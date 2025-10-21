@@ -1,0 +1,22 @@
+{
+  "name": "bpodangren-skills",
+  "owner": {
+    "name": "Daniel Bo",
+    "email": "bodangren@gmail.com"
+  },
+  "metadata": {
+    "description": "Personal skills",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "workflow-skills",
+      "description": "Git worflow for spec-driven development",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./git-workplace"
+      ]
+    }
+  ]
+}
