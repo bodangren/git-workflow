@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Use this skill for spec-driven git workflow with GitHub issues. Provides 9 workflow commands including brownfield project migration, sprint management, issue tracking, and PR workflows. Triggers include migrating existing projects, creating sprint issues, starting work on issues, testing implementations, submitting PRs, handling review feedback, closing completed work, checking sprint progress, or creating/updating specs. Use when the user mentions migration, sprints, issues, PRs, specs, or wants to track development workflow.
+description: Use this skill for spec-driven git workflow with GitHub issues. Provides 10 workflow commands including brownfield project migration, sprint management, AI quality reviews, issue tracking, and PR workflows. Triggers include migrating existing projects, creating sprint issues, reviewing sprint quality, starting work on issues, testing implementations, submitting PRs, handling review feedback, closing completed work, checking sprint progress, or creating/updating specs. Use when the user mentions migration, sprints, reviews, issues, PRs, specs, or wants to track development workflow.
 ---
 
 # Git Workflow
@@ -9,7 +9,7 @@ Spec-driven development workflow using GitHub issues, pull requests, and specifi
 
 ## Overview
 
-This skill implements a comprehensive spec-driven development workflow that integrates specifications, GitHub issues, and pull requests. It provides 9 workflow commands covering brownfield migration, spec creation, sprint management, and the complete development lifecycle through issue closure.
+This skill implements a comprehensive spec-driven development workflow that integrates specifications, GitHub issues, and pull requests. It provides 10 workflow commands covering brownfield migration, spec creation, sprint management, quality reviews, and the complete development lifecycle through issue closure.
 
 **Key Principles:**
 - **Spec-First**: Specifications in `docs/specs/` are the source of truth
@@ -22,6 +22,7 @@ This skill implements a comprehensive spec-driven development workflow that inte
 Use this skill when:
 - Migrating existing brownfield projects to spec-driven workflow
 - Creating sprint issues from planning documents
+- Reviewing sprint issues for quality and architecture compliance
 - Starting work on assigned issues
 - Testing implementation before submission
 - Creating pull requests with spec deltas
@@ -54,7 +55,7 @@ project/
 
 ## Workflow Commands
 
-This skill provides 9 commands that form a complete development lifecycle:
+This skill provides 10 commands that form a complete development lifecycle:
 
 ### 0. migrate-project (Brownfield Migration)
 **Purpose**: Migrate existing project to spec-driven workflow
@@ -113,6 +114,26 @@ This skill provides 9 commands that form a complete development lifecycle:
 
 ---
 
+### 2.5. review-sprint
+**Purpose**: AI-powered quality review of sprint issues for architecture, wording, and planning
+
+**When to use**:
+- After running seed-sprint
+- Before developers start work with next-issue
+- When sprint planning needs quality validation
+- To ensure architectural consistency
+
+**Key actions**:
+- Review all open issues in sprint milestone
+- Check architecture compliance against docs
+- Validate wording clarity and planning quality
+- Suggest improvements as respectful comments
+- Post review comments on each issue
+
+**Details**: See `references/review-sprint.md`
+
+---
+
 ### 3. next-issue
 **Purpose**: Select and start work on next available issue
 
@@ -126,6 +147,7 @@ This skill provides 9 commands that form a complete development lifecycle:
 - Get assigned issues with priorities
 - Check for spec conflicts
 - Read affected specs
+- **Read all issue comments (including review suggestions)**
 - Create feature branch
 - Update TODO.md and sprint file
 
@@ -256,7 +278,8 @@ A typical issue follows this lifecycle:
 ```
 1. init-spec      → Create spec for new capability
 2. seed-sprint    → Create issue from sprint file
-3. next-issue     → Start work on issue
+2.5. review-sprint → AI review issues for quality (NEW)
+3. next-issue     → Start work on issue (read review comments)
 4. test-issue     → Validate implementation
 5. submit-issue   → Create pull request
 6. update-issue   → Address review feedback (if needed)
@@ -528,7 +551,8 @@ Closes #123
 1. Create sprint file: docs/sprint/S2.md
 2. Run: init-spec (for new capabilities)
 3. Run: seed-sprint
-4. Verify: Sprint issues created in GitHub
+4. Run: review-sprint (AI quality review)
+5. Verify: Sprint issues created and reviewed in GitHub
 ```
 
 ### Daily Development
@@ -615,6 +639,7 @@ All workflow commands have detailed reference documentation in the `references/`
 - `migrate-project.md` - **Brownfield migration** (first-time setup)
 - `init-spec.md` - Creating specification files
 - `seed-sprint.md` - Creating sprint issues
+- `review-sprint.md` - **AI quality review** of sprint issues (NEW)
 - `next-issue.md` - Starting work on issues
 - `test-issue.md` - Testing implementation
 - `submit-issue.md` - Creating pull requests
@@ -646,7 +671,8 @@ gh auth login  # if not authenticated
 migrate-project            # Migrate brownfield project (first time)
 init-spec [capability]     # Create spec files
 seed-sprint [sprint-file]  # Create sprint issues
-next-issue                 # Start next issue
+review-sprint              # AI review sprint issues (NEW)
+next-issue                 # Start next issue (read reviews)
 test-issue                 # Run tests
 submit-issue               # Create PR
 update-issue               # Update PR

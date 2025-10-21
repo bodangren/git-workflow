@@ -129,7 +129,18 @@ ISSUE_NUMBER=201
 
 # Read complete issue
 gh issue view $ISSUE_NUMBER
+
+# Read ALL comments (including review suggestions)
+gh issue view $ISSUE_NUMBER --comments
 ```
+
+**IMPORTANT**: Pay special attention to review comments posted by `review-sprint`. These may include:
+- Architecture compliance suggestions
+- Wording and clarity improvements
+- Planning enhancements
+- Spec change recommendations
+
+Consider these suggestions during implementation but use your judgment on how to apply them.
 
 ### 7. Extract and Validate Spec References
 
@@ -366,12 +377,15 @@ Milestone: S2
 Affected specs:
   - docs/specs/curriculum-management/spec.md
 
+Review comments: 1 comment (review suggestions available)
+
 Next steps:
-  1. Review spec requirements and scenarios
-  2. Implement according to acceptance criteria
-  3. Write tests per test plan
-  4. Run 'test-issue' before submitting
-  5. Run 'submit-issue' when ready for PR
+  1. Review issue comments and review suggestions
+  2. Review spec requirements and scenarios
+  3. Implement according to acceptance criteria (considering review feedback)
+  4. Write tests per test plan
+  5. Run 'test-issue' before submitting
+  6. Run 'submit-issue' when ready for PR
 
 Dependencies to watch:
   - None identified
