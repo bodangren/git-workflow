@@ -328,19 +328,256 @@ Add test results to sprint file:
 - **Last Tested**: 2025-10-22
 ```
 
-### 11. Chrome DevTools Integration (if available)
+### 11. Chrome DevTools Debugging (E2E Test Failures)
 
-If Chrome DevTools MCP is available for E2E debugging:
+When E2E tests fail, use chrome-devtools-mcp tools for interactive debugging. This is more effective than analyzing test screenshots alone.
 
-```bash
-# Take screenshot on test failure
-if [ $E2E_EXIT -ne 0 ]; then
-  echo "Capturing screenshot for debugging..."
-  # Use MCP tools to capture screenshot
-  # Analyze network requests
-  # Check console errors
-fi
+#### When to Use Chrome DevTools MCP
+
+- E2E test failures that are hard to reproduce
+- Element not found errors in tests
+- Unexpected UI behavior
+- Network/API issues during E2E tests
+- Performance problems during user flows
+- JavaScript errors affecting functionality
+
+#### Basic Debugging Workflow
+
+**1. Navigate to the failing page:**
 ```
+navigate_page(url='http://localhost:3000/failing-feature')
+```
+
+**2. Take snapshot to see page state:**
+```
+take_snapshot()
+```
+This shows the accessibility tree with element uids - faster than screenshots and provides interaction handles.
+
+**3. Check console for JavaScript errors:**
+```
+list_console_messages(types=['error', 'warn'])
+```
+
+**4. Inspect specific error:**
+```
+get_console_message(msgid=1)
+```
+
+**5. Check network requests:**
+```
+list_network_requests(resourceTypes=['fetch', 'xhr'])
+```
+
+**6. Get failed request details:**
+```
+get_network_request(reqid=1)
+```
+
+#### Common E2E Debugging Patterns
+
+**Pattern 1: Element Not Found**
+```
+# Test says: "Button not found"
+
+# Take snapshot to see what elements exist
+take_snapshot()
+
+# Output might show:
+# [100] button "Save Draft"  (not "Submit" as test expects)
+
+# Fix: Update test selector or check if element is conditionally rendered
+```
+
+**Pattern 2: Form Submission Fails**
+```
+# Navigate to form
+navigate_page(url='http://localhost:3000/form')
+
+# Take snapshot to discover form fields
+take_snapshot()
+
+# Fill form using discovered uids
+fill(uid='50', value='test@example.com')
+fill(uid='51', value='password123')
+
+# Check console before submit
+list_console_messages()
+
+# Submit
+click(uid='52')
+
+# Check console after submit
+list_console_messages(types=['error'])
+
+# Check network requests
+list_network_requests(resourceTypes=['fetch', 'xhr'])
+
+# Analyze the POST request
+get_network_request(reqid=1)
+```
+
+**Pattern 3: Navigation Timeout**
+```
+# Test times out waiting for page load
+
+# Navigate and monitor
+navigate_page(url='http://localhost:3000/slow-page', timeout=30000)
+
+# Check console for errors
+list_console_messages(types=['error'])
+
+# Check network for stuck/failed requests
+list_network_requests()
+
+# Find the blocking request
+get_network_request(reqid=5)  # Shows: 500 Internal Server Error
+```
+
+**Pattern 4: State Synchronization Issues**
+```
+# Test expects element to appear after action
+
+# Take initial snapshot
+navigate_page(url='http://localhost:3000/dashboard')
+take_snapshot()
+
+# Trigger action
+click(uid='100')
+
+# Wait for expected content
+wait_for(text='Data loaded', timeout=5000)
+
+# If wait_for fails, check what's actually happening:
+take_snapshot()  # See current page state
+list_console_messages()  # Check for JS errors
+list_network_requests()  # Check if API call completed
+```
+
+**Pattern 5: Performance Issues**
+```
+# Test is slow or times out
+
+# Start performance trace
+performance_start_trace(reload=true, autoStop=true)
+
+# Stop and analyze
+performance_stop_trace()
+
+# Output shows Core Web Vitals:
+# - LCP: 4.5s (slow!)
+# - FID: 250ms (slow!)
+
+# Get detailed breakdown
+performance_analyze_insight(insightName='LCPBreakdown')
+
+# This reveals: Large image blocking render
+```
+
+#### Verifying Test Fixes
+
+After fixing E2E tests, verify interactively:
+
+```
+# Navigate to the feature
+navigate_page(url='http://localhost:3000/feature')
+
+# Reproduce test steps manually
+take_snapshot()
+click(uid='100')
+fill(uid='101', value='test data')
+click(uid='102')
+
+# Verify expected outcome
+wait_for(text='Success')
+take_screenshot(filePath='/tmp/verified.png')
+
+# Confirm no errors
+list_console_messages(types=['error'])
+# Expected: No errors
+
+# Confirm API calls succeeded
+list_network_requests(resourceTypes=['fetch'])
+# Expected: All 200 status codes
+```
+
+#### Multi-Page Testing
+
+For tests involving multiple pages/tabs:
+
+```
+# List all open pages
+list_pages()
+
+# Create new page for comparison
+new_page(url='http://localhost:3000/compare')
+
+# Switch between pages
+select_page(pageIdx=0)  # Original page
+take_snapshot()
+
+select_page(pageIdx=1)  # New page
+take_snapshot()
+
+# Close when done
+close_page(pageIdx=1)
+```
+
+#### Network Condition Testing
+
+Test behavior under poor network conditions:
+
+```
+# Simulate slow 3G
+emulate_network(throttlingOption='Slow 3G')
+
+# Navigate and test
+navigate_page(url='http://localhost:3000')
+
+# Check if loading states work properly
+take_snapshot()  # Should show loading indicators
+
+# Reset to normal
+emulate_network(throttlingOption='No emulation')
+```
+
+#### JavaScript Execution for Test Setup
+
+If you need to manipulate page state:
+
+```
+# Navigate to page
+navigate_page(url='http://localhost:3000')
+
+# Execute custom JS to set up test state
+evaluate_script(function='() => { localStorage.setItem("testMode", "true"); location.reload(); }')
+
+# Verify state
+take_snapshot()
+```
+
+#### Best Practices for E2E Debugging
+
+1. **Always snapshot first** - Faster and provides uids for interaction
+2. **Check console immediately** - JavaScript errors often explain failures
+3. **Inspect network activity** - API failures are common E2E issues
+4. **Use wait_for instead of timeouts** - More reliable for dynamic content
+5. **Verify element state** - Use verbose snapshot to see disabled/hidden states
+6. **Test incrementally** - Reproduce test step-by-step to find exact failure point
+7. **Clean up** - Close extra pages, reset network emulation when done
+
+#### Tool Quick Reference
+
+| Need | Tool |
+|------|------|
+| See page structure | `take_snapshot()` |
+| Visual verification | `take_screenshot()` |
+| JavaScript errors | `list_console_messages(types=['error'])` |
+| Network issues | `list_network_requests()` |
+| Slow performance | `performance_start_trace()` |
+| Element interaction | `click(uid)`, `fill(uid, value)` |
+| Wait for content | `wait_for(text='Expected')` |
+| Run custom JS | `evaluate_script(function)` |
 
 ## Test Configuration
 
