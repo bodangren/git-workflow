@@ -11,11 +11,11 @@
   "plugins": [
     {
       "name": "workflow-skills",
-      "description": "Git worflow for spec-driven development",
-      "source": "./",
+      "description": "Git workflow for spec-driven development",
+      "source": "./skills",
       "strict": false,
       "skills": [
-        "./git-workplace"
+        "git-workflow"
       ]
     }
   ]
