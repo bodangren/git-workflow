@@ -15,7 +15,7 @@
       "source": "./skills",
       "strict": false,
       "skills": [
-        "git-workflow"
+        "./git-workflow"
       ]
     }
   ]
