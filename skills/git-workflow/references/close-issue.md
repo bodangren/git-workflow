@@ -346,7 +346,97 @@ rm -rf test-results/ screenshots/ .nyc_output/ coverage/
 echo "✓ Artifacts cleaned"
 ```
 
-### 15. Provide Summary
+### 15. Update Development Retrospective
+
+Capture learnings to improve future issues:
+
+```bash
+echo ""
+echo "Updating retrospective with learnings..."
+
+# Calculate issue metrics
+ISSUE_CREATED=$(gh issue view $ISSUE_NUMBER --json createdAt --jq .createdAt | cut -d'T' -f1)
+DAYS_ELAPSED=$(( ($(date +%s -d "$MERGED_DATE") - $(date +%s -d "$ISSUE_CREATED")) / 86400 ))
+PR_UPDATES=$(gh api repos/:owner/:repo/pulls/$PR_NUMBER --jq '.commits - 1')
+
+# Prompt for retrospective input (in practice, LLM would provide this)
+echo "Quick retrospective for #$ISSUE_NUMBER:"
+echo ""
+echo "Consider:"
+echo "  - What went well? (e.g., clear spec, good test coverage)"
+echo "  - What friction did you encounter? (e.g., missing error scenarios)"
+echo "  - What did you apply/change? (e.g., added validation checks)"
+echo "  - Key lesson? (e.g., always include error cases in spec)"
+echo ""
+
+# In practice, this would be done by LLM:
+# 1. Read current RETROSPECTIVE.md
+# 2. Add new issue as top entry in "Recent Issues"
+# 3. Compress oldest "Recent Issues" entry → "Historical Patterns"
+# 4. Update "Spec Quality Trends" based on this issue
+# 5. Keep total file to ~100 lines
+# 6. Write updated RETROSPECTIVE.md
+
+# For manual workflow:
+if [ -f "RETROSPECTIVE.md" ]; then
+  echo "Note: RETROSPECTIVE.md exists - will need manual update"
+  echo "  Add #$ISSUE_NUMBER with: ${DAYS_ELAPSED} days, ${PR_UPDATES} PR updates"
+else
+  echo "Note: RETROSPECTIVE.md does not exist - consider creating it"
+  echo "  See workflow documentation for template"
+fi
+
+echo ""
+echo "Retrospective points to consider:"
+echo "  - Issue duration: ${DAYS_ELAPSED} days"
+echo "  - PR iterations: ${PR_UPDATES}"
+echo "  - Specs touched: ${AFFECTED_SPECS}"
+```
+
+**RETROSPECTIVE.md structure** (~100 lines total):
+```markdown
+# Development Retrospective
+
+*Last updated: 2025-10-22 (Issue #201)*
+
+---
+
+## Recent Issues (Detailed - Last 3-5)
+
+### #201 - Title (2025-10-22, 2 days, 1 PR update)
+**Went well**: [What worked smoothly]
+**Friction**: [What caused delays or issues]
+**Applied**: [What you changed during implementation]
+**Lesson**: [Key takeaway for future issues]
+
+---
+
+## Historical Patterns (Compressed)
+
+**Common success patterns**:
+- Pattern 1
+- Pattern 2
+
+**Common friction points**:
+- Issue 1
+- Issue 2
+
+**Active improvements being tracked**:
+- Improvement 1 (from #201)
+- Improvement 2 (from #185)
+
+---
+
+## Spec Quality Trends
+
+**Well-specified capabilities** (reference these):
+- capability-name/* - Why it's good
+
+**Capabilities needing improvement**:
+- capability-name/* - What needs work
+```
+
+### 16. Provide Summary
 
 ```
 ✓ Issue Closed Successfully!

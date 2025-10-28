@@ -1,10 +1,10 @@
-# Git Workflow - Spec-Driven Development Plugin
+# Git Workflow - Spec-Driven Development Skill
 
-A comprehensive Claude Code plugin for spec-driven development using GitHub issues, pull requests, and sprint management.
+A comprehensive Claude Code skill for spec-driven development using GitHub issues, pull requests, and sprint management with continuous improvement.
 
 ## Overview
 
-Transform your development workflow with a structured, specification-driven approach that integrates seamlessly with GitHub. This plugin provides 9 workflow commands covering everything from brownfield project migration to sprint analytics.
+Transform your development workflow with a structured, specification-driven approach that integrates seamlessly with GitHub. This skill provides 12 workflow commands covering everything from brownfield project migration to sprint analytics, with built-in continuous improvement through retrospectives.
 
 **Key Features:**
 - 🔄 **Brownfield Migration** - Migrate existing projects to spec-driven workflow
@@ -12,7 +12,10 @@ Transform your development workflow with a structured, specification-driven appr
 - 🎯 **Issue-Driven** - GitHub issues track all proposed changes
 - 🔀 **PR-Tracked** - Pull requests implement and update specs
 - 📊 **Sprint-Organized** - Work organized into sprint milestones
-- 📈 **Analytics** - Velocity tracking and burndown metrics
+- 🔍 **AI Quality Review** - Automated issue review for architecture compliance
+- 🚫 **Blocking Support** - Handle external dependencies gracefully
+- ✂️ **Issue Splitting** - Keep work scoped for single chat sessions
+- 🔄 **Continuous Improvement** - Living retrospective feeds learnings into future work
 
 ## Installation
 
@@ -76,7 +79,7 @@ cat MIGRATION-REPORT.md
 
 ## Workflow Commands
 
-The plugin provides 9 comprehensive workflow commands:
+The skill provides 12 comprehensive workflow commands:
 
 ### 0. migrate-project
 **Migrate existing brownfield projects to spec-driven workflow**
@@ -103,14 +106,43 @@ The plugin provides 9 comprehensive workflow commands:
 - Creates issues with spec references
 - Updates TODO.md and sprint file
 
+### 2.5. review-sprint
+**AI-powered quality review of sprint issues**
+
+- Reviews all issues in current sprint
+- Checks architecture compliance
+- Validates wording and clarity
+- Suggests planning improvements
+- Posts constructive review comments
+
 ### 3. next-issue
 **Select and start work on next available issue**
 
 - Verifies clean working state
 - Recommends issues by priority
 - Checks for spec conflicts
+- **Reads development retrospective (learnings from past issues)**
+- Reads all issue comments (including review suggestions)
 - Creates feature branch
 - Updates tracking files
+
+### 3.5. block-issue
+**Mark issue as blocked when dependencies prevent progress**
+
+- Adds blocked label to issue
+- Documents blocker with expected resolution
+- Updates TODO.md and sprint tracking
+- Pauses work cleanly (commits WIP)
+- Notifies PM of blocker
+
+### 3.6. split-issue
+**Break large issues into smaller, atomic issues**
+
+- Analyzes issue scope (~200K token limit per chat)
+- Identifies split strategy (backend/frontend, phases, etc.)
+- Creates parent/child or sequential issues
+- Links relationships and dependencies
+- Maintains manageable scope per issue
 
 ### 4. test-issue
 **Run comprehensive testing before submission**
@@ -139,12 +171,13 @@ The plugin provides 9 comprehensive workflow commands:
 - Tracks update history
 
 ### 7. close-issue
-**Clean up after PR merge**
+**Clean up after PR merge and capture learnings**
 
 - Verifies PR merged
 - Deletes feature branches
 - Closes GitHub issue
 - Updates all tracking files
+- **Updates RETROSPECTIVE.md with learnings**
 - Calculates sprint progress
 
 ### 8. sprint-status
@@ -159,7 +192,7 @@ The plugin provides 9 comprehensive workflow commands:
 
 ## Directory Structure
 
-This plugin creates and uses the following structure:
+This skill creates and uses the following structure:
 
 ```
 project/
@@ -170,12 +203,15 @@ project/
 │   │   └── [capability]/
 │   │       ├── spec.md       # Requirements and scenarios
 │   │       └── design.md     # Architecture (optional)
-│   └── sprint/               # Sprint planning
-│       ├── S1.md            # Sprint files
-│       ├── S2.md
-│       └── epics/
-│           └── E1.md
+│   ├── sprint/               # Sprint planning
+│   │   ├── S1.md            # Sprint files
+│   │   └── S2.md
+│   ├── epics/                # Epic tracking (optional)
+│   │   └── E1-epic-name.md
+│   └── releases/             # Release planning (optional)
+│       └── v1.0.md
 ├── TODO.md                   # Project tracking
+├── RETROSPECTIVE.md          # Living retrospective (~100 lines)
 ├── CLAUDE.md                 # Workflow guide (created by migrate-project)
 ├── .github/
 │   ├── ISSUE_TEMPLATE/       # Issue templates (created by migrate-project)
@@ -217,11 +253,11 @@ The system SHALL [normative statement using SHALL/MUST]
 
 The workflow uses standardized labels:
 
-**Type**: `type:feature`, `type:bug`, `type:chore`, `type:spec`
+**Type**: `type:feature`, `type:bug`, `type:chore`, `type:spec`, `type:test`, `type:spike`
 **Priority**: `priority:P0` (critical) through `priority:P3` (low)
 **Spec**: `add-capability`, `modify-spec`, `remove-feature`
-**Status**: `blocked`, `in-progress`
-**Area**: `area:frontend`, `area:backend`, `area:devex`
+**Status**: `blocked`, `in-progress`, `parent-issue`
+**Area**: `area:frontend`, `area:backend`, `area:devex`, `area:testing`
 
 ### Commit Messages
 
@@ -254,14 +290,44 @@ Examples:
 1. migrate-project (if brownfield) → Setup structure
 2. init-spec                       → Create capability spec
 3. seed-sprint                     → Create issues from sprint
-4. next-issue                      → Start work
+3.5. review-sprint                 → AI review issues for quality
+4. next-issue                      → Start work (reads retrospective)
+   4.5. block-issue (optional)     → Mark blocked if dependencies
+   4.6. split-issue (optional)     → Split if too large (~200K tokens)
 5. [implement according to spec]
 6. test-issue                      → Validate quality
 7. submit-issue                    → Create PR
 8. update-issue (if needed)        → Address feedback
-9. close-issue                     → Complete after merge
+9. close-issue                     → Complete after merge (updates retrospective)
+   └─→ Learnings feed back into next-issue ← FEEDBACK LOOP
 10. sprint-status                  → Track progress
 ```
+
+## Continuous Improvement
+
+### Development Retrospective
+
+The skill maintains a living **RETROSPECTIVE.md** file (~100 lines) that captures learnings from each issue:
+
+**Structure:**
+- **Recent Issues** (50%): Detailed learnings from last 3-5 issues
+- **Historical Patterns** (40%): Compressed wisdom from earlier issues
+- **Spec Quality Trends** (10%): Which specs are good references vs need work
+
+**Feedback Loop:**
+- `close-issue` adds new learnings and compresses old entries
+- `next-issue` reads retrospective to apply proven patterns and avoid past mistakes
+
+**Example Entry:**
+```markdown
+### #201 - Curriculum Framework (2025-10-22, 2 days, 1 PR update)
+**Went well**: Spec was complete with clear scenarios
+**Friction**: Missed error handling in initial spec
+**Applied**: Added error scenarios after PR feedback
+**Lesson**: Always include error scenarios in spec.md from the start
+```
+
+This creates a **self-improving system** where each issue benefits from the accumulated wisdom of previous work.
 
 ## Best Practices
 
@@ -270,12 +336,16 @@ Examples:
 - Every requirement must have scenarios
 - Use SHALL/MUST for normative requirements
 - Update specs before implementation
+- Track spec debt in TODO.md
 
 ### Issue Management
 - Reference affected specs in all issues
 - Mark change type (ADDED/MODIFIED/REMOVED)
 - Include acceptance criteria
 - Document dependencies
+- **Keep issues sized for single chat (~150-200K tokens)**
+- **Block issues immediately when dependencies arise**
+- **Split large issues proactively during planning**
 
 ### Testing
 - Test locally before pushing
@@ -288,6 +358,7 @@ Examples:
 - Track progress regularly
 - Identify blockers early
 - Monitor velocity
+- **Review retrospective before starting each issue**
 
 ## Examples
 
@@ -401,12 +472,18 @@ Detailed documentation for each workflow command is available in:
   - `migrate-project.md` - Brownfield migration
   - `init-spec.md` - Spec creation
   - `seed-sprint.md` - Sprint seeding
-  - `next-issue.md` - Issue selection
+  - `review-sprint.md` - AI quality review
+  - `next-issue.md` - Issue selection (includes retrospective reading)
+  - `block-issue.md` - Blocking issues
+  - `split-issue.md` - Splitting large issues
   - `test-issue.md` - Testing
   - `submit-issue.md` - PR creation
   - `update-issue.md` - Review handling
-  - `close-issue.md` - Completion
+  - `close-issue.md` - Completion (includes retrospective update)
   - `sprint-status.md` - Analytics
+- `skills/git-workflow/examples/` - Templates
+  - `epic-template.md` - Epic tracking template
+  - `release-template.md` - Release planning template
 
 ## Requirements
 
@@ -435,6 +512,16 @@ MIT License - See LICENSE file for details
 - **Documentation**: See `skills/git-workflow/` directory
 
 ## Changelog
+
+### Version 1.1.0 (2025-10-28)
+
+- **Continuous Improvement**: Living RETROSPECTIVE.md with feedback loop
+- **New Commands**: block-issue, split-issue, review-sprint
+- **Enhanced next-issue**: Reads retrospective before starting work
+- **Enhanced close-issue**: Captures learnings for future issues
+- **Issue Management**: Better support for dependencies and scope control
+- **Templates**: Added epic and release planning templates
+- 12 workflow commands total
 
 ### Version 1.0.0 (2025-10-21)
 

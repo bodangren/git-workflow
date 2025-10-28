@@ -226,7 +226,45 @@ for SPEC_PATH in $AFFECTED_SPECS; do
 done
 ```
 
-### 10. Create Feature Branch
+### 10. Read Development Retrospective
+
+Read accumulated learnings to inform implementation:
+
+```bash
+if [ -f "RETROSPECTIVE.md" ]; then
+  echo ""
+  echo "=== Development Retrospective ==="
+  cat RETROSPECTIVE.md
+  echo ""
+  echo "Consider these learnings during implementation:"
+  echo "  - Apply success patterns from recent issues"
+  echo "  - Avoid known friction points"
+  echo "  - Reference well-specified capabilities"
+  echo "  - Follow active improvement initiatives"
+  echo ""
+elif [ -f "docs/RETROSPECTIVE.md" ]; then
+  echo ""
+  echo "=== Development Retrospective ==="
+  cat docs/RETROSPECTIVE.md
+  echo ""
+  echo "Consider these learnings during implementation."
+  echo ""
+else
+  echo ""
+  echo "ℹ No RETROSPECTIVE.md found (this is normal for first few issues)"
+  echo ""
+fi
+```
+
+**Purpose**: The retrospective captures:
+- **Recent patterns**: What worked/didn't work in last 3-5 issues
+- **Historical wisdom**: Compressed learnings from earlier issues
+- **Spec quality**: Which specs are good references vs need improvement
+- **Active improvements**: Current process improvements being tracked
+
+This context helps avoid repeating past mistakes and apply proven patterns.
+
+### 11. Create Feature Branch
 
 ```bash
 # Extract title and create kebab-case branch name
@@ -266,7 +304,7 @@ git switch -c "$BRANCH_NAME"
 echo "✓ Created and switched to: $BRANCH_NAME"
 ```
 
-### 11. Initial Setup
+### 12. Initial Setup
 
 Check if any setup is needed:
 
@@ -294,7 +332,7 @@ if [ -f "scripts/setup.sh" ]; then
 fi
 ```
 
-### 12. Update TODO.md
+### 13. Update TODO.md
 
 Add issue to "In Progress" section:
 
@@ -330,7 +368,7 @@ cat >> TODO.md << EOF
 EOF
 ```
 
-### 13. Update Sprint File
+### 14. Update Sprint File
 
 Find the relevant sprint file and update story status:
 
@@ -364,7 +402,7 @@ Example sprint file update:
 **Issue**: #201
 ```
 
-### 14. Provide Summary
+### 15. Provide Summary
 
 ```
 ✓ Started work on issue #201
