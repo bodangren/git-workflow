@@ -1,13 +1,14 @@
-# Next Issue Command
+# Work on Issue Workflow
 
-Select and start work on the next available issue from assigned GitHub issues.
+Select and start work on a specific issue from assigned GitHub issues.
 
 ## Purpose
 
-Intelligently select the next issue to work on based on priority, dependencies, and spec readiness. Ensures clean workflow start with all necessary context.
+Load full context for an issue and create a feature branch to begin implementation. Ensures clean workflow start with all necessary context loaded before any code is written.
 
 ## When to Use
 
+Use this workflow when:
 - Starting work on a new issue
 - Switching between issues
 - After completing previous issue
@@ -129,7 +130,18 @@ ISSUE_NUMBER=201
 
 # Read complete issue
 gh issue view $ISSUE_NUMBER
+
+# Read ALL comments (including review suggestions)
+gh issue view $ISSUE_NUMBER --comments
 ```
+
+**IMPORTANT**: Pay special attention to review comments posted by `review-sprint`. These may include:
+- Architecture compliance suggestions
+- Wording and clarity improvements
+- Planning enhancements
+- Spec change recommendations
+
+Consider these suggestions during implementation but use your judgment on how to apply them.
 
 ### 7. Extract and Validate Spec References
 
@@ -215,7 +227,45 @@ for SPEC_PATH in $AFFECTED_SPECS; do
 done
 ```
 
-### 10. Create Feature Branch
+### 10. Read Development Retrospective
+
+Read accumulated learnings to inform implementation:
+
+```bash
+if [ -f "RETROSPECTIVE.md" ]; then
+  echo ""
+  echo "=== Development Retrospective ==="
+  cat RETROSPECTIVE.md
+  echo ""
+  echo "Consider these learnings during implementation:"
+  echo "  - Apply success patterns from recent issues"
+  echo "  - Avoid known friction points"
+  echo "  - Reference well-specified capabilities"
+  echo "  - Follow active improvement initiatives"
+  echo ""
+elif [ -f "docs/RETROSPECTIVE.md" ]; then
+  echo ""
+  echo "=== Development Retrospective ==="
+  cat docs/RETROSPECTIVE.md
+  echo ""
+  echo "Consider these learnings during implementation."
+  echo ""
+else
+  echo ""
+  echo "ℹ No RETROSPECTIVE.md found (this is normal for first few issues)"
+  echo ""
+fi
+```
+
+**Purpose**: The retrospective captures:
+- **Recent patterns**: What worked/didn't work in last 3-5 issues
+- **Historical wisdom**: Compressed learnings from earlier issues
+- **Spec quality**: Which specs are good references vs need improvement
+- **Active improvements**: Current process improvements being tracked
+
+This context helps avoid repeating past mistakes and apply proven patterns.
+
+### 11. Create Feature Branch
 
 ```bash
 # Extract title and create kebab-case branch name
@@ -255,7 +305,7 @@ git switch -c "$BRANCH_NAME"
 echo "✓ Created and switched to: $BRANCH_NAME"
 ```
 
-### 11. Initial Setup
+### 12. Initial Setup
 
 Check if any setup is needed:
 
@@ -283,7 +333,7 @@ if [ -f "scripts/setup.sh" ]; then
 fi
 ```
 
-### 12. Update TODO.md
+### 13. Update TODO.md
 
 Add issue to "In Progress" section:
 
@@ -319,7 +369,7 @@ cat >> TODO.md << EOF
 EOF
 ```
 
-### 13. Update Sprint File
+### 14. Update Sprint File
 
 Find the relevant sprint file and update story status:
 
@@ -353,7 +403,7 @@ Example sprint file update:
 **Issue**: #201
 ```
 
-### 14. Provide Summary
+### 15. Provide Summary
 
 ```
 ✓ Started work on issue #201
@@ -366,12 +416,15 @@ Milestone: S2
 Affected specs:
   - docs/specs/curriculum-management/spec.md
 
+Review comments: 1 comment (review suggestions available)
+
 Next steps:
-  1. Review spec requirements and scenarios
-  2. Implement according to acceptance criteria
-  3. Write tests per test plan
-  4. Run 'test-issue' before submitting
-  5. Run 'submit-issue' when ready for PR
+  1. Review issue comments and review suggestions
+  2. Review spec requirements and scenarios
+  3. Implement according to acceptance criteria (considering review feedback)
+  4. Write tests per test plan
+  5. Run 'test-issue' before submitting
+  6. Run 'submit-issue' when ready for PR
 
 Dependencies to watch:
   - None identified
