@@ -20,34 +20,34 @@ Instead of a single, monolithic skill, SynthesisFlow is composed of a suite of m
 ```mermaid
 graph TD
     subgraph "Phase 1: Definition"
-        A[Start: New Feature Idea] --> B{propose-change};
-        B --> C["changes/my-feature/<br>spec-delta.md<br>plan.md<br>tasks.md"];
-        C --> D[Open "Spec PR" for review];
-        D --> E{Team Review & Approval};
-        E -- Merge PR --> F[Spec is now "Approved"];
+        A[Start: New Feature Idea] --> B{propose-change}
+        B --> C[changes/my-feature/<br>spec-delta.md<br>plan.md<br>tasks.md]
+        C --> D[Open Spec PR for review]
+        D --> E{Team Review & Approval}
+        E -- Merge PR --> F[Spec is now Approved]
     end
 
     subgraph "Phase 2: Sprint Planning"
-        F --> G{plan-sprint};
-        G --> H["Selects 'Approved' specs for<br>current GitHub Milestone"];
-        H --> I["Creates Epic Issue +<br>Atomic Task Issues in Milestone"];
+        F --> G{plan-sprint}
+        G --> H[Selects Approved specs for<br>current GitHub Milestone]
+        H --> I[Creates Epic Issue +<br>Atomic Task Issues in Milestone]
     end
 
     subgraph "Phase 3: Implementation"
-        I --> J{work-on-issue};
-        J --> K["Reads Issue, Spec, Plan,<br>Retrospective, & Doc Index"];
-        K --> L["Creates Git branch<br>(e.g., feat/issue-123)"];
-        L --> M["Writes Code & Tests"];
-        M --> N[Opens "Code PR" for review];
+        I --> J{work-on-issue}
+        J --> K[Reads Issue, Spec, Plan,<br>Retrospective, and Doc Index]
+        K --> L[Creates Git branch<br>eg feat/issue-123]
+        L --> M[Writes Code and Tests]
+        M --> N[Opens Code PR for review]
     end
 
     subgraph "Phase 4: Integration"
-        N --> O{Code Review & Merge};
-        O -- Merge PR --> P{complete-change};
-        P --> Q["Merges spec-delta into<br>source-of-truth `specs/` folder"];
-        Q --> R["Updates RETROSPECTIVE.md"];
-        R --> S["Archives feature branch<br>& closes Epic Issue"];
-        S --> T[End: Feature Complete];
+        N --> O{Code Review & Merge}
+        O -- Merge PR --> P{complete-change}
+        P --> Q[Merges spec-delta into<br>source-of-truth specs/ folder]
+        Q --> R[Updates RETROSPECTIVE.md]
+        R --> S[Archives feature branch<br>and closes Epic Issue]
+        S --> T[End: Feature Complete]
     end
 
     style F fill:#d4edda,stroke:#c3e6cb
