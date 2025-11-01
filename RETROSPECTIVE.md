@@ -50,6 +50,17 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Technical Fixes:** Fixed subshell output loss with process substitution (`done < <(find ...)`), fixed two syntax errors
 - **Meta-Learning:** I initially captured technical details but missed the higher-level insights from the actual conversation. The user corrected: "What did you ACTUALLY learn?" The real learnings are about understanding design intent, following complete workflows, and the philosophy behind the architecture - not just the technical implementation details.
 
+### #46 - TASK: Restructure project-init skill
+
+- **Went well:** Second restructuring went smoothly following the pattern established with doc-indexer. Completed in significantly less time. Expanded SKILL.md from 7 to 179 lines.
+- **Pattern Validated:** The restructuring approach is now established:
+  1. Move run.sh → scripts/descriptive-name.sh
+  2. Expand SKILL.md (50-200 lines) with workflow instructions
+  3. Test both usage patterns (default and with options)
+  4. Follow complete PR workflow including retrospective
+- **Testing Improvement:** Tested both default usage and -d flag option in temp directories to ensure script works correctly before committing
+- **Lesson:** Having a clear pattern from the first restructuring (doc-indexer) made subsequent restructurings much faster and more confident. The template approach works.
+
 ---
 ## Active Improvements
 
