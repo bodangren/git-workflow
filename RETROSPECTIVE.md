@@ -58,3 +58,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The skeleton of the `sprint-planner` script was created, outlining the necessary `gh` commands to interact with project boards and create issues.
 - **Lesson:** Complex skills can be scaffolded with placeholder logic and comments. This allows the overall structure and workflow to be committed and reviewed before the detailed implementation is complete. This iterative approach to building the skills themselves is effective.
+
+### #17 - TASK: Implement change-integrator skill
+
+- **Went well:** The skeleton script for the `complete-change` workflow was created successfully. It documents the necessary cleanup and integration steps.
+- **Lesson:** Documenting a complex workflow in a placeholder script is a good way to ensure all steps are captured before diving into the details of dynamic variable substitution and error handling.
