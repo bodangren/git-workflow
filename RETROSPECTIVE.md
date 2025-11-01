@@ -123,10 +123,23 @@ This file captures learnings from completed tasks to inform and improve future d
 - **No Broken References:** AGENTS.md never referenced specific scripts, only skill directories, so no fixes needed.
 - **Lesson:** Documentation should be a living artifact that evolves with the codebase. The comprehensive skill descriptions now match the comprehensive SKILL.md documentation created during restructuring.
 
----
-## Active Improvements
+### #54 - TASK: Update README with restructuring notes
 
-- Update README with restructuring notes (task #54) - final task!
-- Keep RETROSPECTIVE.md under 100 lines by compressing older content as needed
-- All 7 skill restructurings complete! 🎉
-- Validation script ready for CI/CD integration
+- **Went well:** Added comprehensive "Skill Architecture" section to README. Final task of Sprint 4 complete!
+- **Directory Structure:** Documented standard skill layout with SKILL.md, scripts/ directory, and optional references/
+- **Hybrid Philosophy:** Clearly explained LLM strategic reasoning + helper script automation. Emphasized this is NOT script automation vs AI instructions.
+- **SKILL.md Template:** Documented 7-part template structure all skills follow.
+- **Concrete Example:** Used issue-executor to demonstrate hybrid approach in action.
+- **No Broken References:** README already used skill names, not script paths, so no run.sh references to update.
+- **Lesson:** README is the first documentation most people read. The Skill Architecture section provides essential context for understanding SynthesisFlow's design philosophy and helps new contributors get oriented quickly.
+
+---
+## Sprint 4 Summary
+
+🎉 **ALL 10 TASKS COMPLETE!**
+
+- 7 skill restructurings (#45-#51): Expanded SKILL.md from 7 to 50-262 lines each
+- Validation script created (#52): 96.8% compliance across all skills
+- Documentation updated (#53, #54): AGENTS.md and README reflect new architecture
+
+**Key Achievement**: Successfully applied the hybrid LLM-guided + helper-script architecture across all SynthesisFlow skills while maintaining backward compatibility and improving documentation quality.
