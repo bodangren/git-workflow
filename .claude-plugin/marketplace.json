@@ -5,17 +5,23 @@
     "email": "bodangren@gmail.com"
   },
   "metadata": {
-    "description": "Personal skills",
-    "version": "1.0.0"
+    "description": "SynthesisFlow - Modular spec-driven AI development methodology",
+    "version": "2.0.0"
   },
   "plugins": [
     {
-      "name": "workflow-skills",
-      "description": "Git workflow for spec-driven development",
+      "name": "synthesisflow-skills",
+      "description": "SynthesisFlow: Modular skills for spec-driven development with hybrid LLM-guided + helper-script architecture",
       "source": "./skills",
       "strict": false,
       "skills": [
-        "./git-workflow"
+        "./project-init",
+        "./doc-indexer",
+        "./spec-authoring",
+        "./sprint-planner",
+        "./issue-executor",
+        "./change-integrator",
+        "./agent-integrator"
       ]
     }
   ]
