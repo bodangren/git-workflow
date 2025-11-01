@@ -109,3 +109,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script was successfully updated to use dynamic arguments instead of placeholders, making it a reusable and functional tool.
 - **Lesson:** Parameterizing scripts from the start is essential for automation. Adding a check for the PR's merged state before proceeding makes the script more resilient to being run at the wrong time.
+
+### #34 - TASK: Flesh out agent-integrator skill
+
+- **Went well:** The script was improved by adding argument parsing, making it more flexible by allowing any target file to be specified.
+- **Lesson:** Even for simple scripts, parameterizing filenames and other constants makes them more reusable in different contexts.
