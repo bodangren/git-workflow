@@ -2,120 +2,59 @@
 
 This file captures learnings from completed tasks to inform and improve future development work.
 
-## Sprint 1
+## Historical Learnings (Sprints 1-3)
 
-### #3 - TASK 1: Restructure Existing Skill
+**Key Patterns Established:**
+- Auto-merge workflow (`gh pr merge --auto --squash --delete-branch`) streamlines PR process
+- Git doesn't track empty directories - use `.gitkeep` files
+- `skills/` is source-of-truth for development; `.claude/skills/` is for installed version
+- Idempotent scripts are crucial for reliable automation
+- Shell scripts with case statements work well for multi-function skills
+- Providing both human-readable and JSON output modes adds flexibility
+- Parameterizing scripts from the start makes them reusable
+- Structured data (JSON) + parsing tools (`jq`) more reliable than placeholder logic
+- `gh project` command flags are inconsistent (--owner sometimes required/unsupported)
 
-- **Went well:** The process of renaming the directory and trimming the skill files was straightforward. The focused scope of the task was clear and easy to execute.
-- **Friction:** I initially made a mistake by attempting to modify the `.claude/skills/` directory instead of the correct `skills/` source directory. The user's clarification was essential to get back on track.
-- **Lesson:** Always confirm the source-of-truth directory for skill development before making file system changes. The `skills/` directory is for development, while `.claude/skills/` is for the final installed version. This distinction is critical.
-
-### #4 - TASK 2: Create New Skill Directories
-
-- **Went well:** The task of creating multiple directories was simple to execute with `mkdir -p`.
-- **Friction:** My initial attempt to commit the new empty directories failed because Git does not track empty directories.
-- **Lesson:** To ensure a directory structure is committed to Git, each directory must contain at least one file. The convention is to add an empty `.gitkeep` file for this purpose.
-
-### #5 - TASK 3: Define New Skills
-
-- **Went well:** Creating the placeholder `SKILL.md` files was fast and straightforward. The new auto-merge workflow was also successful.
-- **Process Improvement:** We've adopted a new workflow for PRs: enable auto-merge, wait 180 seconds, and then verify. The `gh pr merge --auto --squash --delete-branch` command is very efficient as it also handles branch cleanup.
-- **Lesson:** The auto-merge process streamlines the workflow significantly, removing the need for manual polling and cleanup steps. This should be the standard process for all atomic tasks going forward.
-
-### #6 - TASK 4: Update Project Documentation
-
-- **Went well:** Creating the `AGENTS.md` file was a simple, declarative task. Re-confirming the `README.md` content ensured no redundant work was done.
-- **Lesson:** The `AGENTS.md` file is a critical piece of infrastructure for ensuring the portability of the skill suite across different AI agents. The use of comment markers for idempotent updates is a good pattern to remember.
+**Spec-Driven Workflow:**
+- `propose-change` → Spec PR → approval → `plan-sprint` cycle is effective
+- Spec PRs provide clear review points before implementation
+- Breaking work into atomic issues improves focus and tracking
 
 ---
-## Sprint 2 Planning
+## Sprint 4
 
-### Spec Approval: "Implement Core SynthesisFlow Skills"
+### Spec Approval: "Claude Code Skill Compliance"
 
-- **Went well:** The `propose-change` workflow was effective for defining the next epic. The use of a "Spec PR" provided a clear point for review and approval.
-- **Lesson:** The cyclical nature of the workflow is now clear. After one sprint ends, the next begins with a new `propose-change` cycle to define the work, which is then approved and moved into the backlog for the `plan-sprint` skill.
+- **Went well:** Using the SynthesisFlow workflow to refactor itself ("dogfooding") revealed bugs in existing skills and validated the methodology
+- **Lesson:** Dogfooding is extremely valuable for understanding and improving workflows. Issues found: syntax errors in `doc-indexer` and `issue-executor` scripts
 
----
-## Sprint 2
+### #45 - TASK: Restructure doc-indexer skill
 
-### #13 - TASK: Implement project-init skill
-
-- **Went well:** The implementation was a simple, single-file script. The auto-merge workflow continues to be efficient.
-- **Lesson:** Simple, single-purpose scripts are easy to implement, test, and document. This reinforces the benefit of our modular skill-based architecture.
-
-### #14 - TASK: Implement doc-indexer skill
-
-- **Went well:** The script to extract frontmatter was implemented successfully. The user's feedback to include non-compliant file warnings was a valuable addition.
-- **Friction:** Encountered several issues with `gh` command syntax, specifically the inconsistent use of the `--owner` flag.
-- **Lesson:** The `gh project` command suite has inconsistent flags. For example, `item-add` can require `--owner` to be non-interactive, but `item-edit` does not support it and fails if it's present. The globally unique `--id` flag makes the owner scope redundant for editing. This is a key learning point for future tool interactions.
-
-### #15 - TASK: Implement spec-authoring skill
-
-- **Went well:** The initial implementation of the `propose` subcommand was successful. The script correctly scaffolds the necessary files for a new change proposal.
-- **Lesson:** Using a shell script with case statements for subcommands is a simple and effective way to structure a skill with multiple functions. This pattern can be reused for other complex skills.
-
-### #16 - TASK: Implement sprint-planner skill
-
-- **Went well:** The skeleton of the `sprint-planner` script was created, outlining the necessary `gh` commands to interact with project boards and create issues.
-- **Lesson:** Complex skills can be scaffolded with placeholder logic and comments. This allows the overall structure and workflow to be committed and reviewed before the detailed implementation is complete. This iterative approach to building the skills themselves is effective.
-
-### #17 - TASK: Implement change-integrator skill
-
-- **Went well:** The skeleton script for the `complete-change` workflow was created successfully. It documents the necessary cleanup and integration steps.
-- **Lesson:** Documenting a complex workflow in a placeholder script is a good way to ensure all steps are captured before diving into the details of dynamic variable substitution and error handling.
-
-### #18 - TASK: Implement agent-integrator skill
-
-- **Went well:** The script to idempotently update `AGENTS.md` was implemented successfully. Using a heredoc for the content block and `grep`/`awk` for replacement logic is a robust pattern.
-- **Lesson:** Idempotent scripts are crucial for reliable automation. Designing skills to be safely re-runnable prevents errors and simplifies the overall workflow.
-
-### #19 - TASK: Refactor issue-executor
-
-- **Went well:** The skeleton script for the `issue-executor` was created, outlining the full context-loading and branch creation process.
-- **Lesson:** The `issue-executor` is the heart of the development loop. Capturing the full context-gathering process (reading the issue, spec, retrospective, and doc index) in the script is critical for the AI to perform its work effectively.
+- **Went well:** Successfully restructured the doc-indexer to Claude Code compliance. Fixed multiple bugs (syntax errors and subshell output loss). Expanded SKILL.md from 7 to 186 lines with comprehensive workflow instructions.
+- **Friction:** Multiple issues discovered:
+  1. Two syntax errors: missing `do` keywords on while loops (lines 13, 30)
+  2. Subshell output loss: Pipeline `find | while` created subshell that swallowed all output
+  3. Issue-executor script has syntax error on line 47 (heredoc quote mismatch)
+- **Technical Solution:** Fixed subshell issue by using process substitution (`done < <(find ...)`) instead of pipeline. This ensures the while loop runs in the current shell, not a subshell, so output is visible.
+- **Lesson:** Bash pipelines create subshells. Use process substitution when you need side effects (like echo/print) from loop bodies to be visible. This is critical for scripts that produce output.
+- **Architecture Insight:** The hybrid approach (LLM-guided workflows + helper scripts) works well. SKILL.md now guides Claude on when/why/how to use the helper script, achieving both context efficiency and strategic understanding.
+- **Process Improvement:** Confirmed complete issue workflow:
+  1. Create feature branch
+  2. Implement changes
+  3. Create PR
+  4. Enable auto-merge: `gh pr merge --auto --squash --delete-branch`
+  5. Wait 60 seconds for tests/merge
+  6. Verify merge: `gh pr view --json state,mergedAt`
+  7. Issue auto-closes when PR merges
+  8. Switch to main: `git switch main && git pull`
+  9. Prune stale refs: `git fetch --prune`
+  10. **Update RETROSPECTIVE.md** (don't forget!)
+- **Documentation Quality:** Writing comprehensive SKILL.md files (50-200 lines) provides significant value. Clear workflows, error handling, and examples help Claude understand when and how to use skills effectively.
 
 ---
-## Sprint 3 Planning
+## Active Improvements
 
-### Spec Approval: "Flesh out Core Skill Implementations"
-
-- **Went well:** The process of defining the next sprint's epic via a Spec PR continues to be a smooth and effective workflow.
-- **Lesson:** This confirms the cyclical process is working. The `propose-change` -> `Spec PR` -> `complete-change` loop is a reliable way to manage the pipeline of work flowing into the backlog.
-
----
-## Sprint 3
-
-### #29 - TASK: Flesh out project-init skill
-
-- **Went well:** The script was successfully updated to handle arguments and provide usage instructions, making it more robust.
-- **Lesson:** Adding proper argument parsing (like `getopts`) and usage functions to shell scripts from the beginning is a good practice for creating maintainable and user-friendly tools.
-
-### #30 - TASK: Flesh out doc-indexer skill
-
-- **Went well:** The script was successfully updated to handle a `-j` flag for JSON output. The logic to handle both human-readable and machine-readable formats adds significant flexibility.
-- **Lesson:** When building CLI tools, even simple shell scripts, providing structured output options like JSON makes them much more powerful and easier to integrate with other tools in a workflow.
-
-### #31 - TASK: Flesh out spec-authoring skill
-
-- **Went well:** The `update` subcommand was successfully added to the `spec-authoring` script. It can now fetch PR comments, which is the first step in building an iterative feedback loop.
-- **Lesson:** Refactoring the script to properly handle arguments for different subcommands (`propose` vs. `update`) makes the tool more robust and extensible for future features.
-
-### #32 - TASK: Flesh out sprint-planner skill
-
-- **Went well:** The script was significantly improved by using `jq` to parse the project board's JSON output. The interactive prompts for selecting an Epic and naming the sprint make the skill much more dynamic.
-- **Lesson:** Relying on structured data (JSON) and specific parsing tools (`jq`) is more reliable than placeholder logic. The script now more closely resembles a functional tool. A dependency check for `jq` was also added to improve robustness.
-
-### #33 - TASK: Flesh out change-integrator skill
-
-- **Went well:** The script was successfully updated to use dynamic arguments instead of placeholders, making it a reusable and functional tool.
-- **Lesson:** Parameterizing scripts from the start is essential for automation. Adding a check for the PR's merged state before proceeding makes the script more resilient to being run at the wrong time.
-
-### #34 - TASK: Flesh out agent-integrator skill
-
-- **Went well:** The script was improved by adding argument parsing, making it more flexible by allowing any target file to be specified.
-- **Lesson:** Even for simple scripts, parameterizing filenames and other constants makes them more reusable in different contexts.
-
-### #35 - TASK: Flesh out issue-executor
-
-- **Went well:** The skeleton script for the `issue-executor` was successfully fleshed out to dynamically fetch issue context and generate branch names.
-- **Lesson:** The `issue-executor` is a critical skill that ties together many other skills (like `doc-indexer` and `spec-authoring` for context). Its robust implementation is key to the AI's ability to work effectively on individual tasks.
+- Need to fix `issue-executor/run.sh` syntax error (line 47)
+- Continue restructuring remaining 6 skills following doc-indexer pattern
+- Validate restructured skills with new validation script (task #52)
+- Keep RETROSPECTIVE.md under 100 lines by compressing older content as needed
