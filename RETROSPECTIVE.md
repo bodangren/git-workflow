@@ -53,3 +53,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The initial implementation of the `propose` subcommand was successful. The script correctly scaffolds the necessary files for a new change proposal.
 - **Lesson:** Using a shell script with case statements for subcommands is a simple and effective way to structure a skill with multiple functions. This pattern can be reused for other complex skills.
+
+### #16 - TASK: Implement sprint-planner skill
+
+- **Went well:** The skeleton of the `sprint-planner` script was created, outlining the necessary `gh` commands to interact with project boards and create issues.
+- **Lesson:** Complex skills can be scaffolded with placeholder logic and comments. This allows the overall structure and workflow to be committed and reviewed before the detailed implementation is complete. This iterative approach to building the skills themselves is effective.
