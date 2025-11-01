@@ -44,7 +44,8 @@ ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 # 2b. Find and read the associated spec file
 echo "Finding associated spec file..."
 # This is a simplified pattern match. A more robust version would be needed for complex bodies.
-SPEC_FILE=$(echo "$ISSUE_BODY" | grep -o 'docs/specs/[^[:space:]`'"'"']*')
+# Match both docs/specs/ and docs/changes/ paths
+SPEC_FILE=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*' || true)
 
 if [ -n "$SPEC_FILE" ] && [ -f "$SPEC_FILE" ]; then
     echo "Found associated spec: $SPEC_FILE"
@@ -63,8 +64,8 @@ fi
 
 # 2d. Run the doc-indexer to get a map of all docs
 echo "Running doc-indexer skill..."
-if [ -f "skills/doc-indexer/scripts/scan-docs.sh" ]; then
-    bash skills/doc-indexer/scripts/scan-docs.sh
+if [ -f ".claude/skills/doc-indexer/scripts/scan-docs.sh" ]; then
+    bash .claude/skills/doc-indexer/scripts/scan-docs.sh
 else
     echo "Warning: doc-indexer skill not found."
 fi
