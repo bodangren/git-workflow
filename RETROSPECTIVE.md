@@ -63,3 +63,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The skeleton script for the `complete-change` workflow was created successfully. It documents the necessary cleanup and integration steps.
 - **Lesson:** Documenting a complex workflow in a placeholder script is a good way to ensure all steps are captured before diving into the details of dynamic variable substitution and error handling.
+
+### #18 - TASK: Implement agent-integrator skill
+
+- **Went well:** The script to idempotently update `AGENTS.md` was implemented successfully. Using a heredoc for the content block and `grep`/`awk` for replacement logic is a robust pattern.
+- **Lesson:** Idempotent scripts are crucial for reliable automation. Designing skills to be safely re-runnable prevents errors and simplifies the overall workflow.
