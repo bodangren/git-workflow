@@ -81,3 +81,11 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The process of defining the next sprint's epic via a Spec PR continues to be a smooth and effective workflow.
 - **Lesson:** This confirms the cyclical process is working. The `propose-change` -> `Spec PR` -> `complete-change` loop is a reliable way to manage the pipeline of work flowing into the backlog.
+
+---
+## Sprint 3
+
+### #29 - TASK: Flesh out project-init skill
+
+- **Went well:** The script was successfully updated to handle arguments and provide usage instructions, making it more robust.
+- **Lesson:** Adding proper argument parsing (like `getopts`) and usage functions to shell scripts from the beginning is a good practice for creating maintainable and user-friendly tools.
