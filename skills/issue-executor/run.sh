@@ -3,11 +3,22 @@
 
 set -e
 
+usage() {
+    echo "Usage: $0 <issue-number>"
+    exit 1
+}
+
 ISSUE_NUMBER=$1
 
 if [ -z "$ISSUE_NUMBER" ]; then
-    echo "Error: Issue number not provided."
-    echo "Usage: $0 <issue-number>"
+    echo "Error: Issue number not provided." >&2
+    usage
+fi
+
+# --- VALIDATION ---
+if ! command -v jq &> /dev/null
+then
+    echo "Error: jq is not installed. Please install it to continue." >&2
     exit 1
 fi
 
@@ -15,9 +26,8 @@ echo "Starting work on Issue #$ISSUE_NUMBER..."
 
 # 1. Verify clean git state
 echo "Verifying git status..."
-# git status --porcelain will be empty if clean
 if [ -n "$(git status --porcelain)" ]; then
-    echo "Error: Working directory is not clean. Please commit or stash changes."
+    echo "Error: Working directory is not clean. Please commit or stash changes." >&2
     exit 1
 fi
 echo "Git status is clean."
@@ -26,26 +36,45 @@ echo "Git status is clean."
 echo "Loading context for Issue #$ISSUE_NUMBER..."
 
 # 2a. Read issue details from GitHub
-# In a real script, we would parse this JSON.
 echo "Fetching issue details..."
-gh issue view "$ISSUE_NUMBER" --json title,body
+ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" --json title,body)
+ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
+ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 
 # 2b. Find and read the associated spec file
-# (Placeholder logic: This would parse the issue body or use the Epic to find the spec)
-SPEC_FILE="docs/specs/002-implement-core-skills.md"
-echo "Found associated spec: $SPEC_FILE"
+echo "Finding associated spec file..."
+# This is a simplified pattern match. A more robust version would be needed for complex bodies.
+SPEC_FILE=$(echo "$ISSUE_BODY" | grep -o "docs/specs/[^[:space:]`']*")
+
+if [ -n "$SPEC_FILE" ] && [ -f "$SPEC_FILE" ]; then
+    echo "Found associated spec: $SPEC_FILE"
+    cat "$SPEC_FILE"
+else
+    echo "No specific spec file linked in issue body."
+fi
 
 # 2c. Read the retrospective
 echo "Reading RETROSPECTIVE.md..."
-cat RETROSPECTIVE.md
+if [ -f "RETROSPECTIVE.md" ]; then
+    cat RETROSPECTIVE.md
+else
+    echo "No RETROSPECTIVE.md file found."
+fi
 
 # 2d. Run the doc-indexer to get a map of all docs
 echo "Running doc-indexer skill..."
-./skills/doc-indexer/run.sh
+if [ -f "skills/doc-indexer/run.sh" ]; then
+    ./skills/doc-indexer/run.sh
+else
+    echo "Warning: doc-indexer skill not found."
+fi
 
 # 3. Create a feature branch
-# (Placeholder logic: This would generate the branch name from the issue title)
-BRANCH_NAME="feat/$ISSUE_NUMBER-refactor-issue-executor"
+echo "Generating branch name..."
+# Sanitize title to create a branch name
+BRANCH_NAME=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed -e 's/task: //g' -e 's/[^a-z0-9]/-/g' -e 's/--/-/g' -e 's/^-//' -e 's/-$//')
+BRANCH_NAME="feat/$ISSUE_NUMBER-$BRANCH_NAME"
+
 echo "Creating new branch: $BRANCH_NAME..."
 git checkout -b "$BRANCH_NAME"
 
