@@ -114,3 +114,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script was improved by adding argument parsing, making it more flexible by allowing any target file to be specified.
 - **Lesson:** Even for simple scripts, parameterizing filenames and other constants makes them more reusable in different contexts.
+
+### #35 - TASK: Flesh out issue-executor
+
+- **Went well:** The skeleton script for the `issue-executor` was successfully fleshed out to dynamically fetch issue context and generate branch names.
+- **Lesson:** The `issue-executor` is a critical skill that ties together many other skills (like `doc-indexer` and `spec-authoring` for context). Its robust implementation is key to the AI's ability to work effectively on individual tasks.
