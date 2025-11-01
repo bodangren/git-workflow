@@ -68,3 +68,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script to idempotently update `AGENTS.md` was implemented successfully. Using a heredoc for the content block and `grep`/`awk` for replacement logic is a robust pattern.
 - **Lesson:** Idempotent scripts are crucial for reliable automation. Designing skills to be safely re-runnable prevents errors and simplifies the overall workflow.
+
+### #19 - TASK: Refactor issue-executor
+
+- **Went well:** The skeleton script for the `issue-executor` was created, outlining the full context-loading and branch creation process.
+- **Lesson:** The `issue-executor` is the heart of the development loop. Capturing the full context-gathering process (reading the issue, spec, retrospective, and doc index) in the script is critical for the AI to perform its work effectively.
