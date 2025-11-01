@@ -143,3 +143,25 @@ This file captures learnings from completed tasks to inform and improve future d
 - Documentation updated (#53, #54): AGENTS.md and README reflect new architecture
 
 **Key Achievement**: Successfully applied the hybrid LLM-guided + helper-script architecture across all SynthesisFlow skills while maintaining backward compatibility and improving documentation quality.
+
+---
+## Sprint 5
+
+### #67 - TASK: Create Skill Structure (project-migrate)
+
+- **Went well:** Created comprehensive skill structure with SKILL.md (228 lines) and script skeleton. Followed complete workflow including auto-merge, wait, verify, and cleanup.
+- **Critical Gap Identified - issue-executor Missing Completion Steps:**
+  - Current issue-executor skill only covers loading context and starting work
+  - **Missing steps:** Auto-merge PR, wait for CI/CD (60 seconds), check merge status, close issue if passed, clean up feature branch, switch back to main
+  - User had to prompt: "The execute issue skill should require you to auto-merge, sleep 60 for it to finish merging, then check status and close out and clean up if it passed. Does it?"
+  - These completion steps should be documented in issue-executor SKILL.md and/or the work-on-issue.sh script should have a companion "complete-issue.sh" script
+- **Complete Workflow Should Be:**
+  1. Load context and create feature branch (✅ currently implemented)
+  2. Implement changes and commit
+  3. Push and create PR
+  4. Enable auto-merge: `gh pr merge --squash --auto`
+  5. Wait for CI/CD: `sleep 60`
+  6. Check merge status: `gh pr view --json mergedAt,mergedBy`
+  7. Close issue with completion comment (auto-closed by PR if using "Closes #X")
+  8. Clean up: `git checkout main && git pull && git branch -d feat/X-branch-name`
+- **Lesson:** The issue-executor skill needs to document the COMPLETE end-to-end workflow, not just the start. Users should know the full cycle from "start work" to "issue closed and branch cleaned up". This ensures consistency and prevents forgotten steps.
