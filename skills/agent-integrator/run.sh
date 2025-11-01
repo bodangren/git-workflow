@@ -1,7 +1,31 @@
 #!/bin/bash
-# This script idempotently creates or updates the AGENTS.md file in the project root.
+# This script idempotently creates or updates a SynthesisFlow agent guide in a markdown file.
 
 set -e
+
+usage() {
+    echo "Usage: $0 [-f <filepath>]"
+    echo "  -f <filepath>: The path to the markdown file to update. Defaults to AGENTS.md in the project root."
+    exit 1
+}
+
+TARGET_FILE="AGENTS.md"
+
+while getopts ":f:" opt; do
+  case ${opt} in
+    f )
+      TARGET_FILE=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: $OPTARG" 1>&2
+      usage
+      ;;
+    : )
+      echo "Invalid option: $OPTARG requires an argument" 1>&2
+      usage
+      ;;
+  esac
+done
 
 # Define the content block to be inserted/updated
 read -r -d '' AGENT_CONTENT << EOM
@@ -28,8 +52,6 @@ This project uses SynthesisFlow, a modular, spec-driven development methodology.
 To begin, always assess the current state by checking the git branch and running the `doc-indexer`.
 <!-- SYNTHESIS_FLOW_END -->
 EOM
-
-TARGET_FILE="AGENTS.md"
 
 # Ensure the target file exists
 touch "$TARGET_FILE"
