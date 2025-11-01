@@ -87,10 +87,19 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Pattern Consistency:** Each restructuring follows same approach and gets faster. The template is proven and repeatable.
 - **Lesson:** After 5 restructurings (doc-indexer, project-init, spec-authoring, issue-executor, sprint-planner), the pattern is solid. Remaining skills should be straightforward following this template.
 
+### #50 - TASK: Restructure change-integrator skill
+
+- **Went well:** Sixth restructuring completed smoothly. Expanded SKILL.md from 7 to 262 lines. Post-merge workflow now comprehensively documented.
+- **Dual Approach:** Documented both automated script usage AND manual step-by-step alternative. Provides flexibility for users who prefer manual control.
+- **Post-Merge Focus:** Clearly emphasized this runs AFTER code PR is merged, not before. Prevents confusion about timing.
+- **Integration Details:** Documented the complete integration process: branch cleanup, spec file movement from docs/changes/ to docs/specs/, retrospective updates, project board sync.
+- **Configuration Notes:** Explained project-specific IDs needed for project board integration. Noted that future version should auto-detect these.
+- **Lesson:** Skills that can be run manually benefit from documenting both automated and manual approaches. Gives users choice and understanding of what automation does.
+
 ---
 ## Active Improvements
 
-- Continue restructuring remaining skills (change-integrator, agent-integrator)
+- Continue restructuring remaining skill (agent-integrator)
 - Validate restructured skills with new validation script (task #52)
 - Update README and AGENTS.md after all skills restructured
 - Keep RETROSPECTIVE.md under 100 lines by compressing older content as needed
