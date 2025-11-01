@@ -165,3 +165,21 @@ This file captures learnings from completed tasks to inform and improve future d
   7. Close issue with completion comment (auto-closed by PR if using "Closes #X")
   8. Clean up: `git checkout main && git pull && git branch -d feat/X-branch-name`
 - **Lesson:** The issue-executor skill needs to document the COMPLETE end-to-end workflow, not just the start. Users should know the full cycle from "start work" to "issue closed and branch cleaned up". This ensures consistency and prevents forgotten steps.
+
+### #68 - TASK: Implement Discovery Phase (project-migrate)
+
+- **Critical Error from #67 - Wrong Directory Location:**
+  - Issue #67 created project-migrate files in `.claude/skills/` instead of `skills/`
+  - **Violated established pattern:** `skills/` is source-of-truth for development; `.claude/skills/` is for installed version
+  - This pattern was clearly documented in Sprint 4 retrospective and followed by all other skills
+  - Had to move all files to correct location before continuing work
+- **Went well:** Successfully implemented comprehensive discovery phase with file scanning, type detection, and inventory display
+- **Implementation Details:**
+  - Scans docs/, documentation/, wiki/, and root directories for .md files
+  - Detects 8 file types using pattern matching: spec, proposal, ADR, design, plan, retrospective, README, doc
+  - Uses associative arrays for structured inventory (FILE_TYPES)
+  - Handles nested directories (up to 10 levels), excludes .git/ and node_modules/
+  - Outputs human-readable summary with type counts and categorized file list
+  - Testing: Found 12 files across 5 types in current project
+- **Workflow Execution:** Complete workflow executed correctly: auto-merge, 60-second wait, merge verification, auto-close issue, branch cleanup
+- **Lesson:** ALWAYS check that new skills follow the established directory structure pattern (skills/ for source). When in doubt, check existing skills (agent-integrator, doc-indexer, etc.) as reference. The retrospective documents these patterns for a reason - follow them consistently.
