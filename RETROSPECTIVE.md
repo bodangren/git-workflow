@@ -94,3 +94,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script was successfully updated to handle a `-j` flag for JSON output. The logic to handle both human-readable and machine-readable formats adds significant flexibility.
 - **Lesson:** When building CLI tools, even simple shell scripts, providing structured output options like JSON makes them much more powerful and easier to integrate with other tools in a workflow.
+
+### #31 - TASK: Flesh out spec-authoring skill
+
+- **Went well:** The `update` subcommand was successfully added to the `spec-authoring` script. It can now fetch PR comments, which is the first step in building an iterative feedback loop.
+- **Lesson:** Refactoring the script to properly handle arguments for different subcommands (`propose` vs. `update`) makes the tool more robust and extensible for future features.
