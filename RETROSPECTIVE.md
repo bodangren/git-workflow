@@ -48,3 +48,8 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** The script to extract frontmatter was implemented successfully. The user's feedback to include non-compliant file warnings was a valuable addition.
 - **Friction:** Encountered several issues with `gh` command syntax, specifically the inconsistent use of the `--owner` flag.
 - **Lesson:** The `gh project` command suite has inconsistent flags. For example, `item-add` can require `--owner` to be non-interactive, but `item-edit` does not support it and fails if it's present. The globally unique `--id` flag makes the owner scope redundant for editing. This is a key learning point for future tool interactions.
+
+### #15 - TASK: Implement spec-authoring skill
+
+- **Went well:** The initial implementation of the `propose` subcommand was successful. The script correctly scaffolds the necessary files for a new change proposal.
+- **Lesson:** Using a shell script with case statements for subcommands is a simple and effective way to structure a skill with multiple functions. This pattern can be reused for other complex skills.
