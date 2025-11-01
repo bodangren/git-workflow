@@ -78,10 +78,19 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Core Principles Section:** Added clear documentation of "Context is King", "Isolation", and "Atomic Work" principles - helps LLM understand WHY the workflow is structured this way.
 - **Lesson:** Skills with detailed workflow steps benefit from having both SKILL.md (overview + when to use) and references/ (detailed step-by-step). The issue-executor pattern is good for complex workflow skills.
 
+### #48 - TASK: Restructure sprint-planner skill
+
+- **Went well:** Fifth restructuring completed smoothly. Expanded SKILL.md from 7 to 243 lines. Pattern is now very well-established and executing quickly.
+- **Comprehensive Workflow:** Documented 9-step sprint planning workflow clearly separating LLM strategic steps (review board, discuss scope, define metadata) from helper script automation (query API, create issues).
+- **Configuration Guidance:** Added section explaining how to adapt the script for different projects - includes finding project-specific IDs and repository paths. This helps users customize the skill.
+- **Error Handling:** Documented 6 common error scenarios with solutions. Covers both user errors (jq not installed) and workflow issues (missing spec references).
+- **Pattern Consistency:** Each restructuring follows same approach and gets faster. The template is proven and repeatable.
+- **Lesson:** After 5 restructurings (doc-indexer, project-init, spec-authoring, issue-executor, sprint-planner), the pattern is solid. Remaining skills should be straightforward following this template.
+
 ---
 ## Active Improvements
 
-- Continue restructuring remaining skills (sprint-planner, change-integrator, agent-integrator)
+- Continue restructuring remaining skills (change-integrator, agent-integrator)
 - Validate restructured skills with new validation script (task #52)
 - Update README and AGENTS.md after all skills restructured
 - Keep RETROSPECTIVE.md under 100 lines by compressing older content as needed
