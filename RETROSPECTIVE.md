@@ -73,3 +73,11 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The skeleton script for the `issue-executor` was created, outlining the full context-loading and branch creation process.
 - **Lesson:** The `issue-executor` is the heart of the development loop. Capturing the full context-gathering process (reading the issue, spec, retrospective, and doc index) in the script is critical for the AI to perform its work effectively.
+
+---
+## Sprint 3 Planning
+
+### Spec Approval: "Flesh out Core Skill Implementations"
+
+- **Went well:** The process of defining the next sprint's epic via a Spec PR continues to be a smooth and effective workflow.
+- **Lesson:** This confirms the cyclical process is working. The `propose-change` -> `Spec PR` -> `complete-change` loop is a reliable way to manage the pipeline of work flowing into the backlog.
