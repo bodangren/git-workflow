@@ -26,3 +26,11 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** Creating the `AGENTS.md` file was a simple, declarative task. Re-confirming the `README.md` content ensured no redundant work was done.
 - **Lesson:** The `AGENTS.md` file is a critical piece of infrastructure for ensuring the portability of the skill suite across different AI agents. The use of comment markers for idempotent updates is a good pattern to remember.
+
+---
+## Sprint 2 Planning
+
+### Spec Approval: "Implement Core SynthesisFlow Skills"
+
+- **Went well:** The `propose-change` workflow was effective for defining the next epic. The use of a "Spec PR" provided a clear point for review and approval.
+- **Lesson:** The cyclical nature of the workflow is now clear. After one sprint ends, the next begins with a new `propose-change` cycle to define the work, which is then approved and moved into the backlog for the `plan-sprint` skill.
