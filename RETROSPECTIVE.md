@@ -61,6 +61,14 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Testing Improvement:** Tested both default usage and -d flag option in temp directories to ensure script works correctly before committing
 - **Lesson:** Having a clear pattern from the first restructuring (doc-indexer) made subsequent restructurings much faster and more confident. The template approach works.
 
+### #47 - TASK: Restructure spec-authoring skill
+
+- **Went well:** Restructuring proceeded smoothly. Expanded SKILL.md from 7 to 242 lines documenting both subcommands and Spec PR philosophy.
+- **Multi-Subcommand Skill:** This was the first skill with multiple subcommands (propose and update), requiring more comprehensive documentation to explain when and how to use each.
+- **Testing Both Subcommands:** Tested both `propose` (creates directory structure) and `update` (fetches PR comments) to ensure both work correctly
+- **Philosophy Documentation:** Included "Specs as Code" philosophy section explaining WHY spec PRs matter, not just HOW to use them - important for LLM understanding of strategic intent
+- **Lesson:** More complex skills (multiple subcommands) benefit from clear section headers and comprehensive examples. The SKILL.md is longer (242 lines) but necessary to cover both workflows thoroughly.
+
 ---
 ## Active Improvements
 
