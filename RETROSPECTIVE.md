@@ -104,3 +104,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script was significantly improved by using `jq` to parse the project board's JSON output. The interactive prompts for selecting an Epic and naming the sprint make the skill much more dynamic.
 - **Lesson:** Relying on structured data (JSON) and specific parsing tools (`jq`) is more reliable than placeholder logic. The script now more closely resembles a functional tool. A dependency check for `jq` was also added to improve robustness.
+
+### #33 - TASK: Flesh out change-integrator skill
+
+- **Went well:** The script was successfully updated to use dynamic arguments instead of placeholders, making it a reusable and functional tool.
+- **Lesson:** Parameterizing scripts from the start is essential for automation. Adding a check for the PR's merged state before proceeding makes the script more resilient to being run at the wrong time.
