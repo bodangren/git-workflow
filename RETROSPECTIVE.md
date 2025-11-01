@@ -69,10 +69,19 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Philosophy Documentation:** Included "Specs as Code" philosophy section explaining WHY spec PRs matter, not just HOW to use them - important for LLM understanding of strategic intent
 - **Lesson:** More complex skills (multiple subcommands) benefit from clear section headers and comprehensive examples. The SKILL.md is longer (242 lines) but necessary to cover both workflows thoroughly.
 
+### #49 - TASK: Restructure issue-executor skill
+
+- **Went well:** Successfully fixed syntax error and restructured. Expanded SKILL.md from 40 to 193 lines. This skill already had a good foundation with references directory.
+- **Bug Fix During Restructuring:** Discovered and fixed syntax error on line 47 (quote escaping in grep pattern `[^[:space:]`']*`). Also updated doc-indexer path from old run.sh to new scripts/scan-docs.sh.
+- **Existing Structure:** issue-executor already had references/work-on-issue.md, showing the right pattern. Other skills should follow this approach for detailed workflow documentation.
+- **Terminology Cleanup:** Changed "Next Issue Command" to "Work on Issue Workflow" for consistency and clarity.
+- **Core Principles Section:** Added clear documentation of "Context is King", "Isolation", and "Atomic Work" principles - helps LLM understand WHY the workflow is structured this way.
+- **Lesson:** Skills with detailed workflow steps benefit from having both SKILL.md (overview + when to use) and references/ (detailed step-by-step). The issue-executor pattern is good for complex workflow skills.
+
 ---
 ## Active Improvements
 
-- Need to fix `issue-executor/run.sh` syntax error (line 47)
-- Continue restructuring remaining 6 skills following doc-indexer pattern
+- Continue restructuring remaining skills (sprint-planner, change-integrator, agent-integrator)
 - Validate restructured skills with new validation script (task #52)
+- Update README and AGENTS.md after all skills restructured
 - Keep RETROSPECTIVE.md under 100 lines by compressing older content as needed
