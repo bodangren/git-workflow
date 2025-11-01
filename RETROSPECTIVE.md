@@ -21,3 +21,8 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Creating the placeholder `SKILL.md` files was fast and straightforward. The new auto-merge workflow was also successful.
 - **Process Improvement:** We've adopted a new workflow for PRs: enable auto-merge, wait 180 seconds, and then verify. The `gh pr merge --auto --squash --delete-branch` command is very efficient as it also handles branch cleanup.
 - **Lesson:** The auto-merge process streamlines the workflow significantly, removing the need for manual polling and cleanup steps. This should be the standard process for all atomic tasks going forward.
+
+### #6 - TASK 4: Update Project Documentation
+
+- **Went well:** Creating the `AGENTS.md` file was a simple, declarative task. Re-confirming the `README.md` content ensured no redundant work was done.
+- **Lesson:** The `AGENTS.md` file is a critical piece of infrastructure for ensuring the portability of the skill suite across different AI agents. The use of comment markers for idempotent updates is a good pattern to remember.
