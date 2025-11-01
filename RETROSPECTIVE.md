@@ -30,26 +30,25 @@ This file captures learnings from completed tasks to inform and improve future d
 
 ### #45 - TASK: Restructure doc-indexer skill
 
-- **Went well:** Successfully restructured the doc-indexer to Claude Code compliance. Fixed multiple bugs (syntax errors and subshell output loss). Expanded SKILL.md from 7 to 186 lines with comprehensive workflow instructions.
-- **Friction:** Multiple issues discovered:
-  1. Two syntax errors: missing `do` keywords on while loops (lines 13, 30)
-  2. Subshell output loss: Pipeline `find | while` created subshell that swallowed all output
-  3. Issue-executor script has syntax error on line 47 (heredoc quote mismatch)
-- **Technical Solution:** Fixed subshell issue by using process substitution (`done < <(find ...)`) instead of pipeline. This ensures the while loop runs in the current shell, not a subshell, so output is visible.
-- **Lesson:** Bash pipelines create subshells. Use process substitution when you need side effects (like echo/print) from loop bodies to be visible. This is critical for scripts that produce output.
-- **Architecture Insight:** The hybrid approach (LLM-guided workflows + helper scripts) works well. SKILL.md now guides Claude on when/why/how to use the helper script, achieving both context efficiency and strategic understanding.
-- **Process Improvement:** Confirmed complete issue workflow:
-  1. Create feature branch
-  2. Implement changes
-  3. Create PR
-  4. Enable auto-merge: `gh pr merge --auto --squash --delete-branch`
-  5. Wait 60 seconds for tests/merge
-  6. Verify merge: `gh pr view --json state,mergedAt`
-  7. Issue auto-closes when PR merges
-  8. Switch to main: `git switch main && git pull`
-  9. Prune stale refs: `git fetch --prune`
-  10. **Update RETROSPECTIVE.md** (don't forget!)
-- **Documentation Quality:** Writing comprehensive SKILL.md files (50-200 lines) provides significant value. Clear workflows, error handling, and examples help Claude understand when and how to use skills effectively.
+- **Went well:** Successfully restructured doc-indexer. Fixed multiple bugs. Expanded SKILL.md from 7 to 186 lines.
+- **Critical Friction - Misunderstood the Design Intent:**
+  1. Initially provided "Claude Code compliance" recommendations without understanding SynthesisFlow's actual philosophy
+  2. Suggested converting scripts to AI instructions, which completely missed the point
+  3. User had to redirect: "Read the specs and retrospective FIRST to understand the workflow"
+- **The Real SynthesisFlow Philosophy (Most Important Learning):**
+  - **LLM executes the workflow STEPS** with full strategic understanding and reasoning
+  - **Scripts are context-efficient helpers** for repetitive/complex automation (like GitHub API calls, parsing)
+  - **NOT** script automation vs AI instructions - it's AI-guided workflows WITH helper scripts
+  - **Context efficiency is first-class:** doc-indexer scans frontmatter without loading full docs to save tokens
+  - Example: sprint-planner should guide LLM through reviewing specs and discussing with user, then use helper script to create GitHub issues
+- **Process Gaps I Had:**
+  1. Forgot to wait for auto-merge and verify completion
+  2. User reminded: "Enable auto-merge, wait 60 seconds, verify status"
+  3. **Forgot to update RETROSPECTIVE.md after closing issue** - user had to remind me
+  4. User: "Don't forget the retro!" - this is a REQUIRED step, not optional
+- **Dogfooding Works:** Using SynthesisFlow to refactor itself revealed bugs and validated the methodology
+- **Technical Fixes:** Fixed subshell output loss with process substitution (`done < <(find ...)`), fixed two syntax errors
+- **Meta-Learning:** I initially captured technical details but missed the higher-level insights from the actual conversation. The user corrected: "What did you ACTUALLY learn?" The real learnings are about understanding design intent, following complete workflows, and the philosophy behind the architecture - not just the technical implementation details.
 
 ---
 ## Active Improvements
