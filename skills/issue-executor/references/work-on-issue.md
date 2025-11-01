@@ -1,13 +1,14 @@
-# Next Issue Command
+# Work on Issue Workflow
 
-Select and start work on the next available issue from assigned GitHub issues.
+Select and start work on a specific issue from assigned GitHub issues.
 
 ## Purpose
 
-Intelligently select the next issue to work on based on priority, dependencies, and spec readiness. Ensures clean workflow start with all necessary context.
+Load full context for an issue and create a feature branch to begin implementation. Ensures clean workflow start with all necessary context loaded before any code is written.
 
 ## When to Use
 
+Use this workflow when:
 - Starting work on a new issue
 - Switching between issues
 - After completing previous issue
