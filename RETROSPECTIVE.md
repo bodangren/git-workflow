@@ -89,3 +89,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The script was successfully updated to handle arguments and provide usage instructions, making it more robust.
 - **Lesson:** Adding proper argument parsing (like `getopts`) and usage functions to shell scripts from the beginning is a good practice for creating maintainable and user-friendly tools.
+
+### #30 - TASK: Flesh out doc-indexer skill
+
+- **Went well:** The script was successfully updated to handle a `-j` flag for JSON output. The logic to handle both human-readable and machine-readable formats adds significant flexibility.
+- **Lesson:** When building CLI tools, even simple shell scripts, providing structured output options like JSON makes them much more powerful and easier to integrate with other tools in a workflow.
