@@ -38,7 +38,7 @@ Build the discovery logic that finds and catalogs existing documentation.
 Categorize discovered content and generate migration suggestions.
 
 **Subtasks**:
-- [ ] Implement categorization rules (specs ’ docs/specs/, proposals ’ docs/changes/)
+- [ ] Implement categorization rules (specs ï¿½ docs/specs/, proposals ï¿½ docs/changes/)
 - [ ] Handle special cases (ADRs, READMEs, root-level docs)
 - [ ] Detect conflicts (existing content in target directories)
 - [ ] Generate target path for each discovered file
@@ -62,7 +62,7 @@ Create migration plan that can be reviewed and approved.
 - [ ] Save plan to manifest file
 
 **Acceptance Criteria**:
-- Migration plan clearly shows source ’ target mappings
+- Migration plan clearly shows source ï¿½ target mappings
 - User can review complete plan before execution
 - Plan is saved for rollback reference
 - Interactive review is intuitive
@@ -141,7 +141,34 @@ Verify migration completed successfully and report results.
 - Validation report is comprehensive
 - Issues clearly reported with suggestions
 
-## Task 9: Implement Interactive Modes
+## Task 9: Implement Frontmatter Generation
+
+Add YAML frontmatter to migrated files for doc-indexer compliance.
+
+**Subtasks**:
+- [ ] Leverage doc-indexer scan script to detect non-compliant files
+- [ ] Implement title extraction from first `#` heading or filename
+- [ ] Implement file type detection (spec, proposal, design, adr, retrospective, plan)
+- [ ] Extract git metadata (creation date, author) when available
+- [ ] Generate suggested frontmatter for each non-compliant file
+- [ ] Implement interactive review UI (show suggestion, allow edit/accept/skip)
+- [ ] Support batch operations ("apply to all remaining")
+- [ ] Insert frontmatter at top of file while preserving content
+- [ ] Validate generated YAML syntax
+
+**Acceptance Criteria**:
+- All non-compliant files detected using doc-indexer script
+- Title extraction works from headings and filenames
+- File types correctly categorized based on name/path patterns
+- Git metadata used when available
+- Generated frontmatter follows doc-indexer conventions
+- User can review and edit each suggestion
+- Batch operations work smoothly
+- Frontmatter inserted without breaking file content
+- Generated YAML is syntactically valid
+- Final doc-indexer scan confirms compliance (or acknowledged skips)
+
+## Task 10: Implement Interactive Modes
 
 Support different execution modes (interactive, auto-approve, dry-run).
 
@@ -159,14 +186,14 @@ Support different execution modes (interactive, auto-approve, dry-run).
 - Progress is visible during long operations
 - User always knows what's happening
 
-## Task 10: Write SKILL.md Documentation
+## Task 11: Write SKILL.md Documentation
 
 Create comprehensive workflow documentation for the skill.
 
 **Subtasks**:
 - [ ] Write "Purpose" section
 - [ ] Write "When to Use" section
-- [ ] Document workflow steps (discovery ’ validation)
+- [ ] Document workflow steps (discovery ï¿½ validation)
 - [ ] Add usage examples for each mode
 - [ ] Document error handling scenarios
 - [ ] Add notes and best practices
@@ -179,7 +206,7 @@ Create comprehensive workflow documentation for the skill.
 - Follows SynthesisFlow skill template
 - Links to helper script appropriately
 
-## Task 11: Create Rollback Mechanism
+## Task 12: Create Rollback Mechanism
 
 Implement safe rollback to pre-migration state.
 
@@ -197,7 +224,7 @@ Implement safe rollback to pre-migration state.
 - Works with partial migrations
 - Safe guards against data loss
 
-## Task 12: Integration Testing
+## Task 13: Integration Testing
 
 Test the skill with various project scenarios.
 
@@ -209,6 +236,10 @@ Test the skill with various project scenarios.
 - [ ] Test link updates across various structures
 - [ ] Test rollback functionality
 - [ ] Test all execution modes (interactive, auto-approve, dry-run)
+- [ ] Test frontmatter generation (files without frontmatter)
+- [ ] Test mixed frontmatter scenario (some files with, some without)
+- [ ] Test frontmatter skip functionality
+- [ ] Verify doc-indexer compliance after frontmatter generation
 
 **Acceptance Criteria**:
 - All test scenarios pass
@@ -217,8 +248,10 @@ Test the skill with various project scenarios.
 - Links remain valid after migration
 - Rollback works in all scenarios
 - Each mode behaves as expected
+- Frontmatter generation works correctly
+- Doc-indexer scan confirms compliance post-migration
 
-## Task 13: Update project-init Integration
+## Task 14: Update project-init Integration
 
 Enhance project-init to detect existing docs and suggest project-migrate.
 
@@ -234,7 +267,7 @@ Enhance project-init to detect existing docs and suggest project-migrate.
 - Documentation explains when to use each skill
 - No confusion about which skill to use
 
-## Task 14: Register with agent-integrator
+## Task 15: Register with agent-integrator
 
 Ensure project-migrate is discoverable by AI agents.
 
