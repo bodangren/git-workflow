@@ -99,3 +99,8 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The `update` subcommand was successfully added to the `spec-authoring` script. It can now fetch PR comments, which is the first step in building an iterative feedback loop.
 - **Lesson:** Refactoring the script to properly handle arguments for different subcommands (`propose` vs. `update`) makes the tool more robust and extensible for future features.
+
+### #32 - TASK: Flesh out sprint-planner skill
+
+- **Went well:** The script was significantly improved by using `jq` to parse the project board's JSON output. The interactive prompts for selecting an Epic and naming the sprint make the skill much more dynamic.
+- **Lesson:** Relying on structured data (JSON) and specific parsing tools (`jq`) is more reliable than placeholder logic. The script now more closely resembles a functional tool. A dependency check for `jq` was also added to improve robustness.
