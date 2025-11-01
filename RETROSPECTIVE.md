@@ -42,3 +42,9 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The implementation was a simple, single-file script. The auto-merge workflow continues to be efficient.
 - **Lesson:** Simple, single-purpose scripts are easy to implement, test, and document. This reinforces the benefit of our modular skill-based architecture.
+
+### #14 - TASK: Implement doc-indexer skill
+
+- **Went well:** The script to extract frontmatter was implemented successfully. The user's feedback to include non-compliant file warnings was a valuable addition.
+- **Friction:** Encountered several issues with `gh` command syntax, specifically the inconsistent use of the `--owner` flag.
+- **Lesson:** The `gh project` command suite has inconsistent flags. For example, `item-add` can require `--owner` to be non-interactive, but `item-edit` does not support it and fails if it's present. The globally unique `--id` flag makes the owner scope redundant for editing. This is a key learning point for future tool interactions.
