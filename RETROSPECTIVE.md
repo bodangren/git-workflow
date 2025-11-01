@@ -34,3 +34,11 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** The `propose-change` workflow was effective for defining the next epic. The use of a "Spec PR" provided a clear point for review and approval.
 - **Lesson:** The cyclical nature of the workflow is now clear. After one sprint ends, the next begins with a new `propose-change` cycle to define the work, which is then approved and moved into the backlog for the `plan-sprint` skill.
+
+---
+## Sprint 2
+
+### #13 - TASK: Implement project-init skill
+
+- **Went well:** The implementation was a simple, single-file script. The auto-merge workflow continues to be efficient.
+- **Lesson:** Simple, single-purpose scripts are easy to implement, test, and document. This reinforces the benefit of our modular skill-based architecture.
