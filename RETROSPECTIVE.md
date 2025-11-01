@@ -15,3 +15,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** The task of creating multiple directories was simple to execute with `mkdir -p`.
 - **Friction:** My initial attempt to commit the new empty directories failed because Git does not track empty directories.
 - **Lesson:** To ensure a directory structure is committed to Git, each directory must contain at least one file. The convention is to add an empty `.gitkeep` file for this purpose.
+
+### #5 - TASK 3: Define New Skills
+
+- **Went well:** Creating the placeholder `SKILL.md` files was fast and straightforward. The new auto-merge workflow was also successful.
+- **Process Improvement:** We've adopted a new workflow for PRs: enable auto-merge, wait 180 seconds, and then verify. The `gh pr merge --auto --squash --delete-branch` command is very efficient as it also handles branch cleanup.
+- **Lesson:** The auto-merge process streamlines the workflow significantly, removing the need for manual polling and cleanup steps. This should be the standard process for all atomic tasks going forward.
