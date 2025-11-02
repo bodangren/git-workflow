@@ -1372,13 +1372,389 @@ fi
 
 echo ""
 
+# Function to extract title from markdown file
+extract_title_from_file() {
+  local file="$1"
+
+  # Try to find first # heading (not ##)
+  local title=$(grep -m 1 '^# ' "$file" 2>/dev/null | sed 's/^# //')
+
+  # If no heading found, use filename without extension
+  if [ -z "$title" ]; then
+    title=$(basename "$file" .md | sed 's/-/ /g; s/_/ /g')
+    # Capitalize first letter of each word
+    title=$(echo "$title" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+  fi
+
+  echo "$title"
+}
+
+# Function to detect file type from path and name patterns
+detect_frontmatter_type() {
+  local file="$1"
+  local lowercase=$(echo "$file" | tr '[:upper:]' '[:lower:]')
+
+  # Retrospective
+  if [[ "$lowercase" =~ retrospective ]]; then
+    echo "retrospective"
+    return
+  fi
+
+  # ADR (Architectural Decision Record)
+  if [[ "$lowercase" =~ adr-[0-9]+ ]] || [[ "$lowercase" =~ /decisions/ ]] || [[ "$lowercase" =~ decision.*record ]]; then
+    echo "adr"
+    return
+  fi
+
+  # Spec / Specification
+  if [[ "$lowercase" =~ spec ]] || [[ "$lowercase" =~ specification ]]; then
+    echo "spec"
+    return
+  fi
+
+  # Proposal / RFC / Draft
+  if [[ "$lowercase" =~ proposal ]] || [[ "$lowercase" =~ rfc ]] || [[ "$lowercase" =~ draft ]]; then
+    echo "proposal"
+    return
+  fi
+
+  # Design doc
+  if [[ "$lowercase" =~ design ]] || [[ "$lowercase" =~ architecture ]]; then
+    echo "design"
+    return
+  fi
+
+  # Plan
+  if [[ "$lowercase" =~ plan ]] || [[ "$lowercase" =~ roadmap ]]; then
+    echo "plan"
+    return
+  fi
+
+  # Default: general documentation
+  echo "doc"
+}
+
+# Function to get git metadata for a file
+get_git_metadata() {
+  local file="$1"
+
+  # Check if file is in git
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo ""
+    return
+  fi
+
+  # Get creation date (first commit date) and author
+  local creation_date=$(git log --follow --format=%aI --reverse "$file" 2>/dev/null | head -n 1)
+  local author=$(git log --follow --format='%an' --reverse "$file" 2>/dev/null | head -n 1)
+
+  if [ -n "$creation_date" ] && [ -n "$author" ]; then
+    echo "created: $creation_date"
+    echo "author: $author"
+  fi
+}
+
+# Function to check if file has frontmatter
+has_frontmatter() {
+  local file="$1"
+
+  # Check if file starts with ---
+  if head -n 1 "$file" 2>/dev/null | grep -q '^---$'; then
+    return 0  # Has frontmatter
+  else
+    return 1  # No frontmatter
+  fi
+}
+
+# Function to generate frontmatter for a file
+generate_frontmatter() {
+  local file="$1"
+
+  local title=$(extract_title_from_file "$file")
+  local file_type=$(detect_frontmatter_type "$file")
+  local git_metadata=$(get_git_metadata "$file")
+
+  # Build frontmatter
+  echo "---"
+  echo "title: $title"
+  echo "type: $file_type"
+
+  # Add git metadata if available
+  if [ -n "$git_metadata" ]; then
+    echo "$git_metadata"
+  fi
+
+  echo "---"
+}
+
+# Function to validate YAML syntax (basic check)
+validate_yaml_frontmatter() {
+  local frontmatter="$1"
+
+  # Check basic structure: starts and ends with ---
+  if ! echo "$frontmatter" | head -n 1 | grep -q '^---$'; then
+    return 1
+  fi
+
+  if ! echo "$frontmatter" | tail -n 1 | grep -q '^---$'; then
+    return 1
+  fi
+
+  # Check for key: value pattern in middle lines
+  local middle=$(echo "$frontmatter" | sed '1d;$d')
+  if [ -n "$middle" ]; then
+    # Each line should be "key: value" format
+    if echo "$middle" | grep -qv '^[a-zA-Z_][a-zA-Z0-9_]*: '; then
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
+# Function to insert frontmatter at top of file
+insert_frontmatter() {
+  local file="$1"
+  local frontmatter="$2"
+
+  # Create temporary file
+  local temp_file=$(mktemp)
+
+  # Write frontmatter
+  echo "$frontmatter" > "$temp_file"
+  echo "" >> "$temp_file"
+
+  # Append original content
+  cat "$file" >> "$temp_file"
+
+  # Replace original file
+  mv "$temp_file" "$file"
+
+  return 0
+}
+
+# Function to display frontmatter suggestion and get user approval
+review_frontmatter_suggestion() {
+  local file="$1"
+  local suggested_frontmatter="$2"
+  local batch_mode="${3:-false}"
+
+  echo ""
+  echo "File: $file"
+  echo ""
+  echo "Suggested frontmatter:"
+  echo "$suggested_frontmatter"
+  echo ""
+
+  if [ "$batch_mode" = "true" ]; then
+    # In batch mode, auto-apply
+    return 0
+  fi
+
+  echo "Options:"
+  echo "  a) Accept and insert"
+  echo "  e) Edit before inserting"
+  echo "  s) Skip this file"
+  echo "  b) Batch apply to all remaining files"
+  echo ""
+  read -p "Choose [a/e/s/b]: " choice
+
+  case "$choice" in
+    a|A)
+      return 0  # Accept
+      ;;
+    e|E)
+      return 2  # Edit
+      ;;
+    s|S)
+      return 1  # Skip
+      ;;
+    b|B)
+      return 3  # Batch mode
+      ;;
+    *)
+      echo "Invalid choice. Skipping file..."
+      return 1
+      ;;
+  esac
+}
+
+# Function to edit frontmatter interactively
+edit_frontmatter() {
+  local original="$1"
+
+  # Create temp file with original
+  local temp_file=$(mktemp)
+  echo "$original" > "$temp_file"
+
+  # Use editor (EDITOR env var or nano as fallback)
+  ${EDITOR:-nano} "$temp_file"
+
+  # Read edited content
+  local edited=$(cat "$temp_file")
+  rm "$temp_file"
+
+  echo "$edited"
+}
+
+# Function to run frontmatter generation phase
+generate_frontmatter_phase() {
+  local batch_mode=false
+  local files_processed=0
+  local files_updated=0
+  local files_skipped=0
+  local files_already_compliant=0
+
+  echo "Scanning for files without frontmatter..."
+  echo ""
+
+  # Collect all markdown files in docs/
+  local -a files_to_process=()
+
+  if [ -d "docs" ]; then
+    while IFS= read -r -d '' file; do
+      # Skip hidden files and directories
+      if [[ "$file" =~ /\. ]]; then
+        continue
+      fi
+
+      # Check if file has frontmatter
+      if ! has_frontmatter "$file"; then
+        files_to_process+=("$file")
+      else
+        files_already_compliant=$((files_already_compliant + 1))
+      fi
+    done < <(find docs -name "*.md" -type f -print0)
+  fi
+
+  echo "Found ${#files_to_process[@]} file(s) without frontmatter"
+  echo "Found $files_already_compliant file(s) already compliant"
+  echo ""
+
+  if [ ${#files_to_process[@]} -eq 0 ]; then
+    echo "✓ All files already have frontmatter!"
+    return 0
+  fi
+
+  # Process each file
+  for file in "${files_to_process[@]}"; do
+    files_processed=$((files_processed + 1))
+
+    # Generate suggested frontmatter
+    local suggested=$(generate_frontmatter "$file")
+
+    # Validate YAML syntax
+    if ! validate_yaml_frontmatter "$suggested"; then
+      echo "⚠️  Warning: Generated frontmatter has invalid YAML syntax for: $file"
+      echo "Skipping this file..."
+      files_skipped=$((files_skipped + 1))
+      continue
+    fi
+
+    # Review suggestion
+    review_frontmatter_suggestion "$file" "$suggested" "$batch_mode"
+    local review_result=$?
+
+    case $review_result in
+      0)
+        # Accept - insert frontmatter
+        if insert_frontmatter "$file" "$suggested"; then
+          echo "✓ Frontmatter inserted into: $file"
+          files_updated=$((files_updated + 1))
+        else
+          echo "⚠️  Error: Failed to insert frontmatter into: $file"
+          files_skipped=$((files_skipped + 1))
+        fi
+        ;;
+      1)
+        # Skip
+        echo "Skipped: $file"
+        files_skipped=$((files_skipped + 1))
+        ;;
+      2)
+        # Edit
+        echo "Opening editor for frontmatter..."
+        local edited=$(edit_frontmatter "$suggested")
+
+        # Validate edited frontmatter
+        if ! validate_yaml_frontmatter "$edited"; then
+          echo "⚠️  Error: Edited frontmatter has invalid YAML syntax. Skipping..."
+          files_skipped=$((files_skipped + 1))
+          continue
+        fi
+
+        # Insert edited frontmatter
+        if insert_frontmatter "$file" "$edited"; then
+          echo "✓ Custom frontmatter inserted into: $file"
+          files_updated=$((files_updated + 1))
+        else
+          echo "⚠️  Error: Failed to insert frontmatter into: $file"
+          files_skipped=$((files_skipped + 1))
+        fi
+        ;;
+      3)
+        # Batch mode - apply to this and all remaining
+        echo "Batch mode enabled. Applying to all remaining files..."
+        batch_mode=true
+
+        # Insert frontmatter for current file
+        if insert_frontmatter "$file" "$suggested"; then
+          echo "✓ Frontmatter inserted into: $file"
+          files_updated=$((files_updated + 1))
+        else
+          echo "⚠️  Error: Failed to insert frontmatter into: $file"
+          files_skipped=$((files_skipped + 1))
+        fi
+        ;;
+    esac
+  done
+
+  echo ""
+  echo "Frontmatter Generation Results:"
+  echo "  Files processed: $files_processed"
+  echo "  Files updated: $files_updated"
+  echo "  Files skipped: $files_skipped"
+  echo "  Files already compliant: $files_already_compliant"
+  echo ""
+
+  # Run doc-indexer scan to confirm compliance
+  if command -v bash >/dev/null 2>&1 && [ -f "skills/doc-indexer/scripts/scan-docs.sh" ]; then
+    echo "Running doc-indexer compliance check..."
+    echo ""
+    bash skills/doc-indexer/scripts/scan-docs.sh | grep -E "^\[WARNING\]|^---" | head -20
+    echo ""
+  fi
+
+  return 0
+}
+
 # Phase 6: Frontmatter Generation
 echo "Phase 6: Frontmatter Generation"
 echo "-------------------------------"
 echo "Adding YAML frontmatter to files..."
 echo ""
-# TODO: Implement frontmatter generation logic (Task 9)
-echo "[Not yet implemented]"
+
+if [ "$DRY_RUN" = true ]; then
+  echo "DRY RUN: Frontmatter generation would execute here"
+  echo ""
+  echo "Would scan docs/ for files without frontmatter"
+  echo "Would generate suggested frontmatter for each file:"
+  echo "  - Extract title from first # heading or filename"
+  echo "  - Detect file type (spec, proposal, design, adr, etc.)"
+  echo "  - Extract git metadata (creation date, author)"
+  echo "  - Generate YAML frontmatter"
+  echo "  - Validate YAML syntax"
+  echo "  - Prompt for review and approval"
+  echo ""
+elif [ "$AUTO_APPROVE" = true ]; then
+  echo "Auto-approve mode: Skipping frontmatter generation (requires manual review)"
+  echo "Run without --auto-approve to interactively add frontmatter"
+  echo ""
+else
+  # Execute frontmatter generation
+  generate_frontmatter_phase
+fi
+
 echo ""
 
 # Function to validate migration
