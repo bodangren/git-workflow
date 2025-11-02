@@ -1014,6 +1014,61 @@ create_directory_structure() {
   return 0
 }
 
+# Function to calculate relative path from one file to another
+calculate_relative_path() {
+  local from_file="$1"
+  local to_file="$2"
+
+  # Get directories containing the files
+  local from_dir=$(dirname "$from_file")
+  local to_dir=$(dirname "$to_file")
+  local to_base=$(basename "$to_file")
+
+  # Normalize . to empty string for easier comparison
+  if [ "$from_dir" = "." ]; then from_dir=""; fi
+  if [ "$to_dir" = "." ]; then to_dir=""; fi
+
+  # If both in same directory, just return the filename
+  if [ "$from_dir" = "$to_dir" ]; then
+    echo "$to_base"
+    return
+  fi
+
+  # Convert paths to arrays for comparison
+  IFS='/' read -ra from_parts <<< "$from_dir"
+  IFS='/' read -ra to_parts <<< "$to_dir"
+
+  # Find common prefix length
+  local common_length=0
+  local max_length=${#from_parts[@]}
+  if [ ${#to_parts[@]} -lt $max_length ]; then
+    max_length=${#to_parts[@]}
+  fi
+
+  for ((i=0; i<max_length; i++)); do
+    if [ "${from_parts[$i]}" = "${to_parts[$i]}" ]; then
+      ((common_length++))
+    else
+      break
+    fi
+  done
+
+  # Calculate number of "../" needed
+  local up_count=$((${#from_parts[@]} - common_length))
+  local result=""
+  for ((i=0; i<up_count; i++)); do
+    result="${result}../"
+  done
+
+  # Add the remaining path from common to target
+  for ((i=common_length; i<${#to_parts[@]}; i++)); do
+    result="${result}${to_parts[$i]}/"
+  done
+
+  # Add the filename
+  echo "${result}${to_base}"
+}
+
 # Function to update relative links in a markdown file
 update_markdown_links() {
   local file="$1"
@@ -1025,8 +1080,100 @@ update_markdown_links() {
     return 0
   fi
 
-  # TODO: Implement link updating logic (will be done in Task 7)
-  # For now, just note that links need updating
+  # Track statistics
+  local links_found=0
+  local links_updated=0
+  local links_broken=0
+
+  # Get directories for path calculations
+  local old_dir=$(dirname "$old_location")
+  local new_dir=$(dirname "$new_location")
+
+  # Create temporary file for updated content
+  local temp_file=$(mktemp)
+
+  # Read file line by line and update links
+  while IFS= read -r line; do
+    local updated_line="$line"
+
+    # Find all markdown links: [text](path) and ![alt](path)
+    # Use grep to find lines with links, then process each link
+    if echo "$line" | grep -qE '\[[^]]*\]\([^)]+\)'; then
+      # Extract and process each link on the line using a simpler approach
+      local temp_line="$line"
+      local link_pattern='\[([^]]*)\]\(([^)]+)\)'
+
+      while [[ "$temp_line" =~ $link_pattern ]]; do
+        local link_text="${BASH_REMATCH[1]}"
+        local link_path="${BASH_REMATCH[2]}"
+
+        # Skip absolute URLs (http://, https://, etc.)
+        if [[ "$link_path" =~ ^https?:// ]] || [[ "$link_path" =~ ^mailto: ]] || [[ "$link_path" =~ ^# ]]; then
+          # Remove this match from temp_line to find next link
+          temp_line="${temp_line#*]($link_path)}"
+          continue
+        fi
+
+        links_found=$((links_found + 1))
+
+        # Calculate the absolute path of the linked file from old location
+        local linked_file_abs=""
+        if [[ "$link_path" = /* ]]; then
+          # Absolute path from project root
+          linked_file_abs="$link_path"
+        else
+          # Relative path from old location
+          if [ "$old_dir" = "." ]; then
+            linked_file_abs="$link_path"
+          else
+            linked_file_abs="$old_dir/$link_path"
+          fi
+        fi
+
+        # Normalize path (remove ./ and resolve ..)
+        linked_file_abs=$(echo "$linked_file_abs" | sed 's|/\./|/|g')
+
+        # Calculate new relative path from new location to linked file
+        local new_link_path=$(calculate_relative_path "$new_location" "$linked_file_abs")
+
+        # Update the link in the line if it changed
+        if [ "$link_path" != "$new_link_path" ]; then
+          updated_line=$(echo "$updated_line" | sed "s|]($link_path)|]($new_link_path)|")
+          links_updated=$((links_updated + 1))
+
+          # Validate that the linked file exists
+          if [ ! -f "$linked_file_abs" ] && [ ! -d "$linked_file_abs" ]; then
+            links_broken=$((links_broken + 1))
+            if [ "$DRY_RUN" = false ]; then
+              echo "    ⚠️  Warning: Link target not found: $link_path → $new_link_path (target: $linked_file_abs)" >&2
+            fi
+          fi
+        fi
+
+        # Remove this match from temp_line to find next link
+        temp_line="${temp_line#*]($link_path)}"
+      done
+    fi
+
+    echo "$updated_line" >> "$temp_file"
+  done < "$file"
+
+  # Replace original file with updated content if changes were made
+  if [ "$links_updated" -gt 0 ]; then
+    if [ "$DRY_RUN" = false ]; then
+      mv "$temp_file" "$file"
+      echo "    Updated $links_updated link(s) in $(basename "$file") (found: $links_found, broken: $links_broken)"
+    else
+      echo "    [DRY RUN] Would update $links_updated link(s) in $(basename "$file") (found: $links_found, broken: $links_broken)"
+      rm "$temp_file"
+    fi
+  else
+    rm "$temp_file"
+    if [ "$links_found" -gt 0 ]; then
+      echo "    No link updates needed in $(basename "$file") ($links_found link(s) already correct)"
+    fi
+  fi
+
   return 0
 }
 
