@@ -510,3 +510,36 @@ This file captures learnings from completed tasks to inform and improve future d
   - Statistics reporting shows: processed, updated, skipped, already compliant
 - **Complete Workflow Execution:** Feature branch created (feat/75-implement-frontmatter-generation), implementation completed (380 lines added), tested with dry-run mode on test project, committed with "Closes #75", pushed, PR #90 created, auto-merge enabled, 60-second wait, verified merge and issue auto-closure (#75 closed at 2025-11-02T09:52:24Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
 - **Lesson:** Frontmatter generation is the bridge between legacy documentation and doc-indexer compliance. Title extraction needs both primary (from content) and fallback (from filename) strategies. YAML validation before insertion prevents file corruption. Interactive review UI should provide actionable options (not just yes/no). Batch mode significantly improves UX when processing many files. Git metadata adds valuable context but must be optional (not all files have git history). Integration with existing tools (doc-indexer) validates that new features achieve their intended purpose. The frontmatter generation phase completes the project-migrate skill's core migration functionality - files are discovered, analyzed, planned, backed up, migrated, links updated, validated, and now doc-indexer compliant.
+
+### #76 - TASK: Implement Interactive Modes (project-migrate)
+
+- **Went well:** Successfully implemented comprehensive interactive modes with phase-by-phase approval, clear progress indicators, and helpful prompts throughout all 7 migration phases
+- **Implementation Scope:** Added 116 lines implementing interactive workflow enhancements
+- **Key Features Delivered:**
+  - Phase continuation prompts between all 7 phases with clear descriptions
+  - Enhanced mode display with emoji indicators (🔍 dry-run, ⚡ auto-approve, 👤 interactive)
+  - Visual separators and completion messages for better progress tracking
+  - INTERACTIVE configuration flag to control prompt behavior
+  - Auto-approve mode properly skips prompts and handles conflicts
+  - User can pause/cancel migration at any phase boundary
+- **Design Pattern - Progressive Disclosure:**
+  - Users see what each phase will do BEFORE it executes
+  - Clear explanations help users make informed decisions
+  - Pause option at every phase gives control without overwhelming
+  - Three distinct modes serve different use cases (explore, automate, control)
+- **Mode Behavior:**
+  - **Interactive Mode (default)**: Phase-by-phase approval with detailed descriptions, user reviews and approves each step
+  - **Dry-Run Mode**: No prompts, shows complete plan without execution, safe exploration of migration
+  - **Auto-Approve Mode**: No prompts, auto-skips conflicts, skips frontmatter (requires review), minimal interaction for automation
+- **UX Enhancement Philosophy:**
+  - Prompts explain "what will happen" not just "do you want to continue"
+  - Visual indicators (━━━, ✓, emoji) create clear section boundaries
+  - Completion messages provide positive feedback on progress
+  - Pause instructions are actionable (review output, try dry-run, run again)
+- **Testing Validation:**
+  - Dry-run test confirmed prompts don't appear in non-interactive mode
+  - Bash syntax validation passed (bash -n)
+  - Mode display clearly explains each mode's behavior
+  - Phase descriptions are concise but informative
+- **Complete Workflow Execution:** Feature branch created (feat/76-implement-interactive-modes), implementation completed (116 lines added), tested with dry-run mode, committed with "Closes #76", pushed, PR #91 created, auto-merge enabled, 60-second wait, verified merge (2025-11-02T10:11:08Z) and issue auto-closure (#76 closed at 2025-11-02T10:11:10Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
+- **Lesson:** Interactive modes should be progressive and informative, not just yes/no gates. Users need context about what will happen before committing to each phase. Visual indicators (emoji, separators, completion messages) significantly improve UX and help users track progress through multi-step workflows. Three distinct modes (interactive/dry-run/auto-approve) serve different needs: exploration, automation, and controlled execution. The INTERACTIVE flag pattern allows functions to adapt behavior based on mode without complex conditionals everywhere. Phase descriptions should explain purpose and consequences, not just ask for permission. Good UX in CLI tools means users never wonder "what's happening now" or "what will happen next".
