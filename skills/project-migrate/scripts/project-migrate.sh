@@ -748,13 +748,248 @@ fi
 
 echo ""
 
+# Function to create backup
+create_backup() {
+  # Generate timestamped backup directory name
+  local timestamp=$(date +%Y%m%d-%H%M%S)
+  BACKUP_DIR=".synthesisflow-backup-${timestamp}"
+
+  echo "Creating backup directory: $BACKUP_DIR"
+
+  # Create backup directory
+  if ! mkdir -p "$BACKUP_DIR"; then
+    echo "⚠️  Error: Failed to create backup directory!"
+    return 1
+  fi
+
+  # Copy existing docs/ directory to backup location if it exists
+  if [ -d "docs" ]; then
+    echo "Backing up existing docs/ directory..."
+    if ! cp -r docs "$BACKUP_DIR/docs"; then
+      echo "⚠️  Error: Failed to backup docs/ directory!"
+      return 1
+    fi
+    echo "✓ Backed up docs/ directory"
+  else
+    echo "ℹ️  No existing docs/ directory to backup"
+  fi
+
+  # Store migration manifest in backup directory
+  if [ -f "$MIGRATION_MANIFEST" ]; then
+    echo "Storing migration manifest in backup..."
+    if ! cp "$MIGRATION_MANIFEST" "$BACKUP_DIR/migration-manifest.json"; then
+      echo "⚠️  Error: Failed to store migration manifest!"
+      return 1
+    fi
+    echo "✓ Stored migration manifest"
+  fi
+
+  # Create backup README with restoration instructions
+  echo "Creating backup README..."
+  cat > "$BACKUP_DIR/README.md" <<'EOF'
+# SynthesisFlow Migration Backup
+
+This directory contains a backup of your project documentation before SynthesisFlow migration.
+
+## Backup Contents
+
+- `docs/` - Complete backup of your original docs/ directory (if it existed)
+- `migration-manifest.json` - The migration plan that was executed
+- `rollback.sh` - Script to restore the original state
+
+## Restoration Procedure
+
+If you need to rollback the migration and restore your original documentation:
+
+### Option 1: Use the Rollback Script
+
+Run the provided rollback script from your project root:
+
+```bash
+bash BACKUP_DIR/rollback.sh
+```
+
+This will:
+1. Remove the SynthesisFlow directory structure (docs/specs/, docs/changes/)
+2. Restore the original docs/ directory from backup
+3. Clean up empty directories
+
+### Option 2: Manual Restoration
+
+If you prefer manual control:
+
+1. **Backup current state** (in case you want to keep some changes):
+   ```bash
+   mv docs docs-after-migration
+   ```
+
+2. **Restore original docs/**:
+   ```bash
+   cp -r BACKUP_DIR/docs .
+   ```
+
+3. **Clean up** (if desired):
+   ```bash
+   rm -rf docs-after-migration
+   ```
+
+## Safety Notes
+
+- This backup is READ-ONLY - never modify files in this directory
+- Keep this backup until you're confident the migration was successful
+- The rollback script is safe to run - it won't delete this backup
+- You can manually inspect files in this backup at any time
+
+## Backup Metadata
+
+- Created: TIMESTAMP
+- Migration manifest: migration-manifest.json
+- Original location: PROJECT_ROOT
+
+## Questions?
+
+Refer to the SynthesisFlow documentation or the project-migrate skill documentation.
+EOF
+
+  # Replace placeholders in README
+  sed -i "s|BACKUP_DIR|$BACKUP_DIR|g" "$BACKUP_DIR/README.md"
+  sed -i "s|TIMESTAMP|$(date -Iseconds)|g" "$BACKUP_DIR/README.md"
+  sed -i "s|PROJECT_ROOT|$(pwd)|g" "$BACKUP_DIR/README.md"
+
+  echo "✓ Created backup README"
+
+  # Generate rollback script
+  echo "Generating rollback script..."
+  cat > "$BACKUP_DIR/rollback.sh" <<'ROLLBACK_SCRIPT'
+#!/bin/bash
+# SynthesisFlow Migration Rollback Script
+# This script restores your project to its pre-migration state
+
+set -e
+
+echo "========================================"
+echo " SynthesisFlow Migration Rollback"
+echo "========================================"
+echo ""
+echo "⚠️  WARNING: This will restore your project to its pre-migration state."
+echo "   Any changes made after migration will be lost!"
+echo ""
+
+# Get the backup directory (where this script is located)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKUP_DIR="$(basename "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+echo "Backup directory: $BACKUP_DIR"
+echo "Project root: $PROJECT_ROOT"
+echo ""
+
+read -p "Are you sure you want to rollback? [y/N]: " confirm
+if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+  echo "Rollback cancelled."
+  exit 0
+fi
+
+echo ""
+echo "Starting rollback..."
+echo ""
+
+cd "$PROJECT_ROOT"
+
+# Step 1: Remove SynthesisFlow directories (if they exist and are empty or managed)
+echo "Step 1: Removing SynthesisFlow directory structure..."
+
+if [ -d "docs/specs" ]; then
+  echo "  Removing docs/specs/..."
+  rm -rf docs/specs
+fi
+
+if [ -d "docs/changes" ]; then
+  echo "  Removing docs/changes/..."
+  rm -rf docs/changes
+fi
+
+# Remove docs/ if it's now empty
+if [ -d "docs" ] && [ -z "$(ls -A docs)" ]; then
+  echo "  Removing empty docs/ directory..."
+  rmdir docs
+fi
+
+echo "✓ SynthesisFlow directories removed"
+echo ""
+
+# Step 2: Restore original docs/ directory
+echo "Step 2: Restoring original docs/ directory..."
+
+if [ -d "$BACKUP_DIR/docs" ]; then
+  echo "  Copying backup docs/ to project root..."
+  cp -r "$BACKUP_DIR/docs" .
+  echo "✓ Original docs/ directory restored"
+else
+  echo "ℹ️  No original docs/ directory to restore"
+fi
+
+echo ""
+
+# Step 3: Clean up empty directories
+echo "Step 3: Cleaning up empty directories..."
+find . -type d -empty -not -path "./.git/*" -delete 2>/dev/null || true
+echo "✓ Cleanup complete"
+echo ""
+
+echo "========================================"
+echo " Rollback Complete!"
+echo "========================================"
+echo ""
+echo "Your project has been restored to its pre-migration state."
+echo "The backup directory ($BACKUP_DIR) has been preserved."
+echo ""
+echo "Next steps:"
+echo "  1. Verify your documentation is restored correctly"
+echo "  2. Delete the backup when you're confident: rm -rf $BACKUP_DIR"
+echo ""
+ROLLBACK_SCRIPT
+
+  # Make rollback script executable
+  chmod +x "$BACKUP_DIR/rollback.sh"
+  echo "✓ Generated rollback script"
+
+  echo ""
+  echo "✓ Backup complete!"
+  echo ""
+  echo "Backup location: $BACKUP_DIR"
+  echo "  - Original docs/: $BACKUP_DIR/docs/"
+  echo "  - Migration plan: $BACKUP_DIR/migration-manifest.json"
+  echo "  - Restoration guide: $BACKUP_DIR/README.md"
+  echo "  - Rollback script: $BACKUP_DIR/rollback.sh"
+  echo ""
+  echo "To rollback this migration: bash $BACKUP_DIR/rollback.sh"
+  echo ""
+
+  return 0
+}
+
 # Phase 4: Backup
 echo "Phase 4: Backup"
 echo "---------------"
 echo "Creating backup before migration..."
 echo ""
-# TODO: Implement backup logic (Task 5)
-echo "[Not yet implemented]"
+
+# Skip backup in dry-run mode
+if [ "$DRY_RUN" = true ]; then
+  echo "DRY RUN: Backup would be created here"
+  echo "  Backup directory name would be: .synthesisflow-backup-$(date +%Y%m%d-%H%M%S)"
+  echo "  Would backup: docs/ directory (if exists)"
+  echo "  Would include: migration manifest, README, rollback script"
+  echo ""
+else
+  # Create backup
+  if ! create_backup; then
+    echo "⚠️  Error: Backup failed! Migration aborted."
+    exit 1
+  fi
+fi
+
 echo ""
 
 # Phase 5: Migration
@@ -793,6 +1028,13 @@ echo "  1. Review migrated files"
 echo "  2. Run doc-indexer to catalog documentation"
 echo "  3. Begin using SynthesisFlow workflow"
 echo ""
-echo "Backup location: [not yet created]"
-echo "To rollback: [rollback script not yet generated]"
+
+# Display backup information if backup was created
+if [ -n "$BACKUP_DIR" ] && [ "$DRY_RUN" != true ]; then
+  echo "Backup location: $BACKUP_DIR"
+  echo "To rollback: bash $BACKUP_DIR/rollback.sh"
+else
+  echo "Backup location: [dry-run mode - no backup created]"
+  echo "To rollback: [dry-run mode - no rollback script generated]"
+fi
 echo ""
