@@ -208,3 +208,37 @@ This file captures learnings from completed tasks to inform and improve future d
   - general docs → docs/
 - **Testing Results:** Tested with current project (12 files, 5 types) - 7 files already in place, 5 to migrate, 0 conflicts after fixes
 - **Lesson:** Edge cases are discovered through testing with real data. Dry-run mode is invaluable for validating migration logic without side effects. Three-state conflict detection (no conflict / already in place / true conflict) provides better UX than binary detection. Subdirectory preservation is essential to avoid name collisions in complex documentation structures.
+
+### #70 - TASK: Implement Planning Phase (project-migrate)
+
+- **Went well:** Successfully implemented comprehensive planning phase with all 5 acceptance criteria met in first iteration
+- **Implementation Scope:** Added 263 lines across 5 functions for complete planning workflow
+- **Key Features Delivered:**
+  - Structured JSON migration plan with timestamp and complete metadata
+  - Human-readable summary with clear action groupings (files to move vs skip)
+  - Interactive plan review with 4 intuitive options (approve/modify/save/cancel)
+  - Plan modification mode with interactive target path adjustment
+  - Automatic conflict re-detection when paths are modified
+  - Timestamped manifest file: `.project-migrate-manifest-TIMESTAMP.json`
+  - Proper dry-run mode handling (shows plan, skips approval prompts)
+- **Design Pattern - Multi-Option Approval Flow:**
+  - Not just yes/no, but actionable choices: approve, modify, save-for-later, cancel
+  - Modification mode allows granular control over individual file targets
+  - Recursive approval after modifications ensures user confirms changes
+  - Save-and-exit option enables review workflow without execution
+- **JSON Generation Best Practice:**
+  - Proper string escaping for JSON safety (handles quotes in paths/rationales)
+  - Structured format with arrays for easy parsing/processing
+  - Includes both machine-readable data and human context (rationales)
+  - Timestamp enables multiple plan versions for comparison
+- **Variable Scoping Fix:**
+  - Initial bug: timestamp variable set inside function that needs it externally
+  - Solution: Move timestamp generation to calling function, pass manifest path to generator
+  - Lesson: When variables need to persist beyond function scope, set them at appropriate level
+- **Testing Validation:**
+  - Dry-run test confirmed all functions work correctly
+  - JSON manifest properly formatted and valid
+  - Plan summary clearly distinguishes "files to move" vs "already in place"
+  - Conflict detection integrated with modification workflow
+- **Complete Workflow Execution:** Auto-merge enabled, 60-second wait, merge verified, issue auto-closed (#70), branch cleaned up - entire SynthesisFlow workflow executed correctly
+- **Lesson:** Interactive approval flows benefit from multiple clear options rather than simple yes/no. Providing "modify" and "save for later" options gives users control and flexibility. Testing with dry-run mode before committing validates both functionality and UX. The planning phase is critical for user confidence - showing exactly what will happen before execution reduces anxiety and errors.
