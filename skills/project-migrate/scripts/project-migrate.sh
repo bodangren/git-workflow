@@ -478,13 +478,274 @@ for file in "${DISCOVERED_FILES[@]}"; do
 done
 echo ""
 
+# Function to generate JSON migration plan
+generate_migration_plan_json() {
+  echo "{"
+  echo "  \"timestamp\": \"$(date -Iseconds)\","
+  echo "  \"total_files\": ${#DISCOVERED_FILES[@]},"
+  echo "  \"conflict_count\": $conflict_count,"
+  echo "  \"in_place_count\": $in_place_count,"
+  echo "  \"migrations\": ["
+
+  local first=true
+  for file in "${DISCOVERED_FILES[@]}"; do
+    if [ "$first" = true ]; then
+      first=false
+    else
+      echo ","
+    fi
+
+    local file_type="${FILE_TYPES[$file]}"
+    local category="${FILE_CATEGORIES[$file]}"
+    local target="${FILE_TARGETS[$file]}"
+    local rationale="${FILE_RATIONALES[$file]}"
+    local has_conflict="${FILE_CONFLICTS[$file]}"
+
+    # Escape double quotes in strings for JSON
+    file_escaped=$(echo "$file" | sed 's/"/\\"/g')
+    target_escaped=$(echo "$target" | sed 's/"/\\"/g')
+    rationale_escaped=$(echo "$rationale" | sed 's/"/\\"/g')
+
+    echo -n "    {"
+    echo -n "\"source\": \"$file_escaped\", "
+    echo -n "\"target\": \"$target_escaped\", "
+    echo -n "\"type\": \"$file_type\", "
+    echo -n "\"category\": \"$category\", "
+    echo -n "\"rationale\": \"$rationale_escaped\", "
+    echo -n "\"conflict\": \"$has_conflict\""
+    echo -n "}"
+  done
+
+  echo ""
+  echo "  ]"
+  echo "}"
+}
+
+# Function to display human-readable plan summary
+display_plan_summary() {
+  echo "Migration Plan Summary"
+  echo "======================"
+  echo ""
+  echo "Total files discovered: ${#DISCOVERED_FILES[@]}"
+  echo "Files to migrate: $((${#DISCOVERED_FILES[@]} - in_place_count))"
+  echo "Files already in place: $in_place_count"
+  echo "Conflicts detected: $conflict_count"
+  echo ""
+
+  if [ $conflict_count -gt 0 ]; then
+    echo "⚠️  CONFLICTS REQUIRING RESOLUTION:"
+    for file in "${DISCOVERED_FILES[@]}"; do
+      if [ "${FILE_CONFLICTS[$file]}" = "true" ]; then
+        printf "  • %s → %s\n" "$file" "${FILE_TARGETS[$file]}"
+        printf "    Resolution: Will prompt for action (skip/rename/overwrite)\n"
+      fi
+    done
+    echo ""
+  fi
+
+  echo "MIGRATION ACTIONS:"
+  echo ""
+
+  # Group by action type
+  local move_count=0
+  local skip_count=0
+
+  for file in "${DISCOVERED_FILES[@]}"; do
+    if [ "${FILE_CONFLICTS[$file]}" = "in_place" ]; then
+      skip_count=$((skip_count + 1))
+    else
+      move_count=$((move_count + 1))
+    fi
+  done
+
+  echo "Files to move: $move_count"
+  if [ $move_count -gt 0 ]; then
+    for file in "${DISCOVERED_FILES[@]}"; do
+      if [ "${FILE_CONFLICTS[$file]}" != "in_place" ]; then
+        local target="${FILE_TARGETS[$file]}"
+        local conflict_marker=""
+        if [ "${FILE_CONFLICTS[$file]}" = "true" ]; then
+          conflict_marker=" ⚠️"
+        fi
+        printf "  %s → %s%s\n" "$file" "$target" "$conflict_marker"
+      fi
+    done
+  fi
+  echo ""
+
+  echo "Files to skip (already in place): $skip_count"
+  if [ $skip_count -gt 0 ]; then
+    for file in "${DISCOVERED_FILES[@]}"; do
+      if [ "${FILE_CONFLICTS[$file]}" = "in_place" ]; then
+        printf "  ✓ %s\n" "$file"
+      fi
+    done
+  fi
+  echo ""
+}
+
+# Function to prompt for plan approval
+prompt_plan_approval() {
+  if [ "$AUTO_APPROVE" = true ]; then
+    echo "Auto-approve enabled, proceeding with migration..."
+    return 0
+  fi
+
+  echo ""
+  echo "Review the migration plan above."
+  echo ""
+  echo "Options:"
+  echo "  a) Approve and proceed"
+  echo "  m) Modify plan (adjust target paths)"
+  echo "  s) Save plan and exit (for review)"
+  echo "  c) Cancel migration"
+  echo ""
+  read -p "Choose [a/m/s/c]: " choice
+
+  case "$choice" in
+    a|A)
+      echo "Plan approved. Proceeding with migration..."
+      return 0
+      ;;
+    m|M)
+      echo "Plan modification selected."
+      modify_plan_interactive
+      return $?
+      ;;
+    s|S)
+      echo "Saving plan to manifest..."
+      generate_migration_plan_json > "$MIGRATION_MANIFEST"
+      echo "Plan saved to: $MIGRATION_MANIFEST"
+      echo "Review the plan and run the migration again when ready."
+      exit 0
+      ;;
+    c|C)
+      echo "Migration cancelled."
+      exit 0
+      ;;
+    *)
+      echo "Invalid choice. Please try again."
+      prompt_plan_approval
+      ;;
+  esac
+}
+
+# Function to modify plan interactively
+modify_plan_interactive() {
+  echo ""
+  echo "Plan Modification Mode"
+  echo "======================"
+  echo ""
+  echo "You can adjust target paths for individual files."
+  echo "Type 'done' when finished, or 'cancel' to abort."
+  echo ""
+
+  while true; do
+    echo "Files available for modification:"
+    local index=1
+    for file in "${DISCOVERED_FILES[@]}"; do
+      printf "%2d) %s → %s\n" "$index" "$file" "${FILE_TARGETS[$file]}"
+      index=$((index + 1))
+    done
+    echo ""
+    echo "Type the number of the file to modify (or 'done'/'cancel'):"
+    read -p "> " input
+
+    case "$input" in
+      done|DONE|d|D)
+        echo "Modifications complete."
+        return 0
+        ;;
+      cancel|CANCEL|c|C)
+        echo "Modifications cancelled. Returning to plan review..."
+        prompt_plan_approval
+        return $?
+        ;;
+      ''|*[!0-9]*)
+        echo "Invalid input. Please enter a number, 'done', or 'cancel'."
+        continue
+        ;;
+      *)
+        if [ "$input" -ge 1 ] && [ "$input" -le ${#DISCOVERED_FILES[@]} ]; then
+          local file="${DISCOVERED_FILES[$((input - 1))]}"
+          local current_target="${FILE_TARGETS[$file]}"
+
+          echo ""
+          echo "File: $file"
+          echo "Current target: $current_target"
+          echo ""
+          read -p "Enter new target path (or press Enter to keep current): " new_target
+
+          if [ -n "$new_target" ]; then
+            FILE_TARGETS["$file"]="$new_target"
+            echo "Updated target to: $new_target"
+
+            # Re-check conflict status with new target
+            local has_conflict=$(check_conflict "$file" "$new_target")
+            FILE_CONFLICTS["$file"]="$has_conflict"
+
+            if [ "$has_conflict" = "true" ]; then
+              echo "⚠️  Warning: New target conflicts with existing file!"
+            fi
+          else
+            echo "Target unchanged."
+          fi
+          echo ""
+        else
+          echo "Invalid number. Please choose between 1 and ${#DISCOVERED_FILES[@]}."
+        fi
+        ;;
+    esac
+  done
+}
+
+# Function to save migration plan
+save_migration_plan() {
+  echo "Saving migration plan to manifest..."
+
+  # Generate manifest filename with timestamp
+  local timestamp=$(date +%Y%m%d_%H%M%S)
+  MIGRATION_MANIFEST=".project-migrate-manifest-${timestamp}.json"
+
+  generate_migration_plan_json > "$MIGRATION_MANIFEST"
+
+  if [ -f "$MIGRATION_MANIFEST" ]; then
+    echo "✓ Migration plan saved to: $MIGRATION_MANIFEST"
+    echo ""
+    echo "Manifest contains:"
+    echo "  - Timestamp: $(date -Iseconds)"
+    echo "  - Total files: ${#DISCOVERED_FILES[@]}"
+    echo "  - Source → target mappings"
+    echo "  - Conflict information"
+    echo "  - File types and categories"
+    echo ""
+  else
+    echo "⚠️  Error: Failed to save migration plan!"
+    return 1
+  fi
+}
+
 # Phase 3: Planning
 echo "Phase 3: Planning"
 echo "-----------------"
 echo "Generating migration plan..."
 echo ""
-# TODO: Implement planning logic (Task 4)
-echo "[Not yet implemented]"
+
+# Display human-readable plan summary
+display_plan_summary
+
+# Save plan to manifest file
+save_migration_plan
+
+# Prompt for plan approval (unless dry-run)
+if [ "$DRY_RUN" = true ]; then
+  echo "DRY RUN: Plan generated but no actions will be taken."
+  echo "Review the plan above and the manifest file: $MIGRATION_MANIFEST"
+  echo ""
+else
+  prompt_plan_approval
+fi
+
 echo ""
 
 # Phase 4: Backup
