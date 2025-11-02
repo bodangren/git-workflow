@@ -426,3 +426,87 @@ This file captures learnings from completed tasks to inform and improve future d
   - Natural conclusion to the migration workflow
 - **Complete Workflow Execution:** Feature branch created, implementation completed, tested with dry-run mode, committed with "Closes #74", pushed, PR #89 created, auto-merge enabled, 60-second wait, verified merge and issue auto-closure (#74 closed at 2025-11-02T07:49:36Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
 - **Lesson:** Validation is the confidence builder that confirms migration success. Error vs warning distinction is crucial - not all issues are equal. Actionable suggestions in reports empower users to resolve issues without guesswork. Three-tier status system (passed/passed-with-warnings/failed) provides nuanced success criteria. Validation should reference rollback options on failure - always provide an escape hatch. Reusing regex patterns across phases (link update and validation) ensures consistency. The validation phase closes the loop - discovery, analysis, planning, backup, migration, link updates, and finally verification that it all worked correctly.
+
+### #75 - TASK: Implement Frontmatter Generation (project-migrate)
+
+- **Went well:** Successfully implemented comprehensive frontmatter generation with all 9 acceptance criteria met on first iteration
+- **Implementation Scope:** Added 380 lines across 11 functions implementing complete Phase 6 (Frontmatter Generation)
+- **Key Features Delivered:**
+  - Frontmatter detection using file header scan (checks for `---` delimiter)
+  - Title extraction from first `#` heading with filename fallback (smart capitalization)
+  - File type detection for spec, proposal, design, adr, retrospective, plan, doc
+  - Git metadata extraction (creation date from first commit, author name)
+  - YAML frontmatter generation following doc-indexer conventions
+  - Interactive review UI with 4 options: accept/edit/skip/batch
+  - Batch mode support for "apply to all remaining files"
+  - Safe frontmatter insertion at top of file (preserves content)
+  - YAML syntax validation (checks structure and key:value format)
+  - Integration with doc-indexer scan for final compliance verification
+- **Frontmatter Structure:**
+  ```yaml
+  ---
+  title: Extracted Title
+  type: spec
+  created: 2025-11-02T10:15:30+08:00
+  author: Author Name
+  ---
+  ```
+- **Title Extraction Logic:**
+  - Primary: Extract from first `# heading` (not `##`)
+  - Fallback: Derive from filename with smart transformations
+  - Filename processing: `test-spec.md` → "Test Spec" (replace `-/_` with spaces, capitalize words)
+  - Uses awk for word-by-word capitalization
+- **File Type Detection Strategy:**
+  - Pattern matching on lowercase file path
+  - Retrospective → `retrospective` (contains "retrospective")
+  - ADR → `adr` (matches `adr-[0-9]+`, `/decisions/`, or "decision record")
+  - Spec → `spec` (contains "spec" or "specification")
+  - Proposal → `proposal` (contains "proposal", "rfc", or "draft")
+  - Design → `design` (contains "design" or "architecture")
+  - Plan → `plan` (contains "plan" or "roadmap")
+  - Default → `doc` (general documentation)
+- **Git Metadata Extraction:**
+  - Uses `git log --follow --format=%aI --reverse` for first commit timestamp
+  - Uses `git log --follow --format='%an' --reverse` for original author
+  - Gracefully handles non-git files (returns empty string)
+  - `--follow` flag tracks file renames through history
+- **YAML Validation Approach:**
+  - Checks frontmatter starts and ends with `---` delimiters
+  - Validates middle lines match `key: value` pattern
+  - Regex: `^[a-zA-Z_][a-zA-Z0-9_]*: ` (identifier followed by colon and space)
+  - Rejects invalid frontmatter before insertion (prevents file corruption)
+- **Interactive Review UI Design:**
+  - Shows file path and suggested frontmatter clearly
+  - Four intuitive options: a)ccept, e)dit, s)kip, b)atch
+  - Edit option opens text editor (respects `$EDITOR` env var, defaults to nano)
+  - Batch mode auto-applies to current and all remaining files (efficiency for large migrations)
+  - Re-validates YAML after manual edits
+- **Frontmatter Insertion Strategy:**
+  - Creates temporary file with frontmatter + blank line + original content
+  - Atomic file replacement (minimizes corruption risk)
+  - Preserves all original file content
+  - Handles files without trailing newline correctly
+- **Three Operation Modes:**
+  - **Interactive Mode** (default): Review each suggestion, full user control
+  - **Dry-Run Mode** (`--dry-run`): Shows what would be done, doesn't modify files
+  - **Auto-Approve Mode** (`--auto-approve`): Skips frontmatter generation with explanatory message
+- **Doc-Indexer Integration:**
+  - Runs `skills/doc-indexer/scripts/scan-docs.sh` after frontmatter insertion
+  - Displays compliance check results (warnings and compliant files)
+  - Validates that frontmatter generation achieved its goal
+  - Uses grep to filter output for relevant information
+- **Testing Validation:**
+  - Dry-run test confirmed all phases execute correctly
+  - Created test project with markdown file without frontmatter
+  - Verified title extraction from `# heading` works
+  - Confirmed file type detection (test-spec.md → "spec")
+  - Validated git metadata extraction from test repo
+  - YAML syntax validation confirmed working
+- **Design Decisions:**
+  - Auto-approve mode skips frontmatter generation rather than auto-applying (requires human review)
+  - Edit option uses standard EDITOR env var for consistency with Unix conventions
+  - Batch mode applies to "this and all remaining" (not "all previous too") for predictable behavior
+  - Git metadata is optional (gracefully handles non-git files or files without history)
+  - Statistics reporting shows: processed, updated, skipped, already compliant
+- **Complete Workflow Execution:** Feature branch created (feat/75-implement-frontmatter-generation), implementation completed (380 lines added), tested with dry-run mode on test project, committed with "Closes #75", pushed, PR #90 created, auto-merge enabled, 60-second wait, verified merge and issue auto-closure (#75 closed at 2025-11-02T09:52:24Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
+- **Lesson:** Frontmatter generation is the bridge between legacy documentation and doc-indexer compliance. Title extraction needs both primary (from content) and fallback (from filename) strategies. YAML validation before insertion prevents file corruption. Interactive review UI should provide actionable options (not just yes/no). Batch mode significantly improves UX when processing many files. Git metadata adds valuable context but must be optional (not all files have git history). Integration with existing tools (doc-indexer) validates that new features achieve their intended purpose. The frontmatter generation phase completes the project-migrate skill's core migration functionality - files are discovered, analyzed, planned, backed up, migrated, links updated, validated, and now doc-indexer compliant.
