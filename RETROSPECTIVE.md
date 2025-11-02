@@ -183,3 +183,28 @@ This file captures learnings from completed tasks to inform and improve future d
   - Testing: Found 12 files across 5 types in current project
 - **Workflow Execution:** Complete workflow executed correctly: auto-merge, 60-second wait, merge verification, auto-close issue, branch cleanup
 - **Lesson:** ALWAYS check that new skills follow the established directory structure pattern (skills/ for source). When in doubt, check existing skills (agent-integrator, doc-indexer, etc.) as reference. The retrospective documents these patterns for a reason - follow them consistently.
+
+### #69 - TASK: Implement Analysis Phase (project-migrate)
+
+- **Went well:** Successfully implemented comprehensive analysis phase with categorization, conflict detection, and migration planning
+- **Edge Case Discovery Through Testing:**
+  - Initial implementation flagged false conflicts for files already in target location
+  - Path normalization issue: `./RETROSPECTIVE.md` vs `RETROSPECTIVE.md` treated as different files
+  - Name collision risk: Multiple subdirectories with files named `proposal.md`, `spec-delta.md`, `tasks.md`
+  - Fixed by: Path normalization in conflict detection, subdirectory preservation in target path generation
+- **Three-State Conflict Detection:**
+  - Implemented nuanced conflict states: "false" (no conflict), "in_place" (already correct), "true" (real conflict)
+  - Improves UX by distinguishing files that need no action from actual conflicts
+  - Visual indicators: ✓ for in-place, ⚠️ for conflicts, blank for migrations
+- **Subdirectory Preservation Strategy:**
+  - Files in `docs/changes/subdir/` migrate to `docs/specs/subdir/` or `docs/subdir/`
+  - Prevents name collisions when multiple subdirectories contain identically-named files
+  - Example: `docs/changes/project-migrate-skill/tasks.md` → `docs/project-migrate-skill/tasks.md`
+- **Categorization Logic:**
+  - specs/ADRs/designs/plans → docs/specs/ (architectural source-of-truth)
+  - proposals → docs/changes/ (changes under review)
+  - retrospectives → root/RETROSPECTIVE.md (SynthesisFlow convention)
+  - READMEs → preserved in place
+  - general docs → docs/
+- **Testing Results:** Tested with current project (12 files, 5 types) - 7 files already in place, 5 to migrate, 0 conflicts after fixes
+- **Lesson:** Edge cases are discovered through testing with real data. Dry-run mode is invaluable for validating migration logic without side effects. Three-state conflict detection (no conflict / already in place / true conflict) provides better UX than binary detection. Subdirectory preservation is essential to avoid name collisions in complex documentation structures.
