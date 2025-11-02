@@ -330,3 +330,46 @@ This file captures learnings from completed tasks to inform and improve future d
   - Architecture ready for link updating phase
 - **Complete Workflow Execution:** Feature branch created, implementation completed, tested with dry-run, committed with "Closes #72", pushed, PR #87 created, auto-merge enabled, 60-second wait, verified merge and issue auto-closure, branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
 - **Lesson:** Git history preservation is valuable but should gracefully fall back for untracked files. Interactive conflict resolution gives users control while providing sensible defaults (skip). Path normalization prevents subtle bugs from path format differences. Testing with dry-run mode validates both logic and user experience before committing. Building stub functions for future phases keeps architecture clean and shows where functionality will be added. The migration phase is the "point of no return" - ensure backup is created first and provide clear rollback instructions on any failure.
+
+### #73 - TASK: Implement Link Update Logic (project-migrate)
+
+- **Went well:** Successfully implemented complete link update functionality with all 5 acceptance criteria met on first iteration
+- **Implementation Scope:** Added 156 lines across 2 functions for markdown link updating
+- **Key Features Delivered:**
+  - `calculate_relative_path()`: Pure path-based calculation that works with non-existent directories
+  - `update_markdown_links()`: Parses markdown, updates links, validates integrity, reports statistics
+  - Regex pattern matching for both regular links `[text](path)` and image links `![alt](path)`
+  - Skip absolute URLs (http://, https://, mailto:), anchor links (#section)
+  - Link validation with warnings for broken targets
+  - Detailed statistics: links found, updated, broken
+  - Proper dry-run mode support
+- **Path Calculation Design:**
+  - Array-based approach: Split paths on `/` delimiter for comparison
+  - Find common prefix length by comparing path components
+  - Calculate `../` count needed to navigate up from source directory
+  - Append remaining target path components
+  - Works with paths that don't exist yet (crucial for migration planning phase)
+- **Regex Challenge - Bash Pattern Escaping:**
+  - Initial implementation used inline regex: `while [[ "$temp_line" =~ \[([^]]+)\]\(([^)]+)\) ]]`
+  - Bash syntax error: "unexpected token `)'" due to unescaped square brackets in conditional expression
+  - Solution: Store pattern in variable first: `local link_pattern='\[([^]]*)\]\(([^)]+)\)'`
+  - Use variable in regex: `while [[ "$temp_line" =~ $link_pattern ]]`
+  - Also changed `[^]]+` to `[^]]*` to handle empty link text edge case
+- **Link Processing Strategy:**
+  - Line-by-line processing with temporary file for updates
+  - Multiple links per line handled with iterative regex matching
+  - After each match, remove matched portion from temp string to find next link
+  - `BASH_REMATCH` array captures link text and path for each match
+  - Global line update with `sed` for safe multi-link replacement
+- **Testing Methodology:**
+  - Syntax validation: `bash -n script.sh` caught regex error early
+  - Unit tests for path calculations: root → nested, nested → root, cross-directory
+  - Verified correct relative paths: `../../README.md`, `../specs/file.md`, etc.
+  - Confirmed absolute URLs skipped, relative links updated
+- **Statistics Reporting:**
+  - Three counters: `links_found` (all relative links), `links_updated` (changed), `links_broken` (target missing)
+  - Informative messages: "Updated N link(s)", "No updates needed (N already correct)"
+  - Warnings for broken links (target doesn't exist)
+  - Different output for dry-run vs actual execution
+- **Complete Workflow Execution:** Feature branch created, implementation completed, tested with dry-run and unit tests, committed with "Closes #73", pushed, PR #88 created, auto-merge enabled, 60-second wait, verified merge and issue auto-closure (#73 closed at 2025-11-02T07:40:26Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
+- **Lesson:** Complex regex patterns in bash conditionals benefit from being stored in variables first - improves readability and avoids escaping issues. Array-based path manipulation is more reliable than string manipulation for calculating relative paths, especially when directories don't exist yet. Iterative regex matching with string reduction (`${temp_line#*match}`) is an effective pattern for processing multiple matches on a single line. Statistics reporting improves user confidence - knowing "found X, updated Y, broken Z" provides transparency. Testing path calculations independently before integration validates the core logic. The link update phase completes the migration workflow - files are moved AND their internal references stay correct.
