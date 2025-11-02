@@ -992,13 +992,237 @@ fi
 
 echo ""
 
+# Function to create SynthesisFlow directory structure
+create_directory_structure() {
+  echo "Creating SynthesisFlow directory structure..."
+
+  local dirs=("docs" "docs/specs" "docs/changes")
+
+  for dir in "${dirs[@]}"; do
+    if [ ! -d "$dir" ]; then
+      if ! mkdir -p "$dir"; then
+        echo "⚠️  Error: Failed to create directory: $dir"
+        return 1
+      fi
+      echo "✓ Created directory: $dir"
+    else
+      echo "ℹ️  Directory already exists: $dir"
+    fi
+  done
+
+  echo ""
+  return 0
+}
+
+# Function to update relative links in a markdown file
+update_markdown_links() {
+  local file="$1"
+  local old_location="$2"
+  local new_location="$3"
+
+  # Skip if file is in same location
+  if [ "$old_location" = "$new_location" ]; then
+    return 0
+  fi
+
+  # TODO: Implement link updating logic (will be done in Task 7)
+  # For now, just note that links need updating
+  return 0
+}
+
+# Function to move a single file
+migrate_file() {
+  local source="$1"
+  local target="$2"
+  local use_git_mv="${3:-true}"
+
+  # Normalize paths
+  local normalized_source="${source#./}"
+  local normalized_target="${target#./}"
+
+  # Check if source and target are the same
+  if [ "$normalized_source" = "$normalized_target" ]; then
+    echo "  ✓ $source (already in place)"
+    return 0
+  fi
+
+  # Create target directory if it doesn't exist
+  local target_dir=$(dirname "$target")
+  if [ ! -d "$target_dir" ]; then
+    if ! mkdir -p "$target_dir"; then
+      echo "  ⚠️  Error: Failed to create directory: $target_dir"
+      return 1
+    fi
+  fi
+
+  # Check if target already exists
+  if [ -f "$target" ]; then
+    echo "  ⚠️  Conflict: Target already exists: $target"
+
+    # Prompt for resolution
+    echo "     Options: (s)kip, (r)ename source, (o)verwrite"
+    read -p "     Choose [s/r/o]: " resolution
+
+    case "$resolution" in
+      r|R)
+        # Rename by adding numeric suffix
+        local base="${target%.*}"
+        local ext="${target##*.}"
+        local counter=1
+        local new_target="${base}-${counter}.${ext}"
+
+        while [ -f "$new_target" ]; do
+          counter=$((counter + 1))
+          new_target="${base}-${counter}.${ext}"
+        done
+
+        echo "     Renaming to: $new_target"
+        target="$new_target"
+        ;;
+      o|O)
+        echo "     Overwriting target file..."
+        rm -f "$target"
+        ;;
+      s|S|*)
+        echo "     Skipping file"
+        return 0
+        ;;
+    esac
+  fi
+
+  # Perform the move
+  if [ "$use_git_mv" = true ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    # Use git mv to preserve history
+    if git mv "$source" "$target" 2>/dev/null; then
+      echo "  ✓ $source → $target (git mv)"
+      return 0
+    else
+      # Fall back to regular mv if git mv fails
+      if mv "$source" "$target"; then
+        echo "  ✓ $source → $target (mv)"
+        return 0
+      else
+        echo "  ⚠️  Error: Failed to move file: $source"
+        return 1
+      fi
+    fi
+  else
+    # Use regular mv
+    if mv "$source" "$target"; then
+      echo "  ✓ $source → $target (mv)"
+      return 0
+    else
+      echo "  ⚠️  Error: Failed to move file: $source"
+      return 1
+    fi
+  fi
+}
+
+# Function to execute migration
+execute_migration() {
+  echo "Creating SynthesisFlow directory structure..."
+  if ! create_directory_structure; then
+    echo "⚠️  Error: Failed to create directory structure!"
+    return 1
+  fi
+  echo ""
+
+  echo "Migrating files..."
+  echo ""
+
+  local success_count=0
+  local skip_count=0
+  local error_count=0
+  local total_to_migrate=0
+
+  # Count files that need migration
+  for file in "${DISCOVERED_FILES[@]}"; do
+    local normalized_source="${file#./}"
+    local target="${FILE_TARGETS[$file]}"
+    local normalized_target="${target#./}"
+
+    if [ "$normalized_source" != "$normalized_target" ]; then
+      total_to_migrate=$((total_to_migrate + 1))
+    fi
+  done
+
+  echo "Files to migrate: $total_to_migrate"
+  echo ""
+
+  # Migrate each file
+  for file in "${DISCOVERED_FILES[@]}"; do
+    local target="${FILE_TARGETS[$file]}"
+    local conflict="${FILE_CONFLICTS[$file]}"
+
+    # Skip files already in place
+    if [ "$conflict" = "in_place" ]; then
+      skip_count=$((skip_count + 1))
+      continue
+    fi
+
+    # Migrate the file
+    if migrate_file "$file" "$target" true; then
+      success_count=$((success_count + 1))
+
+      # Update links in the migrated file
+      update_markdown_links "$target" "$file" "$target"
+    else
+      error_count=$((error_count + 1))
+    fi
+  done
+
+  echo ""
+  echo "Migration Results:"
+  echo "  ✓ Migrated: $success_count file(s)"
+  echo "  ⊘ Skipped: $skip_count file(s) (already in place)"
+
+  if [ $error_count -gt 0 ]; then
+    echo "  ⚠️  Errors: $error_count file(s)"
+    return 1
+  fi
+
+  echo ""
+  return 0
+}
+
 # Phase 5: Migration
 echo "Phase 5: Migration"
 echo "------------------"
 echo "Executing file migrations..."
 echo ""
-# TODO: Implement migration logic (Task 6)
-echo "[Not yet implemented]"
+
+if [ "$DRY_RUN" = true ]; then
+  echo "DRY RUN: Migration would execute here"
+  echo ""
+  echo "Would create directories:"
+  echo "  - docs/"
+  echo "  - docs/specs/"
+  echo "  - docs/changes/"
+  echo ""
+  echo "Would migrate $((${#DISCOVERED_FILES[@]} - in_place_count)) file(s):"
+  for file in "${DISCOVERED_FILES[@]}"; do
+    target="${FILE_TARGETS[$file]}"
+    conflict="${FILE_CONFLICTS[$file]}"
+
+    if [ "$conflict" != "in_place" ]; then
+      conflict_marker=""
+      if [ "$conflict" = "true" ]; then
+        conflict_marker=" ⚠️"
+      fi
+      echo "  $file → $target$conflict_marker"
+    fi
+  done
+  echo ""
+else
+  # Execute migration
+  if ! execute_migration; then
+    echo "⚠️  Error: Migration failed!"
+    echo ""
+    echo "To rollback: bash $BACKUP_DIR/rollback.sh"
+    exit 1
+  fi
+fi
+
 echo ""
 
 # Phase 6: Frontmatter Generation
