@@ -28,99 +28,52 @@ Use this skill in the following situations:
 
 ## Workflow
 
-### Step 1: Assess Current State
+The skill guides you through 7 phases with phase-by-phase approval.
 
-Before migration, understand what exists:
-- Check for existing docs/ directory
-- Identify markdown files throughout the project
-- Note any existing organizational structure
+### Step 1: Run the Migration Script
 
-### Step 2: Run the Migration Script
+Execute with one of three modes:
 
-Execute the helper script to start the migration process:
-
-**Interactive mode (default)**:
+**Interactive (default)** - Review and approve each phase:
 ```bash
 bash scripts/project-migrate.sh
 ```
 
-**Auto-approve mode (skip prompts)**:
-```bash
-bash scripts/project-migrate.sh --auto-approve
-```
-
-**Dry-run mode (see plan without executing)**:
+**Dry-run** - Preview plan without execution:
 ```bash
 bash scripts/project-migrate.sh --dry-run
 ```
 
-### Step 3: Review Discovery Results
+**Auto-approve** - Skip prompts for automation:
+```bash
+bash scripts/project-migrate.sh --auto-approve
+```
 
-The script scans the project and displays:
-- All markdown files found
-- Categorization of files (spec, ADR, design doc, proposal, etc.)
-- Proposed target locations in SynthesisFlow structure
+### Step 2: Review Each Phase
 
-Review the inventory and confirm to continue.
+**Phase 1 - Discovery**: Scans for all markdown files and categorizes them (spec, ADR, design, proposal, etc.)
 
-### Step 4: Approve Migration Plan
+**Phase 2 - Analysis**: Maps each file to target location in SynthesisFlow structure with conflict detection
 
-The script generates a migration plan showing:
-- Source file → Target location mappings
-- Conflict detection (existing files in target locations)
-- Rationale for each categorization
+**Phase 3 - Planning**: Shows complete migration plan with source → target mappings for your approval
 
-Review the plan carefully and approve or request modifications.
+**Phase 4 - Backup**: Creates timestamped backup directory with rollback script before any changes
 
-### Step 5: Backup Creation
+**Phase 5 - Migration**: Moves files using `git mv` to preserve history, creates directory structure
 
-Before any changes, the script:
-- Creates timestamped backup directory (`.synthesisflow-backup-YYYYMMDD-HHMMSS/`)
-- Copies all existing docs/ content
-- Stores migration manifest for rollback
-- Generates rollback script and instructions
+**Phase 6 - Link Updates**: Recalculates and updates all relative markdown links to reflect new locations
 
-Note the backup location for safety.
+**Phase 7 - Validation**: Verifies all files migrated correctly, checks link integrity, validates structure
 
-### Step 6: Execute Migration
+**Phase 8 - Frontmatter (Optional)**: Generates and inserts doc-indexer compliant frontmatter for files missing it
 
-The script performs the migration:
-- Creates SynthesisFlow directory structure (docs/specs/, docs/changes/)
-- Moves files to target locations using `git mv` when possible
-- Updates relative links in markdown files
-- Handles conflicts safely
-- Reports progress for each file
+### Step 3: Post-Migration
 
-### Step 7: Frontmatter Generation (Optional)
-
-For doc-indexer compliance, the script:
-- Scans migrated files for missing frontmatter
-- Extracts title from headings or filename
-- Detects file type (spec, proposal, design, adr, etc.)
-- Generates suggested frontmatter
-- Prompts for review/customization
-- Inserts frontmatter while preserving content
-
-You can accept, edit, skip, or batch-apply suggestions.
-
-### Step 8: Validation
-
-The script verifies migration success:
-- All discovered files accounted for
-- No broken links detected
-- SynthesisFlow structure exists
-- Doc-indexer compliance check
-- Validation report generated
-
-Review the report for any issues.
-
-### Step 9: Next Steps
-
-After successful migration:
-- Run `doc-indexer` to catalog the new structure
-- Begin using SynthesisFlow workflow (spec-authoring, sprint-planner, etc.)
-- Commit the migration to git
-- Delete backup if satisfied with results
+After successful completion:
+- Review validation report for any warnings
+- Run `doc-indexer` to verify compliance
+- Commit migration changes to git
+- Delete backup once satisfied (or keep for reference)
 
 ## Error Handling
 
@@ -170,50 +123,17 @@ After successful migration:
 - Review rollback instructions
 - Restore to pre-migration state
 
-## Migration Phases Explained
+## Categorization Rules
 
-### Discovery Phase
+The analysis phase categorizes files using pattern matching:
 
-Scans project for markdown files in:
-- docs/ directory
-- documentation/ directory
-- wiki/ directory
-- Root-level README files
-- Any *.md files
-
-### Analysis Phase
-
-Categorizes files by detecting patterns:
-- **Specs**: Files with "spec", "specification", "requirements" in name/path → docs/specs/
-- **Proposals**: Files with "proposal", "rfc", "draft" in name/path → docs/changes/
-- **ADRs**: Files matching `ADR-*` or in `decisions/` → docs/specs/decisions/
-- **Design**: Files with "design", "architecture" in name/path → docs/specs/
-- **READMEs**: Kept in place (preserve project structure)
-
-### Backup Phase
-
-Creates comprehensive backup:
-- Full copy of docs/ directory
-- Migration manifest (JSON) with all mappings
-- Rollback script for restoration
-- README with instructions
-
-### Migration Phase
-
-Executes file movements:
-- Uses `git mv` to preserve history when possible
-- Copies files not in git tracking
-- Updates relative links `[text](../path)` to reflect new locations
-- Validates each operation
-
-### Frontmatter Generation Phase
-
-Ensures doc-indexer compliance:
-- Detects files without YAML frontmatter
-- Generates suggestions based on file analysis
-- Allows interactive review and editing
-- Inserts frontmatter at top of file
-- Validates YAML syntax
+- **Specs** (→ docs/specs/): Contains "spec", "specification", "requirements"
+- **Proposals** (→ docs/changes/): Contains "proposal", "rfc", "draft"
+- **ADRs** (→ docs/specs/decisions/): Matches `ADR-*` pattern or in `decisions/` directory
+- **Design Docs** (→ docs/specs/): Contains "design", "architecture"
+- **Plans** (→ docs/): Contains "plan", "roadmap"
+- **Retrospectives** (→ RETROSPECTIVE.md): Contains "retrospective"
+- **READMEs**: Preserved in original location
 
 ## Notes
 
