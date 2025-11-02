@@ -614,3 +614,35 @@ This file captures learnings from completed tasks to inform and improve future d
   - Empty vs non-empty directory states
 - **Complete Workflow Execution:** Feature branch created (feat/78-rollback-mechanism), implementation completed (87 insertions, 24 deletions), tested with dry-run mode, committed with "Closes #78", pushed, PR #93 created, auto-merge enabled, 60-second wait, verified merge (2025-11-02T10:29:23Z) and issue auto-closure (#78 closed at 2025-11-02T10:29:23Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly
 - **Lesson:** Rollback mechanisms must prioritize data safety over simplicity - better to warn about unexpected content than delete it. Conditional cleanup (check if empty, check if pre-existing) provides both clean rollback for simple cases and safety for complex scenarios. Creating a safety backup BEFORE rollback provides an additional safety net if rollback itself has issues. The manifest file is valuable not just for migration but also for rollback (identifies what was created vs what pre-existed). Enhanced warning messages help users understand WHY preservation decisions were made rather than silently keeping/removing directories. Testing rollback logic is best done through dry-run validation and code review rather than actual destructive testing. The rollback mechanism completes the project-migrate skill's safety story - users can confidently try migration knowing they can safely revert if needed.
+
+### #79 - TASK: Integration Testing (project-migrate)
+
+- **Went well:** Completed comprehensive integration testing covering all 11 test scenarios specified in acceptance criteria. All tests passed on first run without requiring any bug fixes to the skill.
+- **Test Scope:** Created 5 isolated test environments in /tmp/integration-test-79/ covering empty projects, simple docs, complex structures, conflicts, and frontmatter scenarios. Each test executed successfully validating different aspects of the project-migrate skill.
+- **Comprehensive Coverage:** Tested empty project (handled correctly with no changes), simple docs (2 files migrated successfully), complex nested structure (4 files across multiple directories including ADRs), existing docs/specs/ conflict (correctly detected and preserved), link validation (detected broken links with warnings), rollback functionality (full restoration verified), all execution modes (dry-run, auto-approve, interactive), frontmatter generation (detection via doc-indexer), mixed frontmatter (preserved existing, identified missing), frontmatter skip (auto-approve mode), and doc-indexer compliance verification.
+- **Testing Strategy:**
+  - Created git-initialized test environments for realistic scenarios
+  - Used echo piping to simulate user inputs for non-interactive testing
+  - Tested both --dry-run (shows plan without changes) and --auto-approve (executes with minimal prompts) modes
+  - Verified rollback by executing rollback.sh and checking file restoration
+  - Integrated doc-indexer via symlink to test frontmatter compliance detection
+  - Captured command outputs and validated against expected behavior
+- **Documentation Approach:** Created comprehensive TEST_RESULTS_ISSUE_79.md (374 lines) documenting each test scenario with setup, execution, results, and acceptance criteria. Included executive summary, test environment details, individual scenario results, acceptance criteria checklist, issues found (none), recommendations for future enhancements, and final verdict.
+- **Key Findings:**
+  - All 11 scenarios passed without issues
+  - No data loss in any scenario
+  - Conflicts handled gracefully (existing files preserved)
+  - Link validation detects broken links (manual fixing required - potential enhancement)
+  - Rollback works correctly with full restoration
+  - Each execution mode behaves as expected
+  - Frontmatter detection works via doc-indexer integration
+  - Git history preserved using `git mv`
+  - Backup and manifest mechanisms function correctly
+- **Test Environment Management:**
+  - test-empty: Empty project validation (only README.md)
+  - test-simple: Simple migration (2 files) + rollback testing
+  - test-complex: Complex structure (4 files, nested directories, ADRs, proposals)
+  - test-conflict: Conflict detection (existing docs/specs/ preserved)
+  - test-frontmatter: Frontmatter generation and doc-indexer compliance
+- **Complete Workflow Execution:** Feature branch created (feat/79-integration-testing), comprehensive testing executed across 11 scenarios, TEST_RESULTS_ISSUE_79.md documented with 374 lines, committed with "Closes #79", pushed, PR #94 created with detailed test summary, auto-merge enabled, 60-second wait, verified merge (2025-11-02T22:36:18Z) and issue auto-closure (#79 closed at 2025-11-02T22:36:19Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly.
+- **Lesson:** Comprehensive integration testing validates that individual components work together correctly in realistic scenarios. Testing in isolated /tmp/ environments prevents interference with the actual project while allowing git-based testing (init, mv, commit). Documenting test results in a structured markdown file (setup, execution, results, acceptance) creates a valuable artifact for future reference and demonstrates thoroughness. All tests passing on first run indicates high code quality from prior implementation phases (discovery, backup, rollback). Testing multiple execution modes (dry-run, auto-approve, interactive) ensures the skill works for different user preferences. Integration with doc-indexer via symlink demonstrates that skills can compose together (project-migrate + doc-indexer). Rollback testing by actually executing the rollback script provides confidence in the safety mechanism. The comprehensive test document serves both as validation evidence and as a testing template for future skills. Testing all scenarios from the spec's testing strategy section ensures complete coverage aligned with requirements.
