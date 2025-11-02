@@ -1381,13 +1381,267 @@ echo ""
 echo "[Not yet implemented]"
 echo ""
 
+# Function to validate migration
+validate_migration() {
+  echo "Running post-migration validation..."
+  echo ""
+
+  local validation_errors=0
+  local validation_warnings=0
+
+  # Validation 1: Check SynthesisFlow directory structure exists
+  echo "1. Checking SynthesisFlow directory structure..."
+  local required_dirs=("docs" "docs/specs" "docs/changes")
+  local missing_dirs=0
+
+  for dir in "${required_dirs[@]}"; do
+    if [ -d "$dir" ]; then
+      echo "  ✓ $dir exists"
+    else
+      echo "  ⚠️  $dir NOT FOUND"
+      missing_dirs=$((missing_dirs + 1))
+      validation_errors=$((validation_errors + 1))
+    fi
+  done
+
+  if [ $missing_dirs -eq 0 ]; then
+    echo "  ✓ All required directories exist"
+  else
+    echo "  ⚠️  Missing $missing_dirs required director(ies)"
+  fi
+  echo ""
+
+  # Validation 2: Check all source files are in target locations
+  echo "2. Verifying file migrations..."
+  local files_verified=0
+  local files_missing=0
+  local files_skipped=0
+
+  for file in "${DISCOVERED_FILES[@]}"; do
+    local target="${FILE_TARGETS[$file]}"
+    local normalized_source="${file#./}"
+    local normalized_target="${target#./}"
+
+    # Check if file was supposed to stay in place
+    if [ "$normalized_source" = "$normalized_target" ]; then
+      if [ -f "$file" ]; then
+        files_verified=$((files_verified + 1))
+        files_skipped=$((files_skipped + 1))
+      else
+        echo "  ⚠️  File missing: $file (should have been preserved in place)"
+        files_missing=$((files_missing + 1))
+        validation_errors=$((validation_errors + 1))
+      fi
+    else
+      # File should have been moved to target
+      if [ -f "$target" ]; then
+        files_verified=$((files_verified + 1))
+      else
+        echo "  ⚠️  Target file missing: $target (source: $file)"
+        files_missing=$((files_missing + 1))
+        validation_errors=$((validation_errors + 1))
+      fi
+    fi
+  done
+
+  echo "  ✓ Files verified in target locations: $files_verified"
+  if [ $files_skipped -gt 0 ]; then
+    echo "    (includes $files_skipped file(s) that stayed in place)"
+  fi
+
+  if [ $files_missing -gt 0 ]; then
+    echo "  ⚠️  Missing files: $files_missing"
+  fi
+  echo ""
+
+  # Validation 3: Compare file counts (discovered vs migrated)
+  echo "3. Comparing file counts..."
+  local discovered_count=${#DISCOVERED_FILES[@]}
+  local expected_migrated=$((discovered_count - in_place_count))
+
+  echo "  Files discovered: $discovered_count"
+  echo "  Files expected to migrate: $expected_migrated"
+  echo "  Files that stayed in place: $in_place_count"
+  echo "  Files verified: $files_verified"
+
+  local count_mismatch=$((discovered_count - files_verified))
+  if [ $count_mismatch -eq 0 ]; then
+    echo "  ✓ All discovered files accounted for"
+  else
+    echo "  ⚠️  File count mismatch: $count_mismatch file(s) unaccounted for"
+    validation_errors=$((validation_errors + 1))
+  fi
+  echo ""
+
+  # Validation 4: Validate link integrity in migrated files
+  echo "4. Validating link integrity..."
+  local total_links=0
+  local broken_links=0
+  local files_with_links=0
+
+  for file in "${DISCOVERED_FILES[@]}"; do
+    local target="${FILE_TARGETS[$file]}"
+    local file_to_check=""
+
+    # Determine which file to check (target if moved, source if in place)
+    local normalized_source="${file#./}"
+    local normalized_target="${target#./}"
+
+    if [ "$normalized_source" = "$normalized_target" ]; then
+      file_to_check="$file"
+    else
+      file_to_check="$target"
+    fi
+
+    # Check if file exists before validating links
+    if [ ! -f "$file_to_check" ]; then
+      continue
+    fi
+
+    # Parse markdown links in the file
+    local file_has_links=false
+    while IFS= read -r line; do
+      # Find markdown links: [text](path) and ![alt](path)
+      if echo "$line" | grep -qE '\[[^]]*\]\([^)]+\)'; then
+        local temp_line="$line"
+        local link_pattern='\[([^]]*)\]\(([^)]+)\)'
+
+        while [[ "$temp_line" =~ $link_pattern ]]; do
+          local link_path="${BASH_REMATCH[2]}"
+
+          # Skip absolute URLs and anchors
+          if [[ "$link_path" =~ ^https?:// ]] || [[ "$link_path" =~ ^mailto: ]] || [[ "$link_path" =~ ^# ]]; then
+            temp_line="${temp_line#*]($link_path)}"
+            continue
+          fi
+
+          file_has_links=true
+          total_links=$((total_links + 1))
+
+          # Calculate absolute path of linked file
+          local file_dir=$(dirname "$file_to_check")
+          local linked_file_abs=""
+
+          if [[ "$link_path" = /* ]]; then
+            # Absolute path from project root
+            linked_file_abs="$link_path"
+          else
+            # Relative path from file location
+            if [ "$file_dir" = "." ]; then
+              linked_file_abs="$link_path"
+            else
+              linked_file_abs="$file_dir/$link_path"
+            fi
+          fi
+
+          # Normalize path
+          linked_file_abs=$(echo "$linked_file_abs" | sed 's|/\./|/|g' | sed 's|^\./||')
+
+          # Check if linked file/directory exists
+          if [ ! -f "$linked_file_abs" ] && [ ! -d "$linked_file_abs" ]; then
+            echo "  ⚠️  Broken link in $file_to_check: $link_path → $linked_file_abs"
+            broken_links=$((broken_links + 1))
+            validation_warnings=$((validation_warnings + 1))
+          fi
+
+          # Remove this match to find next link
+          temp_line="${temp_line#*]($link_path)}"
+        done
+      fi
+    done < "$file_to_check"
+
+    if [ "$file_has_links" = true ]; then
+      files_with_links=$((files_with_links + 1))
+    fi
+  done
+
+  echo "  Files with links: $files_with_links"
+  echo "  Total links found: $total_links"
+
+  if [ $broken_links -eq 0 ]; then
+    echo "  ✓ No broken links detected"
+  else
+    echo "  ⚠️  Broken links found: $broken_links"
+    echo "  Note: Some links may point to files outside the migration scope"
+  fi
+  echo ""
+
+  # Validation 5: Generate validation report summary
+  echo "========================================
+Validation Report Summary
+========================================"
+  echo ""
+
+  if [ $validation_errors -eq 0 ] && [ $validation_warnings -eq 0 ]; then
+    echo "✅ VALIDATION PASSED"
+    echo ""
+    echo "All checks passed successfully!"
+    echo "  • SynthesisFlow directory structure exists"
+    echo "  • All discovered files accounted for ($discovered_count)"
+    echo "  • File counts match expectations"
+    echo "  • No broken links detected"
+  elif [ $validation_errors -eq 0 ]; then
+    echo "⚠️  VALIDATION PASSED WITH WARNINGS"
+    echo ""
+    echo "Migration completed but with $validation_warnings warning(s):"
+    if [ $broken_links -gt 0 ]; then
+      echo "  • $broken_links broken link(s) detected"
+      echo "    Suggestion: Review and update broken links manually"
+    fi
+  else
+    echo "❌ VALIDATION FAILED"
+    echo ""
+    echo "Migration completed with $validation_errors error(s) and $validation_warnings warning(s):"
+    if [ $missing_dirs -gt 0 ]; then
+      echo "  • $missing_dirs required director(ies) missing"
+      echo "    Suggestion: Run migration again or create directories manually"
+    fi
+    if [ $files_missing -gt 0 ]; then
+      echo "  • $files_missing file(s) missing from target locations"
+      echo "    Suggestion: Check backup and restore missing files"
+    fi
+    if [ $count_mismatch -ne 0 ]; then
+      echo "  • File count mismatch: $count_mismatch file(s) unaccounted for"
+      echo "    Suggestion: Compare discovered files with migrated files"
+    fi
+    if [ $broken_links -gt 0 ]; then
+      echo "  • $broken_links broken link(s) detected"
+      echo "    Suggestion: Review and update broken links manually"
+    fi
+  fi
+  echo ""
+
+  return $validation_errors
+}
+
 # Phase 7: Validation
 echo "Phase 7: Validation"
 echo "-------------------"
 echo "Verifying migration success..."
 echo ""
-# TODO: Implement validation logic (Task 8)
-echo "[Not yet implemented]"
+
+if [ "$DRY_RUN" = true ]; then
+  echo "DRY RUN: Validation would execute here"
+  echo ""
+  echo "Would verify:"
+  echo "  1. SynthesisFlow directory structure exists (docs/, docs/specs/, docs/changes/)"
+  echo "  2. All source files are in target locations"
+  echo "  3. File counts match (discovered: ${#DISCOVERED_FILES[@]}, to migrate: $((${#DISCOVERED_FILES[@]} - in_place_count)))"
+  echo "  4. Link integrity (no broken links)"
+  echo "  5. Generate comprehensive validation report"
+  echo ""
+else
+  # Execute validation
+  if ! validate_migration; then
+    echo "⚠️  Validation detected errors. Please review the report above."
+    echo ""
+    if [ -n "$BACKUP_DIR" ]; then
+      echo "To rollback: bash $BACKUP_DIR/rollback.sh"
+    fi
+    echo ""
+  fi
+fi
+
 echo ""
 
 echo "========================================"
