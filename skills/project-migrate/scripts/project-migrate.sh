@@ -7,6 +7,7 @@ set -e
 # Configuration
 DRY_RUN=false
 AUTO_APPROVE=false
+INTERACTIVE=true
 BACKUP_DIR=""
 MIGRATION_MANIFEST=""
 
@@ -17,6 +18,61 @@ declare -A FILE_CATEGORIES=()
 declare -A FILE_TARGETS=()
 declare -A FILE_RATIONALES=()
 declare -A FILE_CONFLICTS=()
+
+# Function to prompt for phase continuation
+prompt_phase_continue() {
+  local phase_name="$1"
+  local phase_description="$2"
+
+  if [ "$INTERACTIVE" = false ] || [ "$DRY_RUN" = true ]; then
+    return 0
+  fi
+
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "📋 Ready to proceed to: $phase_name"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "$phase_description"
+  echo ""
+  read -p "Continue to $phase_name? [Y/n]: " response
+
+  case "$response" in
+    n|N|no|No|NO)
+      echo ""
+      echo "Migration paused. You can:"
+      echo "  • Review the output above"
+      echo "  • Run with --dry-run to see the complete plan"
+      echo "  • Run again when ready to continue"
+      echo ""
+      exit 0
+      ;;
+    *)
+      echo ""
+      return 0
+      ;;
+  esac
+}
+
+# Function to show progress indicator
+show_progress() {
+  local current="$1"
+  local total="$2"
+  local description="$3"
+
+  local percentage=$((current * 100 / total))
+  local filled=$((percentage / 5))
+  local empty=$((20 - filled))
+
+  printf "\r[%-20s] %3d%% - %s" \
+    "$(printf '#%.0s' $(seq 1 $filled))$(printf ' %.0s' $(seq 1 $empty))" \
+    "$percentage" \
+    "$description"
+
+  if [ "$current" -eq "$total" ]; then
+    echo ""
+  fi
+}
 
 # Function to detect documentation type from file path and name
 detect_file_type() {
@@ -321,6 +377,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --auto-approve)
       AUTO_APPROVE=true
+      INTERACTIVE=false
       shift
       ;;
     *)
@@ -337,11 +394,19 @@ echo "========================================"
 echo ""
 
 if [ "$DRY_RUN" = true ]; then
-  echo "Mode: DRY RUN (no changes will be made)"
+  echo "🔍 Mode: DRY RUN"
+  echo "   No changes will be made to your files."
+  echo "   Review the complete migration plan safely."
 elif [ "$AUTO_APPROVE" = true ]; then
-  echo "Mode: AUTO-APPROVE (minimal prompts)"
+  echo "⚡ Mode: AUTO-APPROVE"
+  echo "   Migration will proceed with minimal prompts."
+  echo "   Conflicts will be skipped automatically."
+  echo "   Frontmatter generation will be skipped (requires manual review)."
 else
-  echo "Mode: INTERACTIVE (review each phase)"
+  echo "👤 Mode: INTERACTIVE"
+  echo "   You'll review and approve each phase."
+  echo "   Prompts will guide you through the process."
+  echo "   You can pause at any time."
 fi
 echo ""
 
@@ -355,7 +420,9 @@ echo ""
 discover_files
 
 # Display inventory summary
-echo "Discovery complete! Found ${#DISCOVERED_FILES[@]} markdown file(s)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ Discovery complete! Found ${#DISCOVERED_FILES[@]} markdown file(s)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
 if [ ${#DISCOVERED_FILES[@]} -eq 0 ]; then
@@ -384,6 +451,12 @@ for file in "${DISCOVERED_FILES[@]}"; do
 done
 echo ""
 
+# Prompt to continue to Analysis phase
+prompt_phase_continue "Phase 2: Analysis" \
+  "This phase will categorize discovered files and generate migration targets.
+   Files will be assigned to docs/specs/, docs/changes/, or docs/ based on type.
+   Conflicts with existing files will be detected."
+
 # Phase 2: Analysis
 echo "Phase 2: Analysis"
 echo "-----------------"
@@ -394,7 +467,9 @@ echo ""
 analyze_files
 
 # Display analysis results with rationale
-echo "Analysis complete!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ Analysis complete!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
 # Count conflicts and in-place files
@@ -477,6 +552,12 @@ for file in "${DISCOVERED_FILES[@]}"; do
   echo ""
 done
 echo ""
+
+# Prompt to continue to Planning phase
+prompt_phase_continue "Phase 3: Planning" \
+  "This phase will generate a detailed migration plan showing all file movements.
+   You'll be able to review, modify, or save the plan before execution.
+   The plan will be saved to a manifest file for reference."
 
 # Function to generate JSON migration plan
 generate_migration_plan_json() {
@@ -748,6 +829,12 @@ fi
 
 echo ""
 
+# Prompt to continue to Backup phase
+prompt_phase_continue "Phase 4: Backup" \
+  "This phase will create a complete backup of your docs/ directory.
+   A timestamped backup directory will be created with rollback scripts.
+   This ensures you can safely restore the original state if needed."
+
 # Function to create backup
 create_backup() {
   # Generate timestamped backup directory name
@@ -992,6 +1079,12 @@ fi
 
 echo ""
 
+# Prompt to continue to Migration phase
+prompt_phase_continue "Phase 5: Migration" \
+  "This phase will execute the file migrations using git mv when possible.
+   Files will be moved to their target locations and links will be updated.
+   You'll be prompted to resolve any conflicts that occur."
+
 # Function to create SynthesisFlow directory structure
 create_directory_structure() {
   echo "Creating SynthesisFlow directory structure..."
@@ -1206,6 +1299,12 @@ migrate_file() {
   if [ -f "$target" ]; then
     echo "  ⚠️  Conflict: Target already exists: $target"
 
+    # In auto-approve mode, skip conflicts
+    if [ "$AUTO_APPROVE" = true ]; then
+      echo "     Auto-approve mode: Skipping conflicted file"
+      return 0
+    fi
+
     # Prompt for resolution
     echo "     Options: (s)kip, (r)ename source, (o)verwrite"
     read -p "     Choose [s/r/o]: " resolution
@@ -1371,6 +1470,12 @@ else
 fi
 
 echo ""
+
+# Prompt to continue to Frontmatter phase
+prompt_phase_continue "Phase 6: Frontmatter Generation" \
+  "This phase will add YAML frontmatter to files that don't have it.
+   You'll review each suggested frontmatter (title, type, metadata).
+   You can accept, edit, skip individual files, or batch-apply to all."
 
 # Function to extract title from markdown file
 extract_title_from_file() {
@@ -1756,6 +1861,12 @@ else
 fi
 
 echo ""
+
+# Prompt to continue to Validation phase
+prompt_phase_continue "Phase 7: Validation" \
+  "This phase will verify the migration was successful.
+   It checks directory structure, file locations, counts, and link integrity.
+   A comprehensive validation report will be generated."
 
 # Function to validate migration
 validate_migration() {
