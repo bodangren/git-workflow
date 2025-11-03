@@ -688,3 +688,49 @@ This file captures learnings from completed tasks to inform and improve future d
   - ✅ No confusion about which skill to use (automatic detection prevents wrong choice)
 - **Complete Workflow Execution:** Feature branch created (feat/80-update-project-init-integration), implementation completed (73 lines added), tested all 4 scenarios, committed with "Closes #80", pushed, PR #95 created with comprehensive summary, auto-merge enabled, 60-second wait, verified merge (2025-11-03T04:47:14Z) and issue auto-closure (#80 closed at 2025-11-03T04:47:14Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly.
 - **Lesson:** Smooth skill handoffs improve user experience significantly - detecting context and suggesting the right tool prevents confusion and mistakes. Safe-by-default behavior (requires explicit "y" to continue despite warning) protects users from suboptimal choices while preserving freedom to override. Testing with realistic scenarios (existing docs, empty docs, no docs) validates all code paths and edge cases. Clear documentation with decision trees and comparison tables helps both users and LLMs understand when to use each skill. Interactive prompts should explain WHY a recommendation is being made (listing benefits) rather than just WHAT to do. The project-init + project-migrate integration demonstrates how skills can work together as a system rather than isolated tools. Filtering logic (excluding already-compliant subdirectories) prevents false positives while still catching migration candidates.
+
+### #81 - TASK: Register with agent-integrator (project-migrate)
+
+- **Went well:** Successfully registered project-migrate skill in AGENTS.md making it discoverable by AI agents. Final task in Sprint 5 completed smoothly.
+- **Implementation Scope:** Updated AGENTS.md by manually adding project-migrate entry to Available Skillsets section.
+- **Agent-Integrator Script Issue:**
+  - The helper script `update-agents-file.sh` exists but has a bash heredoc bug (line 31 execution error)
+  - Script tries to execute heredoc content as commands due to delimiter issue
+  - Workaround: Manually edited AGENTS.md using Edit tool instead of running script
+  - Future fix needed: Script should be debugged or rewritten with different heredoc approach
+- **Manual Registration Process:**
+  - Added project-migrate entry after project-init and before doc-indexer
+  - Used correct path: `skills/project-migrate/` (not `.claude/skills/`)
+  - Description accurately reflects functionality: "Migrate existing (brownfield) projects with established documentation to SynthesisFlow structure"
+  - Includes key features: intelligently discovers, categorizes, migrates, preserves content, adds frontmatter, maintains git history
+- **Acceptance Criteria Verification:**
+  - ✅ project-migrate listed in AGENTS.md (line 18)
+  - ✅ Skill is discoverable by Claude Code (in Available Skillsets section)
+  - ✅ Description accurately reflects functionality (comprehensive summary)
+  - ✅ Appropriate for brownfield migration use case
+- **Sprint 5 Completion:** This was the FINAL issue in Sprint 5! All 15 tasks (project-migrate skill implementation) completed successfully. Epic #66 fully implemented.
+- **Complete Workflow Execution:** Feature branch created (feat/81-register-with-agent-integrator), AGENTS.md updated with project-migrate entry, committed with "Closes #81", pushed, PR #96 created, auto-merge enabled, 60-second wait, verified merge (2025-11-03T07:18:01Z) and issue auto-closure (#81 closed at 2025-11-03T07:18:02Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly.
+- **Lesson:** When helper scripts have bugs, manual execution of the task is acceptable - the goal (registration in AGENTS.md) is more important than the method. Document script issues for future fixing. Agent registration (via AGENTS.md) is the final step that makes skills truly discoverable and usable - it closes the loop from implementation to discoverability. The project-migrate skill represents a complete brownfield migration solution from discovery through validation and rollback. Sprint 5 demonstrated that SynthesisFlow methodology scales effectively for implementing complex, multi-phase skills with comprehensive testing and documentation.
+
+---
+## Sprint 5 Summary
+
+**ALL 15 TASKS COMPLETE!**
+
+- Task 67: Create Skill Structure - Basic skeleton and directory setup
+- Task 68: Implement Discovery Phase - File scanning and type detection
+- Task 69: Implement Analysis Phase - Categorization and conflict detection
+- Task 70: Implement Planning Phase - Interactive plan review and approval
+- Task 71: Implement Backup Phase - Timestamped backups with rollback scripts
+- Task 72: Implement Migration Phase - File movement with git history preservation
+- Task 73: Implement Link Update Logic - Relative path recalculation and validation
+- Task 74: Implement Validation Phase - Post-migration verification with 5 checks
+- Task 75: Implement Frontmatter Generation - Doc-indexer compliance automation
+- Task 76: Implement Interactive Modes - Phase-by-phase approval with progress indicators
+- Task 77: Write SKILL.md Documentation - Comprehensive 148-line guide
+- Task 78: Create Rollback Mechanism - Enhanced safety with conditional cleanup
+- Task 79: Integration Testing - 11 test scenarios, all passed
+- Task 80: Update project-init Integration - Smooth handoff with detection
+- Task 81: Register with agent-integrator - AGENTS.md discovery
+
+**Key Achievement:** Successfully implemented complete project-migrate skill (1,942 lines of bash across 8 phases) enabling safe migration of brownfield projects to SynthesisFlow structure. Comprehensive testing validated no data loss, proper git history preservation, link integrity, frontmatter generation, and rollback capability. The skill is now discoverable via AGENTS.md and ready for production use.
