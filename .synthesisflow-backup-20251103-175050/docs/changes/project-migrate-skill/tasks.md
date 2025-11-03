@@ -110,7 +110,7 @@ Execute the actual file movements and transformations.
 Update relative links in markdown files to reflect new locations.
 
 **Subtasks**:
-- [ ] Parse markdown files for link patterns `[text](../changes/project-migrate-skill/path)` and `![alt](../changes/project-migrate-skill/path)`
+- [ ] Parse markdown files for link patterns `[text](path)` and `![alt](path)`
 - [ ] Calculate new relative paths based on file's new location
 - [ ] Update link references in file content
 - [ ] Validate updated links point to existing files

@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-03T17:50:50+08:00",
+  "total_files": 13,
+  "conflict_count": 0,
+  "in_place_count": 7,
+  "migrations": [
+    {"source": "./AGENTS.md", "target": "docs/AGENTS.md", "type": "doc", "category": "doc", "rationale": "General documentation → docs/", "conflict": "false"},
+    {"source": "docs/changes/claude-code-skill-compliance/proposal.md", "target": "docs/changes/claude-code-skill-compliance/proposal.md", "type": "proposal", "category": "proposal", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "docs/changes/claude-code-skill-compliance/spec-delta.md", "target": "docs/specs/claude-code-skill-compliance/spec-delta.md", "type": "spec", "category": "spec", "rationale": "Specification → docs/specs/ (SynthesisFlow source-of-truth)", "conflict": "false"},
+    {"source": "docs/changes/claude-code-skill-compliance/tasks.md", "target": "docs/claude-code-skill-compliance/tasks.md", "type": "doc", "category": "doc", "rationale": "General documentation → docs/", "conflict": "false"},
+    {"source": "docs/changes/project-migrate-skill/proposal.md", "target": "docs/changes/project-migrate-skill/proposal.md", "type": "proposal", "category": "proposal", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "docs/changes/project-migrate-skill/spec-delta.md", "target": "docs/specs/project-migrate-skill/spec-delta.md", "type": "spec", "category": "spec", "rationale": "Specification → docs/specs/ (SynthesisFlow source-of-truth)", "conflict": "false"},
+    {"source": "docs/changes/project-migrate-skill/tasks.md", "target": "docs/project-migrate-skill/tasks.md", "type": "doc", "category": "doc", "rationale": "General documentation → docs/", "conflict": "false"},
+    {"source": "docs/specs/001-synthesis-flow.md", "target": "docs/specs/001-synthesis-flow.md", "type": "spec", "category": "spec", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "docs/specs/002-implement-core-skills.md", "target": "docs/specs/002-implement-core-skills.md", "type": "spec", "category": "spec", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "docs/specs/003-flesh-out-core-skills.md", "target": "docs/specs/003-flesh-out-core-skills.md", "type": "spec", "category": "spec", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "./README.md", "target": "./README.md", "type": "readme", "category": "preserve", "rationale": "Already in correct location (no move needed)", "conflict": "in_place"},
+    {"source": "./RETROSPECTIVE.md", "target": "RETROSPECTIVE.md", "type": "retrospective", "category": "root", "rationale": "Retrospective → root/RETROSPECTIVE.md (SynthesisFlow convention)", "conflict": "in_place"},
+    {"source": "./TEST_RESULTS_ISSUE_79.md", "target": "docs/TEST_RESULTS_ISSUE_79.md", "type": "doc", "category": "doc", "rationale": "General documentation → docs/", "conflict": "false"}
+  ]
+}
