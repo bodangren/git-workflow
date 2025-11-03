@@ -646,3 +646,45 @@ This file captures learnings from completed tasks to inform and improve future d
   - test-frontmatter: Frontmatter generation and doc-indexer compliance
 - **Complete Workflow Execution:** Feature branch created (feat/79-integration-testing), comprehensive testing executed across 11 scenarios, TEST_RESULTS_ISSUE_79.md documented with 374 lines, committed with "Closes #79", pushed, PR #94 created with detailed test summary, auto-merge enabled, 60-second wait, verified merge (2025-11-02T22:36:18Z) and issue auto-closure (#79 closed at 2025-11-02T22:36:19Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly.
 - **Lesson:** Comprehensive integration testing validates that individual components work together correctly in realistic scenarios. Testing in isolated /tmp/ environments prevents interference with the actual project while allowing git-based testing (init, mv, commit). Documenting test results in a structured markdown file (setup, execution, results, acceptance) creates a valuable artifact for future reference and demonstrates thoroughness. All tests passing on first run indicates high code quality from prior implementation phases (discovery, backup, rollback). Testing multiple execution modes (dry-run, auto-approve, interactive) ensures the skill works for different user preferences. Integration with doc-indexer via symlink demonstrates that skills can compose together (project-migrate + doc-indexer). Rollback testing by actually executing the rollback script provides confidence in the safety mechanism. The comprehensive test document serves both as validation evidence and as a testing template for future skills. Testing all scenarios from the spec's testing strategy section ensures complete coverage aligned with requirements.
+
+### #80 - TASK: Update project-init Integration (project-migrate)
+
+- **Went well:** Successfully enhanced project-init skill to detect existing documentation and smoothly hand off to project-migrate when appropriate. All four acceptance criteria met on first iteration.
+- **Implementation Scope:** Modified 2 files (init-project.sh script and SKILL.md documentation), added 73 lines implementing detection logic and comprehensive guidance.
+- **Key Features Delivered:**
+  - Detection logic in init-project.sh that counts markdown files in docs/ (excluding docs/specs/ and docs/changes/)
+  - Interactive warning when existing documentation detected (shows count, explains benefits of project-migrate)
+  - User choice: cancel to use project-migrate, or continue with basic initialization
+  - Updated SKILL.md with decision tree (no docs/empty docs/existing docs → which skill)
+  - New "project-init vs project-migrate" section explaining when to use each skill
+  - Documentation of smooth handoff behavior (automatic detection and suggestion)
+- **Detection Logic Design:**
+  - Uses `find` to count markdown files in docs/ directory
+  - Excludes docs/specs/ and docs/changes/ subdirectories (already SynthesisFlow-compliant)
+  - Triggers suggestion only when existing docs found (EXISTING_DOCS > 0)
+  - Preserves existing docs if user chooses to continue (idempotent behavior)
+- **User Experience Enhancement:**
+  - Clear warning emoji (⚠️) draws attention without alarming
+  - Lists 6 specific benefits of using project-migrate (history, links, frontmatter, backups, etc.)
+  - Provides exact command to run project-migrate for convenience
+  - Default behavior is to cancel (requires explicit "y" to continue) - safe-by-default
+  - Exit message guides user to use project-migrate skill
+- **Documentation Structure:**
+  - Updated "When to Use" section with bold emphasis on "no existing documentation"
+  - Added decision tree in Step 1 (assess project state) with three clear branches
+  - New dedicated section "project-init vs project-migrate" with side-by-side comparison
+  - "Smooth Handoff" subsection explaining automatic detection behavior
+  - Added detection logic notes explaining the filtering criteria
+- **Testing Validation:**
+  - Test 1 (existing docs): Detected 2 markdown files, displayed suggestion, cancelled correctly
+  - Test 2 (existing docs, continue): Displayed suggestion, allowed user to continue, created structure
+  - Test 3 (no docs): Proceeded normally without warning
+  - Test 4 (empty docs/): Proceeded normally without warning
+  - All test scenarios behaved as expected
+- **Acceptance Criteria Verification:**
+  - ✅ project-init detects existing documentation (find command counts .md files)
+  - ✅ Clear suggestion provided to use project-migrate (6 benefits listed, exact command shown)
+  - ✅ Documentation explains when to use each skill (decision tree + comparison section)
+  - ✅ No confusion about which skill to use (automatic detection prevents wrong choice)
+- **Complete Workflow Execution:** Feature branch created (feat/80-update-project-init-integration), implementation completed (73 lines added), tested all 4 scenarios, committed with "Closes #80", pushed, PR #95 created with comprehensive summary, auto-merge enabled, 60-second wait, verified merge (2025-11-03T04:47:14Z) and issue auto-closure (#80 closed at 2025-11-03T04:47:14Z), branch cleaned up, retrospective updated - full SynthesisFlow workflow executed correctly.
+- **Lesson:** Smooth skill handoffs improve user experience significantly - detecting context and suggesting the right tool prevents confusion and mistakes. Safe-by-default behavior (requires explicit "y" to continue despite warning) protects users from suboptimal choices while preserving freedom to override. Testing with realistic scenarios (existing docs, empty docs, no docs) validates all code paths and edge cases. Clear documentation with decision trees and comparison tables helps both users and LLMs understand when to use each skill. Interactive prompts should explain WHY a recommendation is being made (listing benefits) rather than just WHAT to do. The project-init + project-migrate integration demonstrates how skills can work together as a system rather than isolated tools. Filtering logic (excluding already-compliant subdirectories) prevents false positives while still catching migration candidates.
