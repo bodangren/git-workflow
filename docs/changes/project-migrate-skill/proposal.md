@@ -1,3 +1,11 @@
+---
+title: Project Migrate Skill
+type: proposal
+status: approved
+created: 2024-03-01
+description: Intelligent migration tool for adding SynthesisFlow to existing projects with established documentation
+---
+
 # Proposal: Project Migrate Skill
 
 ## Problem Statement

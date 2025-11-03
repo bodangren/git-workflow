@@ -1,3 +1,11 @@
+---
+title: SynthesisFlow Methodology
+type: spec
+status: approved
+created: 2024-01-01
+description: Modular skill architecture for spec-driven development workflow
+---
+
 # Spec Delta: SynthesisFlow Methodology
 
 This document describes the new skills that form the SynthesisFlow methodology.
