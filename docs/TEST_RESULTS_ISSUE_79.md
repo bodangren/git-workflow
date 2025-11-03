@@ -102,7 +102,7 @@ echo -e "y\ny\nn\n" | bash project-migrate.sh --auto-approve
   - docs/spec-v1.md → docs/specs/spec-v1.md
   - docs/proposals/new-feature-draft.md → docs/changes/new-feature-draft.md
 - Link validation detected broken link:
-  - Original: `[ADR-001](../decisions/ADR-001-database.md)`
+  - Original: `[ADR-001](../../decisions/ADR-001-database.md)`
   - After migration: broken (file moved to docs/specs/)
   - Warning issued: ⚠️ Broken link detected
 - Validation passed with warnings
@@ -147,7 +147,7 @@ bash project-migrate.sh --dry-run
 
 **Results**:
 - Script parses markdown files for links
-- Detects relative links: `[text](../path/file.md)`
+- Detects relative links: `[text](../../path/file.md)`
 - Calculates new paths based on file migration
 - Validates link integrity post-migration
 - Reports broken links with clear warnings
