@@ -222,38 +222,142 @@ updated: $today
 
 # Product Brief: $project_name
 
+<!-- This brief defines the high-level vision and scope for the project -->
+<!-- Complete this before conducting detailed research or writing the PRD -->
+
 ## Problem Statement
 
-<!-- Describe the problem this project solves -->
-<!-- What's broken or missing? -->
-<!-- Who experiences this problem and how often? -->
-<!-- What's the business impact? -->
+<!-- This section articulates the core problem we're solving -->
+<!-- A strong problem statement is specific, measurable, and customer-focused -->
+
+**What problem exists?**
+<!-- Describe the current state and its deficiencies -->
+<!-- Example: "Users abandon checkout 40% of the time due to complex payment flows" -->
+
+**Who experiences this problem?**
+<!-- Identify the affected users or stakeholders -->
+<!-- Example: "E-commerce customers making purchases over \$100" -->
+<!-- Example: "Customer support teams handling payment issues" -->
+
+**How often does it occur?**
+<!-- Quantify the frequency or scope -->
+<!-- Example: "Affects 15,000 transactions per month" -->
+
+**What's the business impact?**
+<!-- Express impact in business terms (revenue, costs, customer satisfaction) -->
+<!-- Example: "Lost revenue of \$2M annually" -->
+<!-- Example: "20 support hours per week addressing payment issues" -->
 
 ## Target Users
 
-<!-- Who will use this solution? -->
-<!-- List primary and secondary user personas -->
-<!-- What are their goals and pain points? -->
+<!-- This section defines who will benefit from the solution -->
+<!-- Understanding users drives better product decisions -->
+
+### Primary Users
+<!-- The main users who will directly interact with the solution -->
+
+**Persona 1: [Name/Role]**
+- **Who they are**: [Demographics, role, experience level]
+- **Key goals**: [What they're trying to achieve]
+- **Pain points**: [Current frustrations and obstacles]
+- **Frequency of use**: [How often they'll use this solution]
+
+**Persona 2: [Name/Role]**
+- **Who they are**:
+- **Key goals**:
+- **Pain points**:
+- **Frequency of use**:
+
+### Secondary Users
+<!-- Users who indirectly benefit or have supporting roles -->
+
+- [Stakeholder type]: [How they're affected]
+- [Stakeholder type]: [How they're affected]
 
 ## Proposed Solution
 
-<!-- High-level description of the solution -->
-<!-- What will we build? -->
-<!-- How does it solve the problem? -->
+<!-- This section provides a high-level view of what we'll build -->
+<!-- Focus on the "what" and "why", not implementation details -->
+
+**Solution Overview**
+<!-- In 2-3 sentences, describe what you'll build -->
+<!-- Example: "A streamlined one-click payment system that securely stores user payment methods and enables instant checkout with biometric authentication." -->
+
+**How it addresses the problem**
+<!-- Connect solution back to the problem statement -->
+<!-- Explain the causal relationship between solution and problem resolution -->
+
+**Key capabilities** (3-5 bullet points)
+<!-- High-level features that enable the solution -->
+<!-- Example: "Secure payment method storage with PCI compliance" -->
+<!-- Example: "Biometric authentication for instant verification" -->
+
+- [Capability 1]
+- [Capability 2]
+- [Capability 3]
+
+**What makes this solution different?**
+<!-- How does this differ from current state or alternatives? -->
+<!-- What's innovative or improved? -->
 
 ## Value Proposition
 
-<!-- Why is this valuable? -->
-<!-- Benefits for users -->
-<!-- Benefits for business -->
-<!-- Competitive advantages -->
+<!-- This section articulates why this solution is worth building -->
+<!-- Strong value props are specific, quantifiable, and tied to outcomes -->
+
+### User Benefits
+<!-- How users directly benefit from this solution -->
+
+- **[Benefit category]**: [Specific improvement]
+  - Example: "Speed: Reduce checkout time from 3 minutes to 15 seconds"
+- **[Benefit category]**: [Specific improvement]
+  - Example: "Security: Eliminate need to re-enter card details"
+- **[Benefit category]**: [Specific improvement]
+  - Example: "Convenience: Single-tap payment on mobile devices"
+
+### Business Benefits
+<!-- How the organization benefits -->
+
+- **[Revenue/Cost/Efficiency]**: [Expected impact]
+  - Example: "Revenue: Increase conversion rate by 25%, generating \$500K additional annual revenue"
+- **[Revenue/Cost/Efficiency]**: [Expected impact]
+  - Example: "Cost savings: Reduce support costs by \$100K/year"
+
+### Competitive Advantages
+<!-- What strategic advantages does this provide? -->
+
+- [Advantage over competitors or alternatives]
+- [Market positioning benefit]
+- [Long-term strategic value]
 
 ## Success Metrics
 
-<!-- How will we measure success? -->
-<!-- Include specific, measurable targets -->
-<!-- Example: "80% reduction in checkout abandonment rate" -->
-<!-- Example: "95% of payments processed within 3 seconds" -->
+<!-- This section defines how we'll measure success -->
+<!-- Metrics should be SMART: Specific, Measurable, Achievable, Relevant, Time-bound -->
+
+### Launch Success Criteria
+<!-- Metrics that indicate a successful launch (measured in first 30 days) -->
+
+- **[Metric name]**: [Baseline] → [Target]
+  - Example: "Checkout conversion rate: 60% → 75%"
+- **[Metric name]**: [Baseline] → [Target]
+  - Example: "Average checkout time: 180 seconds → 30 seconds"
+- **[Metric name]**: [Baseline] → [Target]
+  - Example: "Payment failure rate: 5% → 1%"
+
+### Long-term Success Metrics
+<!-- Metrics tracked over 6-12 months post-launch -->
+
+- **[Metric name]**: [Target within timeframe]
+  - Example: "User adoption: 50% of customers using one-click payment within 6 months"
+- **[Metric name]**: [Target within timeframe]
+  - Example: "Customer satisfaction: NPS score increase from 40 to 60"
+
+### Leading Indicators
+<!-- Early signals that predict success -->
+
+- [Metric that indicates progress toward success]
+- Example: "75% of users save payment method on first use"
 
 EOF
 
@@ -307,51 +411,297 @@ updated: $today
 
 # Research: $project_name
 
+<!-- This research document supports PRD development with market intelligence -->
+<!-- Complete this after the product brief but before creating the PRD -->
+
 ## Competitive Analysis
 
-<!-- Identify 3-5 direct competitors -->
-<!-- For each competitor, document: -->
+<!-- This section analyzes the competitive landscape -->
+<!-- Identify 3-5 direct competitors or alternative solutions -->
+<!-- Understanding competition helps identify gaps and opportunities -->
 
 ### Competitor 1: [Name]
-- **Strengths**: [What they do well]
-- **Weaknesses**: [What they do poorly]
-- **Key Features**: [Notable features]
-- **Market Position**: [Their positioning]
+
+**Overview**
+<!-- Brief description of competitor and their market presence -->
+<!-- Example: "Market leader with 40% market share, targeting enterprise customers" -->
+
+**Strengths** (What they do well)
+- [Strength 1]: [Specific capability or feature]
+  - Example: "Superior mobile experience with 4.8 app store rating"
+- [Strength 2]: [Why this matters to users]
+  - Example: "24/7 customer support in 15 languages"
+
+**Weaknesses** (What they do poorly)
+- [Weakness 1]: [Specific limitation or problem]
+  - Example: "Complex pricing structure confuses small business customers"
+- [Weakness 2]: [User complaints or gaps]
+  - Example: "No API access below enterprise tier"
+
+**Key Features** (Notable capabilities)
+- [Feature 1]: [Brief description]
+- [Feature 2]: [Brief description]
+- [Feature 3]: [Brief description]
+
+**Pricing Model**
+<!-- How do they monetize? What's the pricing structure? -->
+<!-- Example: "Freemium: Free up to 100 transactions/month, then \$49-\$299/month tiers" -->
+
+**Market Position**
+<!-- Who are they targeting? What's their positioning? -->
+<!-- Example: "Premium solution for mid-market B2B companies" -->
+
+**Our Advantage Over Them**
+<!-- How can we differentiate or beat them? -->
+<!-- Example: "We can offer simpler onboarding and transparent pricing" -->
+
+---
 
 ### Competitor 2: [Name]
-- **Strengths**:
-- **Weaknesses**:
-- **Key Features**:
-- **Market Position**:
 
-<!-- Add more competitors as needed -->
+**Overview**
+
+**Strengths**
+-
+-
+
+**Weaknesses**
+-
+-
+
+**Key Features**
+-
+
+**Pricing Model**
+
+**Market Position**
+
+**Our Advantage Over Them**
+
+---
+
+### Competitor 3: [Name]
+
+<!-- Repeat structure above -->
+
+---
 
 ## Market Insights
 
-<!-- Market size and trends -->
-<!-- Target market segments -->
-<!-- Regulatory or compliance requirements -->
-<!-- Industry standards and best practices -->
+<!-- This section provides broader market context beyond specific competitors -->
+
+### Market Size & Growth
+<!-- How big is the addressable market? -->
+<!-- What are the growth trends? -->
+<!-- Example: "Global market: \$15B, growing at 23% CAGR" -->
+
+### Target Market Segments
+<!-- What customer segments exist? Which should we target? -->
+<!-- Example: "SMBs (63% of market), Enterprise (25%), Individual creators (12%)" -->
+
+**Primary segment**: [Description]
+- Size: [Market size or customer count]
+- Growth rate: [Percentage]
+- Key characteristics: [What defines this segment]
+
+**Secondary segment**: [Description]
+- Size:
+- Growth rate:
+- Key characteristics:
+
+### Market Trends
+<!-- What directional shifts are happening? -->
+<!-- Example: "Shift from on-premise to cloud-based solutions (75% adoption)" -->
+
+- [Trend 1]: [Description and implications]
+- [Trend 2]: [Description and implications]
+- [Trend 3]: [Description and implications]
+
+### Regulatory & Compliance
+<!-- What regulations apply? What compliance is required? -->
+<!-- Example: "Must comply with PCI-DSS Level 1 for payment processing" -->
+<!-- Example: "GDPR compliance required for EU customers" -->
+
+- [Requirement 1]: [Description and impact]
+- [Requirement 2]: [Description and impact]
+
+### Industry Standards & Best Practices
+<!-- What standards or practices are expected? -->
+<!-- Example: "OAuth 2.0 is industry standard for authentication" -->
+
+- [Standard/Practice]: [Why it matters]
+- [Standard/Practice]: [Why it matters]
 
 ## User Feedback Analysis
 
-<!-- Common pain points with existing solutions -->
-<!-- Desired features from user research -->
-<!-- User preferences and expectations -->
+<!-- This section synthesizes what users say about existing solutions -->
+<!-- Sources: user interviews, reviews, support tickets, forums, surveys -->
+
+### Common Pain Points
+<!-- What frustrates users about current solutions? -->
+<!-- Quantify when possible: "65% of reviews mention slow performance" -->
+
+1. **[Pain point category]**: [Specific issue]
+   - Frequency: [How often mentioned]
+   - User quote: "[Direct user feedback example]"
+   - Example: "Onboarding complexity: 40% of users abandon during setup"
+
+2. **[Pain point category]**: [Specific issue]
+   - Frequency:
+   - User quote:
+
+3. **[Pain point category]**: [Specific issue]
+   - Frequency:
+   - User quote:
+
+### Desired Features
+<!-- What features do users request or expect? -->
+<!-- Distinguish between "nice to have" and "must have" -->
+
+**Must-have features** (Table stakes)
+- [Feature]: [Why users consider this essential]
+- [Feature]: [Why users consider this essential]
+
+**High-value features** (Strong differentiators)
+- [Feature]: [Why users would pay more or switch for this]
+- [Feature]: [Why users would pay more or switch for this]
+
+**Nice-to-have features** (Future consideration)
+- [Feature]: [Lower priority request]
+
+### User Preferences & Expectations
+<!-- What do users expect in terms of experience? -->
+
+- **[Category]**: [Preference]
+  - Example: "Onboarding: Expect to be productive within 5 minutes"
+- **[Category]**: [Preference]
+  - Example: "Support: Expect live chat, not just email"
+- **[Category]**: [Preference]
+  - Example: "Pricing: Prefer simple per-user pricing over complex tiers"
 
 ## Technical Considerations
 
-<!-- Technical approaches used by competitors -->
-<!-- Architecture patterns and trade-offs -->
-<!-- Integration requirements -->
-<!-- Performance and scalability considerations -->
+<!-- This section examines technical approaches and implications -->
+
+### Competitor Technical Approaches
+<!-- How do competitors solve technical challenges? -->
+<!-- What can we learn from their choices? -->
+
+- **[Technical area]**: [How competitors approach it]
+  - Example: "Authentication: Most use OAuth 2.0 with JWT tokens"
+  - Trade-offs: [Pros and cons of this approach]
+
+- **[Technical area]**: [How competitors approach it]
+  - Example: "Data storage: 80% use PostgreSQL for transactional data"
+  - Trade-offs:
+
+### Architecture Patterns
+<!-- What architectural patterns are common or recommended? -->
+
+- **[Pattern]**: [Description and use case]
+  - Pros: [Benefits]
+  - Cons: [Drawbacks]
+  - Example: "Microservices: Better scalability but increased operational complexity"
+
+### Integration Requirements
+<!-- What systems need to integrate? What protocols are standard? -->
+
+- [Integration point]: [Requirements or standards]
+  - Example: "Payment gateways: Must support Stripe, PayPal APIs"
+- [Integration point]: [Requirements or standards]
+
+### Performance & Scalability
+<!-- What are performance expectations? How must the system scale? -->
+
+- **Expected load**: [Transaction volume, user count, data volume]
+  - Example: "Handle 10,000 concurrent users, 1M transactions/day"
+- **Performance targets**: [Response times, throughput]
+  - Example: "API response time <200ms at p95"
+- **Scalability approach**: [How to achieve scale]
+  - Example: "Horizontal scaling with load balancing across regions"
+
+### Technical Risks
+<!-- What technical challenges or risks exist? -->
+
+- [Risk]: [Description and potential mitigation]
+  - Example: "Third-party API dependency: Stripe downtime impacts our service"
 
 ## Recommendations
 
-<!-- Based on research, what should we prioritize? -->
-<!-- Which features are table stakes vs differentiators? -->
+<!-- This section provides actionable recommendations based on research -->
+<!-- These recommendations should inform PRD development -->
+
+### Priority Features
+<!-- Based on competitive analysis and user feedback, what should we build? -->
+
+**Must-build** (Required for competitive parity)
+1. [Feature]: [Why it's essential]
+   - Supporting evidence: [What research supports this]
+
+2. [Feature]: [Why it's essential]
+   - Supporting evidence:
+
+**Should-build** (Differentiators that provide competitive advantage)
+1. [Feature]: [Why it differentiates us]
+   - Supporting evidence: [What research supports this]
+
+2. [Feature]: [Why it differentiates us]
+   - Supporting evidence:
+
+**Could-build** (Future opportunities)
+- [Feature]: [Why it's lower priority]
+
+### Technical Approach
 <!-- What technical approach is recommended? -->
-<!-- What constraints exist (compliance, budget, timeline)? -->
+
+**Recommended architecture**: [High-level approach]
+- Rationale: [Why this approach fits our needs]
+- Example: "Cloud-native microservices for scalability and independent deployment"
+
+**Key technology choices**:
+- [Technology category]: [Recommendation]
+  - Rationale: [Why this choice]
+- [Technology category]: [Recommendation]
+  - Rationale:
+
+### Go-to-Market Positioning
+<!-- How should we position against competitors? -->
+
+**Positioning statement**:
+<!-- Example: "The simplest enterprise-grade solution for SMBs" -->
+
+**Target segment**: [Which market segment to focus on]
+**Key differentiators**: [What makes us different]
+- [Differentiator 1]
+- [Differentiator 2]
+
+### Constraints & Considerations
+<!-- What constraints must we work within? -->
+
+**Compliance constraints**:
+- [Constraint]: [Impact on design]
+
+**Budget constraints**:
+- [Constraint]: [Impact on scope]
+
+**Timeline constraints**:
+- [Constraint]: [Impact on MVP definition]
+
+**Resource constraints**:
+- [Constraint]: [Impact on technical approach]
+
+### Risk Assessment
+<!-- What are the key risks to success? -->
+
+1. **[Risk category]**: [Specific risk]
+   - Likelihood: [High/Medium/Low]
+   - Impact: [High/Medium/Low]
+   - Mitigation: [How to address]
+
+2. **[Risk category]**: [Specific risk]
+   - Likelihood:
+   - Impact:
+   - Mitigation:
 
 EOF
 
@@ -417,126 +767,505 @@ updated: $today
 
 # Product Requirements Document: $project_name
 
+<!-- This PRD translates the product brief and research into specific, actionable requirements -->
+<!-- PRDs should be: Specific, Measurable, Testable, Unambiguous, and Complete -->
+<!-- Review the product brief and research documents before completing this PRD -->
+
 ## Objectives
 
-<!-- Define clear, measurable project objectives -->
-<!-- Objectives should be SMART: Specific, Measurable, Achievable, Relevant, Time-bound -->
+<!-- This section defines what we're trying to achieve and why -->
+<!-- Good objectives are SMART: Specific, Measurable, Achievable, Relevant, Time-bound -->
+<!-- Each objective should link back to problems identified in the product brief -->
 
 ### Primary Objectives
 
-1. **[Objective 1]**
-   - [Specific goal]
-   - [Measurable target]
-   - [Timeline]
+<!-- These are the core goals that define project success -->
+<!-- Usually 2-4 primary objectives -->
 
-2. **[Objective 2]**
-   - [Specific goal]
-   - [Measurable target]
-   - [Timeline]
+1. **[Objective Name]**
+   - **Goal**: [What we're trying to accomplish]
+   - **Measure**: [How we'll measure success with specific metrics]
+   - **Target**: [Specific numeric target]
+   - **Timeline**: [When we aim to achieve this]
+   - **Why it matters**: [Business or user impact]
+   - Example: "Reduce customer onboarding time by 50%, from 10 minutes to 5 minutes, within 3 months of launch to decrease abandonment"
+
+2. **[Objective Name]**
+   - **Goal**:
+   - **Measure**:
+   - **Target**:
+   - **Timeline**:
+   - **Why it matters**:
+
+3. **[Objective Name]**
+   - **Goal**:
+   - **Measure**:
+   - **Target**:
+   - **Timeline**:
+   - **Why it matters**:
 
 ### Secondary Objectives
 
-1. [Future phase objectives]
-2. [Stretch goals]
+<!-- Nice-to-have objectives or future phase goals -->
+<!-- These add value but aren't required for initial launch success -->
+
+1. [Future phase objective with brief rationale]
+2. [Stretch goal that exceeds primary objectives]
 
 ## Success Criteria
 
-<!-- Define measurable criteria that indicate project success -->
+<!-- This section defines concrete, testable criteria for success -->
+<!-- Distinguish between launch readiness and post-launch success -->
 
 ### Launch Criteria (Must-Have)
 
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
+<!-- These must be met before we can launch to users -->
+<!-- Each criterion should be binary: pass/fail, yes/no -->
+<!-- Use checkboxes to track completion -->
+
+**Functional Completeness**
+- [ ] [All MVP features implemented and tested]
+  - Example: "User can create account, add payment method, and complete checkout"
+- [ ] [Core user workflows tested end-to-end]
+  - Example: "100% of critical user paths tested with >95% success rate"
+
+**Quality Standards**
+- [ ] [Performance benchmarks met]
+  - Example: "Page load time <2 seconds at p95"
+- [ ] [Security requirements satisfied]
+  - Example: "Security audit completed with no critical vulnerabilities"
+- [ ] [Accessibility compliance achieved]
+  - Example: "WCAG 2.1 AA compliance verified"
+
+**Operational Readiness**
+- [ ] [Monitoring and alerting configured]
+- [ ] [Documentation complete]
+  - Example: "User guide, API docs, and runbooks published"
+- [ ] [Support team trained]
 
 ### Success Metrics (Post-Launch)
 
-- [ ] [Measurable metric with target value]
-- [ ] [Measurable metric with target value]
-- [ ] [Measurable metric with target value]
+<!-- These metrics indicate the product is achieving its objectives -->
+<!-- Track these for 30-90 days post-launch -->
+<!-- Each metric should have: baseline, target, measurement method, and timeframe -->
+
+**Adoption Metrics**
+- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
+  - How measured: [Measurement method]
+  - Example: "Active users: 0 → 5,000 within 60 days"
+  - How measured: "Daily active users in analytics platform"
+
+**Engagement Metrics**
+- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
+  - How measured:
+  - Example: "Session duration: 3 min → 8 min within 30 days"
+
+**Business Metrics**
+- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
+  - How measured:
+  - Example: "Conversion rate: 12% → 18% within 90 days"
+
+**Quality Metrics**
+- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
+  - How measured:
+  - Example: "Error rate: <1% sustained over 30 days"
 
 ### Stretch Goals
 
-- [ ] [Ambitious but achievable goals]
+<!-- Ambitious goals that exceed primary objectives -->
+<!-- Nice to achieve but not required for success -->
+
+- [ ] [Ambitious goal with clear measurement]
+  - Example: "Achieve 10,000 users within 90 days (2x primary target)"
 
 ## Functional Requirements
 
-<!-- List specific, testable functional requirements -->
+<!-- This section specifies WHAT the system must do -->
+<!-- Each requirement should be: Specific, Testable, Unambiguous, and Complete -->
+<!-- Number requirements for easy reference (FR1, FR2, etc.) -->
+<!-- Group related requirements into logical sections if needed -->
 
 ### FR1: [Requirement Name]
-- **Description**: [What this requirement does]
-- **Inputs**: [What inputs are needed]
-- **Outputs**: [What outputs are produced]
-- **Acceptance Criteria**:
-  - [Specific, testable criterion]
-  - [Specific, testable criterion]
-  - [Specific, testable criterion]
+
+**Description**
+<!-- What does this requirement enable? What user need does it address? -->
+<!-- Be specific about behavior, not implementation -->
+<!-- Example: "System shall allow users to save multiple payment methods for future use" -->
+
+**User Story** (Optional but helpful)
+<!-- As a [user type], I want [capability], so that [benefit] -->
+<!-- Example: "As a returning customer, I want to save my payment method, so that I can check out faster on future purchases" -->
+
+**Inputs**
+<!-- What data or actions trigger this functionality? -->
+<!-- Example: "User clicks 'Save payment method' checkbox during checkout" -->
+<!-- Example: "Payment details: card number, expiration date, CVV, billing address" -->
+
+**Outputs**
+<!-- What results or changes occur? -->
+<!-- Example: "Payment method stored securely with last 4 digits shown" -->
+<!-- Example: "Confirmation message displayed to user" -->
+
+**Business Rules**
+<!-- Any constraints or special conditions? -->
+<!-- Example: "Maximum 5 payment methods per user" -->
+<!-- Example: "Credit card validation must occur before saving" -->
+
+**Acceptance Criteria**
+<!-- Specific, testable conditions that must be met -->
+<!-- Use Given/When/Then format or checklist format -->
+
+- [ ] Given [precondition], when [action], then [expected result]
+  - Example: "Given user has <5 saved methods, when they save a new payment method, then it appears in their payment methods list"
+- [ ] Given [precondition], when [action], then [expected result]
+  - Example: "Given user enters invalid card number, when they attempt to save, then error message displays and payment method is not saved"
+- [ ] [Testable criterion]
+  - Example: "Saved payment method can be selected during future checkout"
+
+**Priority**: [Must Have / Should Have / Could Have / Won't Have]
+
+**Dependencies**: [Other requirements or external systems this depends on]
+<!-- Example: "Depends on FR3 (User Authentication) and integration with Stripe API" -->
+
+---
 
 ### FR2: [Requirement Name]
-- **Description**:
-- **Inputs**:
-- **Outputs**:
-- **Acceptance Criteria**:
-  -
-  -
 
-<!-- Add more functional requirements as needed -->
+**Description**
+
+**User Story**
+
+**Inputs**
+
+**Outputs**
+
+**Business Rules**
+
+**Acceptance Criteria**
+- [ ]
+- [ ]
+- [ ]
+
+**Priority**:
+
+**Dependencies**:
+
+---
+
+### FR3: [Requirement Name]
+
+<!-- Repeat structure above -->
+<!-- Add as many functional requirements as needed -->
+<!-- Typical PRD has 10-30 functional requirements -->
+
+---
 
 ## Non-Functional Requirements
 
-<!-- Specify quality attributes and constraints -->
+<!-- This section specifies HOW WELL the system must perform -->
+<!-- NFRs define quality attributes: performance, security, usability, etc. -->
+<!-- Each NFR should be measurable and testable -->
 
 ### NFR1: Performance
-- [Specific performance targets]
-- [Response time requirements]
-- [Throughput requirements]
+
+<!-- How fast and responsive must the system be? -->
+
+**Response Time**
+- [Operation]: [Target response time]
+  - Example: "Page load: <2 seconds at p95 under normal load"
+- [Operation]: [Target response time]
+  - Example: "API calls: <200ms at p95"
+- [Operation]: [Target response time]
+  - Example: "Search results: <1 second for 95% of queries"
+
+**Throughput**
+- [Metric]: [Target capacity]
+  - Example: "Handle 1,000 transactions per minute sustained"
+- [Metric]: [Target capacity]
+  - Example: "Support 10,000 concurrent users"
+
+**Resource Utilization**
+- [Resource]: [Constraint or target]
+  - Example: "Database queries: <100ms average execution time"
+- [Resource]: [Constraint or target]
+  - Example: "Memory footprint: <512MB per service instance"
+
+**Testing Requirements**
+- Performance tests must simulate [load conditions]
+- Example: "Load test with 10,000 concurrent users for 1 hour"
+
+---
 
 ### NFR2: Security
-- [Security requirements]
-- [Compliance requirements]
-- [Authentication/authorization needs]
+
+<!-- How must the system protect data and prevent unauthorized access? -->
+
+**Authentication**
+- [Requirement]
+  - Example: "Support multi-factor authentication (MFA) for all users"
+- [Requirement]
+  - Example: "Session timeout after 30 minutes of inactivity"
+
+**Authorization**
+- [Requirement]
+  - Example: "Role-based access control (RBAC) with minimum of 3 roles: Admin, User, Guest"
+- [Requirement]
+  - Example: "Users can only access their own data"
+
+**Data Protection**
+- [Requirement]
+  - Example: "All sensitive data encrypted at rest using AES-256"
+- [Requirement]
+  - Example: "All data in transit encrypted using TLS 1.3"
+- [Requirement]
+  - Example: "PII must be masked in logs and error messages"
+
+**Compliance**
+- [Standard/Regulation]: [Specific requirements]
+  - Example: "GDPR: Support right to data deletion within 30 days"
+- [Standard/Regulation]: [Specific requirements]
+  - Example: "PCI-DSS: Never store full card numbers or CVV"
+
+**Security Testing**
+- [Requirement]
+  - Example: "Pass OWASP Top 10 security audit"
+- [Requirement]
+  - Example: "Penetration testing completed before launch"
+
+---
 
 ### NFR3: Reliability
-- [Uptime requirements]
-- [Error handling]
-- [Data integrity]
+
+<!-- How dependable and fault-tolerant must the system be? -->
+
+**Availability**
+- [Target uptime]
+  - Example: "99.9% uptime (SLA), measured monthly"
+  - Example: "Maximum planned downtime: 4 hours per month during maintenance windows"
+
+**Error Handling**
+- [Requirement]
+  - Example: "All API errors return appropriate HTTP status codes and user-friendly messages"
+- [Requirement]
+  - Example: "System gracefully degrades when third-party services unavailable"
+
+**Data Integrity**
+- [Requirement]
+  - Example: "Zero data loss for committed transactions"
+- [Requirement]
+  - Example: "Daily automated backups with 30-day retention"
+- [Requirement]
+  - Example: "Point-in-time recovery capability within 15 minutes"
+
+**Fault Tolerance**
+- [Requirement]
+  - Example: "System continues operating if single service instance fails"
+- [Requirement]
+  - Example: "Automatic retry with exponential backoff for transient failures"
+
+**Monitoring & Alerting**
+- [Requirement]
+  - Example: "Alert on error rate exceeding 1% within 5-minute window"
+- [Requirement]
+  - Example: "Monitor and log all critical user actions"
+
+---
 
 ### NFR4: Usability
-- [User experience requirements]
-- [Accessibility requirements]
-- [Mobile responsiveness]
+
+<!-- How easy and pleasant must the system be to use? -->
+
+**User Experience**
+- [Requirement]
+  - Example: "New users can complete primary task within 5 minutes without training"
+- [Requirement]
+  - Example: "Maximum 3 clicks to reach any major feature"
+
+**Accessibility**
+- [Standard]: [Requirements]
+  - Example: "WCAG 2.1 Level AA compliance"
+- [Requirement]
+  - Example: "Support keyboard navigation for all functionality"
+- [Requirement]
+  - Example: "Screen reader compatible"
+- [Requirement]
+  - Example: "Color contrast ratio minimum 4.5:1"
+
+**Internationalization**
+- [Requirement]
+  - Example: "Support English, Spanish, and French languages"
+- [Requirement]
+  - Example: "Display dates and currency in user's locale format"
+
+**Responsive Design**
+- [Requirement]
+  - Example: "Full functionality on mobile, tablet, and desktop"
+- [Requirement]
+  - Example: "Support minimum resolution: 320px width (mobile)"
+
+**Documentation**
+- [Requirement]
+  - Example: "In-app help tooltips for all major features"
+- [Requirement]
+  - Example: "Comprehensive user guide and FAQ"
+
+---
 
 ### NFR5: Scalability
-- [Scaling requirements]
-- [Capacity planning]
-- [Performance under load]
+
+<!-- How must the system handle growth? -->
+
+**Growth Targets**
+- [Metric]: [Current] → [Target] over [timeframe]
+  - Example: "Users: 1,000 → 100,000 over 12 months"
+- [Metric]: [Current] → [Target] over [timeframe]
+  - Example: "Data volume: 10GB → 1TB over 12 months"
+
+**Scaling Approach**
+- [Strategy]
+  - Example: "Horizontal scaling: Add service instances to handle increased load"
+- [Strategy]
+  - Example: "Database sharding: Partition data by user ID when >1M users"
+
+**Performance Under Load**
+- [Requirement]
+  - Example: "Response time degradation <20% at 2x expected peak load"
+- [Requirement]
+  - Example: "Successfully handle 3x expected peak load with additional resources"
+
+---
+
+### NFR6: Maintainability
+
+<!-- How easy must the system be to maintain and modify? -->
+
+**Code Quality**
+- [Requirement]
+  - Example: "Minimum 80% unit test coverage"
+- [Requirement]
+  - Example: "All code passes linter with zero warnings"
+
+**Documentation**
+- [Requirement]
+  - Example: "All APIs documented with OpenAPI specification"
+- [Requirement]
+  - Example: "Architecture decision records (ADRs) for major design choices"
+- [Requirement]
+  - Example: "Runbooks for common operational tasks"
+
+**Modularity**
+- [Requirement]
+  - Example: "Services loosely coupled with well-defined interfaces"
+- [Requirement]
+  - Example: "Can deploy individual services independently"
+
+---
 
 ## Constraints
 
-<!-- Be explicit about limitations and dependencies -->
+<!-- This section documents limitations we must work within -->
+<!-- Constraints shape the solution but are typically non-negotiable -->
 
-- [Technical constraints]
-- [Business constraints]
-- [Timeline constraints]
-- [Budget constraints]
-- [Integration constraints]
+### Technical Constraints
+
+- [Constraint]: [Description and implications]
+  - Example: "Must integrate with legacy CRM system using SOAP APIs (limits performance)"
+- [Constraint]: [Description and implications]
+  - Example: "Existing infrastructure runs on AWS only (limits multi-cloud options)"
+
+### Business Constraints
+
+- [Constraint]: [Description and implications]
+  - Example: "Launch must occur before Q4 holiday season (hard deadline: October 1)"
+- [Constraint]: [Description and implications]
+  - Example: "No budget for third-party services costing >$5K/month"
+
+### Regulatory Constraints
+
+- [Constraint]: [Description and implications]
+  - Example: "Must comply with GDPR and CCPA (requires specific data handling)"
+- [Constraint]: [Description and implications]
+  - Example: "Healthcare data requires HIPAA compliance (limits storage options)"
+
+### Resource Constraints
+
+- [Constraint]: [Description and implications]
+  - Example: "Development team of 3 engineers (limits scope and complexity)"
+- [Constraint]: [Description and implications]
+  - Example: "No iOS developer available (web-only initial release)"
+
+### Integration Constraints
+
+- [Constraint]: [Description and implications]
+  - Example: "Payment gateway limited to Stripe (already contracted)"
+- [Constraint]: [Description and implications]
+  - Example: "SSO must use company's existing Okta instance"
 
 ## Assumptions
 
-<!-- Document assumptions that underpin the PRD -->
+<!-- This section documents assumptions that underpin the PRD -->
+<!-- Assumptions are things we believe to be true but haven't verified -->
+<!-- If assumptions prove false, requirements may need to change -->
 
-- [Assumption about users]
-- [Assumption about technical environment]
-- [Assumption about business context]
-- [Assumption about resources]
+**User Assumptions**
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Users have reliable internet connections (mobile experience may degrade on 3G)"
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Users are comfortable with English language (no immediate localization needed)"
+
+**Technical Assumptions**
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Third-party APIs maintain 99.9% uptime (our reliability depends on this)"
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Cloud infrastructure can scale to meet demand (architecture relies on auto-scaling)"
+
+**Business Assumptions**
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Target market will pay premium pricing (revenue projections based on this)"
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Current customer demand remains stable (sizing infrastructure for current scale)"
+
+**Resource Assumptions**
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Key engineers remain available throughout project (timeline depends on specific expertise)"
+- [Assumption]: [What we're assuming and why it matters]
+  - Example: "Design resources available for 20 hours/week (UI work scheduled accordingly)"
 
 ## Out of Scope
 
-<!-- Clearly state what will NOT be included -->
+<!-- This section explicitly states what we will NOT build -->
+<!-- Being clear about exclusions prevents scope creep and manages expectations -->
+<!-- For each excluded item, briefly explain why it's out of scope -->
 
-- [Feature/capability explicitly excluded]
-- [Feature deferred to future phase]
-- [Feature out of scope]
+### Features Explicitly Excluded
+
+- **[Feature/Capability]**: [Why it's excluded]
+  - Example: "Social media integration: Not requested by users in research, defer to Phase 2"
+- **[Feature/Capability]**: [Why it's excluded]
+  - Example: "Bulk import tool: Only 5% of users need this, not worth complexity for MVP"
+- **[Feature/Capability]**: [Why it's excluded]
+  - Example: "Mobile native apps: Web-first strategy, revisit if user demand emerges"
+
+### Deferred to Future Phases
+
+- **[Feature/Capability]**: [Why it's deferred and when it might be reconsidered]
+  - Example: "Advanced analytics dashboard: Phase 2 feature after we validate core workflow"
+- **[Feature/Capability]**: [Why it's deferred and when it might be reconsidered]
+  - Example: "Multi-tenant support: Add in 6 months once single-tenant proven"
+
+### Use Cases Not Supported
+
+- **[Use Case]**: [Why it's not supported]
+  - Example: "Enterprise customers with >10,000 users: Architecture doesn't scale to this level yet"
+- **[Use Case]**: [Why it's not supported]
+  - Example: "Offline mode: Requires significant complexity, not essential for MVP"
+
+### Platforms Not Supported
+
+- [Platform]: [Why not supported]
+  - Example: "Internet Explorer 11: <2% of user base, not worth compatibility effort"
+- [Platform]: [Why not supported]
+  - Example: "Legacy Android versions (pre-10): Security and maintenance burden"
 
 EOF
 
@@ -759,97 +1488,459 @@ updated: $today
 
 # Epic Breakdown: $project_name
 
-<!-- Break down the PRD into independently deliverable epics -->
-<!-- Each epic should: -->
-<!--   - Align with one or more PRD objectives -->
-<!--   - Be completable in 2-4 sprints -->
-<!--   - Have clear scope boundaries -->
-<!--   - Provide standalone value -->
+<!-- This document decomposes the PRD into independently deliverable epics -->
+<!-- Purpose: Create a logical decomposition that enables parallel work and incremental delivery -->
+
+## Epic Decomposition Guidelines
+
+<!-- Follow these principles when defining epics: -->
+
+**What makes a good epic?**
+- **Independently deliverable**: Can be shipped and provide value on its own
+- **Right-sized**: Completable in 2-4 sprints (4-8 weeks)
+- **Clear scope**: Well-defined boundaries of what's included/excluded
+- **Aligned with objectives**: Directly supports one or more PRD objectives
+- **Testable**: Has clear success criteria from the PRD
+- **Minimal dependencies**: Reduces blocking between teams/sprints
+
+**Common decomposition strategies:**
+- By user journey (onboarding epic, checkout epic, etc.)
+- By functional area (authentication epic, payment epic, analytics epic)
+- By technical layer (frontend epic, API epic, data migration epic)
+- By user persona (admin tools epic, end-user features epic)
+
+---
 
 ## Epic 1: [Epic Name]
 
-**Objective**: [What this epic achieves]
+<!-- Use a descriptive name that captures the essence of what's being built -->
+<!-- Example: "User Authentication & Authorization" -->
+<!-- Example: "One-Click Checkout Experience" -->
 
-**Scope**:
+### Objective
+
+<!-- What does this epic achieve? What value does it provide? -->
+<!-- Connect to PRD objectives - which objective(s) does this epic support? -->
+<!-- Example: "Enable users to securely save payment methods and checkout with a single click, reducing checkout time from 3 minutes to 30 seconds (supports Objective 1: Reduce cart abandonment)" -->
+
+### Scope
+
+<!-- What specific features and capabilities are included in this epic? -->
+<!-- Be concrete and specific - these become the basis for user stories -->
+
+**Core Features**:
 - [Feature/capability 1]
+  - Example: "User can save up to 5 payment methods to their account"
 - [Feature/capability 2]
+  - Example: "User can select saved payment method during checkout"
 - [Feature/capability 3]
+  - Example: "User can set a default payment method"
 
-**Requirements Coverage**:
-- [PRD requirement covered by this epic]
-- [PRD requirement covered by this epic]
+**Supporting Features**:
+- [Feature/capability]
+  - Example: "User can edit or delete saved payment methods"
+- [Feature/capability]
+  - Example: "System validates payment methods before saving"
 
-**Success Criteria**:
-- [ ] [Measurable criterion from PRD]
-- [ ] [Measurable criterion from PRD]
+### Requirements Coverage
 
-**Dependencies**:
-- [Dependency on other epic, or "None" if foundational]
+<!-- Which specific PRD requirements does this epic address? -->
+<!-- Reference PRD requirement numbers (FR1, FR2, NFR1, etc.) -->
 
-**Estimated Effort**: [Number of sprints]
+**Functional Requirements**:
+- FR1: [Requirement name from PRD]
+  - Coverage: [Complete / Partial - specify what's included]
+- FR3: [Requirement name from PRD]
+  - Coverage: [Complete / Partial - specify what's included]
 
-**Out of Scope**:
-- [What this epic does NOT include]
+**Non-Functional Requirements**:
+- NFR2: Security
+  - Coverage: Payment data encryption, PCI compliance
+- NFR3: Reliability
+  - Coverage: Error handling for payment service failures
+
+### Success Criteria
+
+<!-- What must be true for this epic to be considered successful? -->
+<!-- Pull from PRD success criteria and launch criteria -->
+<!-- Make these specific and measurable -->
+
+**Functional Success** (Must meet all):
+- [ ] [Specific, testable criterion from PRD]
+  - Example: "User can save payment method and use it on next checkout"
+- [ ] [Specific, testable criterion from PRD]
+  - Example: "Payment method data encrypted at rest and in transit"
+- [ ] [Specific, testable criterion from PRD]
+  - Example: "System handles invalid payment data gracefully with clear error messages"
+
+**Quality Success** (Must meet all):
+- [ ] [Performance/quality target from PRD]
+  - Example: "Payment method save operation completes in <1 second"
+- [ ] [Performance/quality target from PRD]
+  - Example: "Zero stored plaintext payment data in database"
+
+**Business Success** (Measured post-launch):
+- [ ] [Business metric from PRD]
+  - Example: "30% of users save payment method on first use"
+- [ ] [Business metric from PRD]
+  - Example: "Returning users using saved payment methods checkout 60% faster"
+
+### User Stories (Optional)
+
+<!-- Breaking epics into user stories helps clarify scope -->
+<!-- Format: As a [user type], I want [capability], so that [benefit] -->
+
+1. As a [user type], I want [capability], so that [benefit]
+   - Example: "As a returning customer, I want to save my payment method, so that I don't have to re-enter it on every purchase"
+
+2. As a [user type], I want [capability], so that [benefit]
+   - Example: "As a user, I want to see only the last 4 digits of my saved card, so that my payment information stays private"
+
+### Dependencies
+
+<!-- What must exist before this epic can be completed? -->
+<!-- Are there dependencies on other epics, teams, or external systems? -->
+
+**Epic Dependencies**:
+- [Other epic]: [What's needed from that epic]
+  - Example: "Epic 2 (User Account Management): Requires user authentication to be complete"
+
+**Technical Dependencies**:
+- [System/service]: [What's needed]
+  - Example: "Stripe API integration: Account must be set up and credentials configured"
+
+**Team Dependencies**:
+- [Team/person]: [What's needed]
+  - Example: "Security team: Review and approval of encryption approach"
+
+**If no dependencies**: "None - this is a foundational epic that other work can build on"
+
+### Technical Approach (Optional)
+
+<!-- High-level technical strategy for implementing this epic -->
+<!-- This is optional but helpful for complex epics -->
+
+- [Key architectural decision or approach]
+  - Example: "Use Stripe's Token API to avoid storing raw payment data"
+- [Key architectural decision or approach]
+  - Example: "Implement encryption at application layer using AWS KMS"
+
+### Estimated Effort
+
+<!-- How long will this epic take to complete? -->
+<!-- Consider: design, implementation, testing, documentation, deployment -->
+
+**Estimate**: [Number of sprints]
+- Example: "3 sprints (6 weeks)"
+
+**Breakdown**:
+- Design & Planning: [Duration]
+  - Example: "1 sprint: UI design, API design, security review"
+- Implementation: [Duration]
+  - Example: "1.5 sprints: Frontend, backend, integration"
+- Testing & Polish: [Duration]
+  - Example: "0.5 sprints: Testing, bug fixes, documentation"
+
+**Confidence Level**: [High / Medium / Low]
+<!-- High: Clear requirements, familiar territory -->
+<!-- Medium: Some unknowns, but manageable -->
+<!-- Low: Significant unknowns, may need spike work -->
+
+### Out of Scope
+
+<!-- What is explicitly NOT included in this epic? -->
+<!-- Clarity on exclusions prevents scope creep -->
+
+- [Feature/capability explicitly excluded]
+  - Example: "Support for cryptocurrency payments (deferred to Phase 2)"
+- [Feature/capability explicitly excluded]
+  - Example: "Payment method sharing between family accounts (not in PRD)"
+- [Feature/capability explicitly excluded]
+  - Example: "Integration with non-Stripe payment processors"
+
+### Risks & Mitigations
+
+<!-- What could go wrong? How will you address it? -->
+
+**Risk 1**: [Description of risk]
+- Likelihood: [High / Medium / Low]
+- Impact: [High / Medium / Low]
+- Mitigation: [How to reduce or handle the risk]
+- Example: "Stripe API changes - Likelihood: Low, Impact: High, Mitigation: Use stable API version, monitor changelog"
+
+**Risk 2**: [Description of risk]
+- Likelihood:
+- Impact:
+- Mitigation:
+
+### Acceptance Process
+
+<!-- How will this epic be validated before closing? -->
+
+1. [Validation step]
+   - Example: "All functional and quality success criteria met"
+2. [Validation step]
+   - Example: "Product owner sign-off on user experience"
+3. [Validation step]
+   - Example: "Security review passed"
+4. [Validation step]
+   - Example: "Documentation complete and published"
 
 ---
 
 ## Epic 2: [Epic Name]
 
-**Objective**:
+<!-- Repeat the structure above for each epic -->
 
-**Scope**:
+### Objective
+
+### Scope
+
+**Core Features**:
 -
 -
 
-**Requirements Coverage**:
+**Supporting Features**:
 -
 
-**Success Criteria**:
+### Requirements Coverage
+
+**Functional Requirements**:
+- FRX:
+  - Coverage:
+
+**Non-Functional Requirements**:
+- NFRX:
+  - Coverage:
+
+### Success Criteria
+
+**Functional Success**:
 - [ ]
 
-**Dependencies**:
+**Quality Success**:
+- [ ]
+
+**Business Success**:
+- [ ]
+
+### User Stories (Optional)
+
+1. As a [user type], I want [capability], so that [benefit]
+
+### Dependencies
+
+**Epic Dependencies**:
 -
 
-**Estimated Effort**:
-
-**Out of Scope**:
+**Technical Dependencies**:
 -
+
+**Team Dependencies**:
+-
+
+### Technical Approach (Optional)
+
+-
+
+### Estimated Effort
+
+**Estimate**:
+
+**Breakdown**:
+- Design & Planning:
+- Implementation:
+- Testing & Polish:
+
+**Confidence Level**:
+
+### Out of Scope
+
+-
+
+### Risks & Mitigations
+
+**Risk 1**:
+- Likelihood:
+- Impact:
+- Mitigation:
+
+### Acceptance Process
+
+1.
+2.
 
 ---
 
-## Epic Dependencies
+## Epic 3: [Epic Name]
 
-<!-- Visualize dependencies between epics -->
+<!-- Add as many epics as needed to cover all PRD requirements -->
+<!-- Typical PRD decomposes into 3-7 epics -->
+<!-- If you have >10 epics, consider whether they're properly sized -->
+
+<!-- Repeat epic structure -->
+
+---
+
+## Epic Dependencies & Sequencing
+
+<!-- This section visualizes how epics relate and the recommended order -->
+<!-- Understanding dependencies helps with sprint planning and parallel work -->
+
+### Dependency Diagram
 
 \`\`\`
-Epic 1: [Name] (Foundational)
+Epic 1: [Name] (Foundational - no dependencies)
   │
   ├─→ Epic 2: [Name] (Depends on Epic 1)
+  │     │
+  │     └─→ Epic 4: [Name] (Depends on Epic 2)
+  │
   └─→ Epic 3: [Name] (Depends on Epic 1)
 
-Recommended Sequence:
-1. Epic 1 (Sprint 1-3)
-2. Epic 2 and Epic 3 in parallel (Sprint 4-6)
+Epic 5: [Name] (Independent - can be done in parallel)
 \`\`\`
 
-## Requirements Traceability
+### Recommended Sequence
 
-<!-- Ensure all PRD requirements are covered -->
+<!-- Provide a concrete plan for tackling epics -->
+<!-- Consider: dependencies, team capacity, business priorities, risk reduction -->
 
-| Requirement | Epic(s) | Coverage |
-|-------------|---------|----------|
-| [PRD Req] | Epic 1 | 100% |
-| [PRD Req] | Epic 2 | 100% |
-| [PRD Req] | Epic 1, Epic 3 | 100% |
+**Phase 1** (Sprints 1-3):
+- Epic 1: [Name]
+  - Rationale: [Why this comes first]
+  - Example: "Must complete foundational authentication before other features can build on it"
 
-Total Coverage: [XX]%
+**Phase 2** (Sprints 4-6):
+- Epic 2: [Name] (Depends on Epic 1)
+- Epic 3: [Name] (Depends on Epic 1) - Can run in parallel with Epic 2
+  - Rationale: [Why these are next and can be parallel]
+
+**Phase 3** (Sprints 7-9):
+- Epic 4: [Name]
+- Epic 5: [Name] - Can run in parallel with Epic 4
+  - Rationale: [Why these come last]
+
+**Critical Path**: Epic 1 → Epic 2 → Epic 4
+<!-- The critical path determines minimum timeline -->
+
+---
+
+## Requirements Traceability Matrix
+
+<!-- This ensures 100% coverage of PRD requirements across epics -->
+<!-- Every requirement from the PRD must map to at least one epic -->
+
+### Functional Requirements Coverage
+
+| Requirement | Epic(s) | Coverage | Notes |
+|-------------|---------|----------|-------|
+| FR1: [Name] | Epic 1 | 100% | Fully covered |
+| FR2: [Name] | Epic 1, Epic 2 | 100% | Split across two epics |
+| FR3: [Name] | Epic 3 | 100% | |
+| FR4: [Name] | Epic 2 | 50% | Partial: MVP only, full implementation in Phase 2 |
+
+<!-- Add rows for all functional requirements from PRD -->
+
+### Non-Functional Requirements Coverage
+
+| Requirement | Epic(s) | Coverage | Notes |
+|-------------|---------|----------|-------|
+| NFR1: Performance | All Epics | 100% | Each epic includes performance testing |
+| NFR2: Security | Epic 1, Epic 2 | 100% | Auth & data protection |
+| NFR3: Reliability | All Epics | 100% | Error handling in each epic |
+| NFR4: Usability | Epic 3, Epic 4 | 100% | |
+| NFR5: Scalability | Epic 5 | 100% | Dedicated infrastructure epic |
+
+<!-- Add rows for all non-functional requirements from PRD -->
+
+### Coverage Summary
+
+- **Total Functional Requirements**: [Count from PRD]
+- **Requirements Fully Covered**: [Count]
+- **Requirements Partially Covered**: [Count] - [Explain which and why]
+- **Requirements Not Covered**: [Count] - [Explain which and why]
+- **Overall Coverage**: [Percentage]
+
+**Target**: 100% coverage of all "Must Have" requirements
+
+---
+
+## Sprint Planning Guidance
+
+<!-- This section helps transition from epics to sprint execution -->
+
+### Estimated Timeline
+
+- **Total Epics**: [Count]
+- **Estimated Duration**: [Total sprints needed]
+  - Example: "5 epics, 12 sprints (24 weeks)"
+- **Target Completion**: [Date based on sprint cadence]
+
+### Team Capacity Assumptions
+
+<!-- What assumptions about team capacity went into estimates? -->
+
+- **Team Size**: [Number of engineers]
+- **Sprint Length**: [Weeks per sprint]
+- **Velocity**: [Story points or similar per sprint]
+- **Availability**: [Any known constraints]
+  - Example: "Assumes full team availability, accounts for holidays"
+
+### Prerequisites for Sprint Planning
+
+<!-- What needs to happen before we can start sprinting? -->
+
+- [ ] All epics reviewed and approved by stakeholders
+- [ ] Dependencies identified and coordinated
+- [ ] Team capacity confirmed
+- [ ] Technical approach validated for high-risk epics
+- [ ] [Other prerequisites]
+
+---
 
 ## Next Steps
 
-1. Review epic breakdown with stakeholders
-2. Refine epic boundaries and dependencies
-3. Use spec-authoring skill to create detailed specs for each epic
-4. Transition to sprint planning once specs are approved
+<!-- Clear actions to move from epic breakdown to execution -->
+
+### Immediate Actions
+
+1. **Review with Stakeholders**
+   - Schedule: [When]
+   - Attendees: [Who needs to review]
+   - Goal: [What you're seeking approval for]
+   - Example: "Present epic breakdown to product leadership on [date] for approval"
+
+2. **Refine Epic Boundaries**
+   - Identify any overlaps or gaps between epics
+   - Ensure each epic is independently deliverable
+   - Validate effort estimates with engineering team
+
+3. **Begin Spec Authoring**
+   - Use SynthesisFlow spec-authoring skill to create detailed specs
+   - Start with Epic 1 (foundational/highest priority)
+   - Create one spec per epic or per major user story
+
+4. **Coordinate Dependencies**
+   - [Action for specific dependency]
+   - Example: "Schedule kickoff with security team for Epic 1 review"
+   - [Action for specific dependency]
+
+### Transition to Execution
+
+**Once epics are approved:**
+
+1. Use **spec-authoring** skill to write detailed specifications for Epic 1
+2. Use **sprint-planner** skill to decompose specs into GitHub issues
+3. Begin Sprint 1 execution using **issue-executor** skill
+4. After each epic completion, use **change-integrator** skill to update documentation
+
+**Success Criteria for This Document**:
+- [ ] All PRD requirements mapped to epics (100% coverage)
+- [ ] Epic dependencies clearly identified and sequenced
+- [ ] Effort estimates reviewed by engineering team
+- [ ] Stakeholder approval obtained
+- [ ] Ready to begin spec authoring for Epic 1
 
 EOF
 
