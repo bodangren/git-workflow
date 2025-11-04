@@ -1535,6 +1535,581 @@ bash scripts/prd-authoring.sh status
 
 ---
 
+## Examples
+
+Comprehensive examples are available in the `skills/prd-authoring/examples/` directory:
+
+### Payment Gateway Integration Example
+
+A complete, realistic example project showing the full PRD authoring workflow:
+
+**Project Overview**:
+- Problem: 45% cart abandonment due to manual invoice processing
+- Solution: Integrate Stripe for real-time online payment processing
+- Value: Recover $1.8M in lost revenue, save $100K in operational costs
+- Timeline: 6 months to launch (Q2 2026)
+
+**Example Files**:
+
+1. **Product Brief** (`01-product-brief-example.md`)
+   - Clear problem statement with quantified business impact
+   - Well-defined user personas (Online Shopper Sarah, Sales Rep Mike)
+   - Specific value propositions: 60s checkout vs 24-48h manual process
+   - Measurable success metrics: 55% → 75% conversion rate
+
+2. **Research Document** (`02-research-example.md`)
+   - Competitive analysis: Stripe, PayPal/Braintree, Square
+   - Market insights: $154B digital payment market, 14.2% CAGR
+   - User feedback: 70% cite checkout complexity as pain point
+   - Technical considerations: PCI compliance, fraud detection, APIs
+   - Recommendation: Use Stripe for best developer experience
+
+3. **PRD - Abbreviated** (`03-prd-example-abbreviated.md`)
+   - 3 SMART primary objectives with measurable targets
+   - Launch criteria: 100 test transactions, <3s processing, PCI compliance
+   - 5 functional requirements (FR1-FR5) with full acceptance criteria
+   - 4 non-functional requirements: Performance, Security, Reliability, Usability
+   - Constraints, assumptions, and explicit out-of-scope items
+
+4. **Workflow Test Log** (`workflow-test-log.md`)
+   - Complete happy path: status → brief → research → PRD → validate → decompose → generate-spec
+   - 10 edge cases tested: missing files, duplicates, invalid input, error handling
+   - Validation quality tests: vague language, unmeasurable criteria, missing sections
+   - All tests passed with proper error handling
+
+**Key Patterns Demonstrated**:
+
+**Problem Statement Format**:
+```
+What problem + Who experiences + Frequency + Business impact
+
+Example: "Our e-commerce platform lacks payment processing, forcing
+customers through manual invoices. This affects 100% of transactions
+(1,000/month), causing 45% cart abandonment and $2.4M lost revenue annually."
+```
+
+**Success Metric Format**:
+```
+Metric name: Baseline → Target within Timeframe
+
+Example: "Checkout conversion rate: 55% → 75% within 30 days post-launch"
+```
+
+**Functional Requirement Structure**:
+- Description: What the system must do
+- User Story: As a [user], I want [capability], so that [benefit]
+- Inputs: What triggers this functionality
+- Outputs: What results or changes occur
+- Business Rules: Constraints or special conditions
+- Acceptance Criteria: Specific, testable conditions (Given/When/Then)
+- Priority: Must Have / Should Have / Could Have
+- Dependencies: Other requirements or systems
+
+**Example Functional Requirement**:
+```markdown
+### FR1: Credit/Debit Card Payment Processing
+
+**Description**: Process credit and debit card payments securely in real-time
+
+**User Story**: As an online shopper, I want to pay with my credit/debit card
+directly on the checkout page, so that I can complete my purchase immediately
+
+**Inputs**: Card number, expiration, CVV, billing address, purchase amount
+
+**Outputs**: Payment confirmation, transaction ID, order receipt via email
+
+**Business Rules**:
+- Accept Visa, Mastercard, Amex, Discover
+- Require CVV for all transactions
+- Maximum transaction: $10,000
+
+**Acceptance Criteria**:
+- [ ] Given valid card, when submitted, then processes in <3 seconds
+- [ ] Given invalid card, when submitted, then clear error message displays
+- [ ] Given successful payment, when completes, then email sent within 30 seconds
+
+**Priority**: Must Have
+
+**Dependencies**: Stripe API integration, email service
+```
+
+**Running the Example Workflow**:
+
+```bash
+# Set up test environment
+mkdir -p /tmp/test-prd && cd /tmp/test-prd
+mkdir -p docs/prds
+
+# Step 1: Check status (no projects yet)
+bash /path/to/prd-authoring.sh status
+
+# Step 2: Create product brief
+bash /path/to/prd-authoring.sh brief "Payment Gateway Integration"
+# Edit docs/prds/payment-gateway-integration/product-brief.md
+
+# Step 3: Verify brief completeness
+bash /path/to/prd-authoring.sh status payment-gateway-integration
+
+# Step 4: Create research document
+bash /path/to/prd-authoring.sh research payment-gateway-integration
+# Edit docs/prds/payment-gateway-integration/research.md
+
+# Step 5: Create PRD
+bash /path/to/prd-authoring.sh create-prd payment-gateway-integration
+# Edit docs/prds/payment-gateway-integration/prd.md
+
+# Step 6: Validate PRD (lenient mode for drafts)
+bash /path/to/prd-authoring.sh validate-prd payment-gateway-integration --lenient
+
+# Step 7: Validate PRD (strict mode when complete)
+bash /path/to/prd-authoring.sh validate-prd payment-gateway-integration
+
+# Step 8: Decompose into epics
+bash /path/to/prd-authoring.sh decompose payment-gateway-integration
+# Edit docs/prds/payment-gateway-integration/epics.md
+
+# Step 9: Generate spec proposal for first epic
+bash /path/to/prd-authoring.sh generate-spec payment-gateway-integration "Payment Processing Core"
+# Edit files in docs/changes/payment-processing-core/
+```
+
+**Expected Timeline for Example Project**:
+- Product brief: 2-4 hours (stakeholder interviews + writing)
+- Research: 4-8 hours (competitive analysis + market research)
+- PRD creation: 8-16 hours (requirements definition + validation)
+- Epic decomposition: 4-8 hours (breaking into deliverable units)
+- Total: 18-36 hours of upfront planning before any code is written
+
+**ROI of Planning**:
+- Upfront time: ~1 week of planning work
+- Prevents: Weeks of rework from misalignment or unclear requirements
+- Enables: Parallel development, clear sprint planning, stakeholder buy-in
+- Result: Faster delivery with less rework and higher quality outcomes
+
+For complete examples with full content, see the `examples/` directory.
+
+---
+
+## Troubleshooting
+
+### Common Errors and Solutions
+
+#### Error: "docs/prds/ directory does not exist"
+
+**Symptom**: Any command fails with this error
+
+**Cause**: Project not initialized with SynthesisFlow structure
+
+**Solution**:
+```bash
+# Create directory structure manually
+mkdir -p docs/prds
+
+# OR use project-init skill to create full SynthesisFlow structure
+# (if available)
+```
+
+**Prevention**: Always run from project root, ensure docs/ directory exists
+
+---
+
+#### Error: "Product brief already exists"
+
+**Symptom**: `brief` command fails when trying to create new brief
+
+**Cause**: Project directory and brief file already exist
+
+**Solution**:
+```bash
+# Option 1: Use different project name
+bash scripts/prd-authoring.sh brief "Payment Gateway V2"
+
+# Option 2: Edit existing brief
+vim docs/prds/payment-gateway-integration/product-brief.md
+
+# Option 3: Delete and recreate (CAUTION: loses work)
+rm -rf docs/prds/payment-gateway-integration
+bash scripts/prd-authoring.sh brief "Payment Gateway Integration"
+```
+
+**Prevention**: Run `status` command first to check what exists
+
+---
+
+#### Error: "Project directory does not exist. Run 'brief' command first"
+
+**Symptom**: `research`, `create-prd`, or other commands fail
+
+**Cause**: Trying to run commands before creating product brief
+
+**Solution**:
+```bash
+# Follow proper workflow order
+bash scripts/prd-authoring.sh brief "Project Name"  # Step 1
+bash scripts/prd-authoring.sh research project-name # Step 2
+bash scripts/prd-authoring.sh create-prd project-name # Step 3
+```
+
+**Prevention**: Always run `status` command to see what step you're on
+
+---
+
+#### Warning: "Research document not found. PRD quality may be reduced"
+
+**Symptom**: When running `create-prd`, prompted to continue without research
+
+**Cause**: Skipping research step before creating PRD
+
+**Solution**:
+```bash
+# Recommended: Cancel and create research first
+# Press 'n' when prompted
+
+# Create research
+bash scripts/prd-authoring.sh research project-name
+# Edit research.md
+
+# Then create PRD
+bash scripts/prd-authoring.sh create-prd project-name
+```
+
+**When to skip**: Very small projects or internal tools where competitive landscape doesn't matter
+
+**Risk**: PRD may lack data-driven insights, miss competitive features, or make invalid assumptions
+
+---
+
+#### Validation Error: "Vague language detected"
+
+**Symptom**: `validate-prd` reports vague terms like "should", "might", "probably", "good", "fast"
+
+**Cause**: Requirements or success criteria are not specific enough
+
+**Solution**:
+Replace vague language with specific, measurable terms:
+
+| Vague | Specific |
+|-------|----------|
+| "fast performance" | "response time <200ms at 95th percentile" |
+| "good user experience" | "task completion rate >85% without help" |
+| "should support many users" | "must support 10,000 concurrent users" |
+| "might improve conversion" | "target 25% increase in conversion rate" |
+| "better security" | "zero critical vulnerabilities in security audit" |
+
+**Example Fix**:
+```markdown
+# Before (vague)
+The system should provide fast payment processing with good security.
+
+# After (specific)
+The system must process payments in under 3 seconds at 95th percentile
+with PCI DSS Level 1 compliance and zero critical security vulnerabilities.
+```
+
+---
+
+#### Validation Error: "Success criteria may lack measurable targets"
+
+**Symptom**: `validate-prd` warns that success criteria are not measurable
+
+**Cause**: Success criteria use qualitative language without numeric targets
+
+**Solution**:
+Add specific numbers, percentages, or metrics to each success criterion:
+
+```markdown
+# Before (unmeasurable)
+- Improve customer satisfaction
+- Reduce checkout time
+- Increase conversion rates
+
+# After (measurable)
+- Customer satisfaction: NPS score 35 → 55 within 3 months
+- Checkout time: Reduce from 180 seconds to 45 seconds (90th percentile)
+- Conversion rate: Increase from 55% to 75% within 30 days post-launch
+```
+
+**Format**: `[Metric name]: [Baseline] → [Target] within [Timeframe]`
+
+---
+
+#### Validation Error: "Some functional requirements may lack acceptance criteria"
+
+**Symptom**: Validation reports missing acceptance criteria for requirements
+
+**Cause**: Requirements defined without testable acceptance criteria
+
+**Solution**:
+Add specific, testable acceptance criteria in Given/When/Then format:
+
+```markdown
+### FR1: Payment Processing
+
+**Acceptance Criteria**:
+- [ ] Given valid card details, when customer submits payment,
+      then transaction processes in <3 seconds
+- [ ] Given invalid card number, when customer submits,
+      then error message displays and payment is not processed
+- [ ] Given successful payment, when transaction completes,
+      then confirmation email sent within 30 seconds
+- [ ] Given network timeout, when Stripe API fails,
+      then system retries 3 times before showing error
+```
+
+**Rule of thumb**: 3-5 acceptance criteria per functional requirement
+
+---
+
+#### Error: "Epics document already exists"
+
+**Symptom**: `decompose` command fails
+
+**Cause**: Epic decomposition already created for this project
+
+**Solution**:
+```bash
+# Option 1: Edit existing epics document
+vim docs/prds/project-name/epics.md
+
+# Option 2: Delete and regenerate (CAUTION: loses work)
+rm docs/prds/project-name/epics.md
+bash scripts/prd-authoring.sh decompose project-name
+
+# Option 3: Create new version
+bash scripts/prd-authoring.sh decompose project-name-v2
+```
+
+---
+
+#### Error: "Spec proposal directory already exists"
+
+**Symptom**: `generate-spec` command fails
+
+**Cause**: Spec proposal already generated for this epic
+
+**Solution**:
+```bash
+# Option 1: Edit existing spec proposal
+vim docs/changes/epic-name/proposal.md
+
+# Option 2: Use different epic name
+bash scripts/prd-authoring.sh generate-spec project-name "Epic Name V2"
+
+# Option 3: Delete and regenerate (CAUTION: loses work)
+rm -rf docs/changes/epic-name
+bash scripts/prd-authoring.sh generate-spec project-name "Epic Name"
+```
+
+---
+
+### Quality Issues
+
+#### Issue: PRD validation passes but requirements are still unclear
+
+**Symptom**: Validation says "GOOD" but team still doesn't understand what to build
+
+**Cause**: Validation catches patterns but can't ensure complete clarity
+
+**Solution**:
+1. Review each requirement with stakeholders
+2. Ask: "How would we test this?" and "What does 'done' look like?"
+3. Add concrete examples to requirements
+4. Create mock-ups or wireframes for UI requirements
+5. Write example API requests/responses for backend requirements
+
+**Prevention**: Use peer review - have another team member read the PRD
+
+---
+
+#### Issue: Epic dependencies are complex and create bottlenecks
+
+**Symptom**: Many epics depend on each other, limiting parallel work
+
+**Cause**: PRD scope may be too ambitious or epics not properly sized
+
+**Solution**:
+1. Consider phasing: MVP with fewer dependencies first, enhancements later
+2. Refactor epic boundaries to reduce coupling
+3. Document dependencies explicitly and plan sprint sequence accordingly
+4. Accept some coupling is normal (just make it visible)
+
+**Example refactoring**:
+```markdown
+# Before (high coupling)
+Epic 1: Full payment system
+Epic 2: Full CRM integration
+Epic 3: Full accounting integration
+
+# After (reduced coupling)
+Epic 1: Basic payment processing (foundation, no dependencies)
+Epic 2: Payment methods & saved cards (depends on Epic 1)
+Epic 3: CRM integration (depends on Epic 1, can parallelize with Epic 2)
+Epic 4: Accounting integration (depends on Epic 1, can parallelize with Epic 2-3)
+```
+
+---
+
+#### Issue: Stakeholders disagree on objectives during PRD review
+
+**Symptom**: PRD review meeting reveals conflicting goals among stakeholders
+
+**Cause**: PRD authoring surfaced alignment issues early (this is actually good!)
+
+**Solution**:
+1. Document all perspectives in PRD
+2. Escalate to decision-maker for prioritization
+3. Update PRD to reflect final decision with rationale
+4. Add assumptions section documenting deferred concerns
+
+**This is a feature, not a bug**: Better to discover misalignment during planning than during development
+
+**Example documentation**:
+```markdown
+## Decision Log
+
+**Decision**: Prioritize B2C checkout experience over B2B invoice workflow
+
+**Rationale**: 80% of revenue from B2C, B2B customers can continue with
+manual invoices short-term. B2C automation has higher ROI ($1.8M vs $400K).
+
+**Stakeholder Positions**:
+- Sales Team: Wanted B2B priority (their main workflow)
+- Product: Recommended B2C (higher revenue impact)
+- Final Decision (CEO): B2C for MVP, B2B in Phase 2
+
+**Assumptions**: B2B customers tolerate manual invoices for 6 more months
+```
+
+---
+
+#### Issue: Research is taking too long and delaying project start
+
+**Symptom**: Week 3 of research and still gathering data
+
+**Cause**: Analysis paralysis, trying to achieve perfect information
+
+**Solution**:
+1. Time-box research: 4-8 hours maximum
+2. Focus on questions that impact requirements (not interesting tangents)
+3. Use 80/20 rule: Get 80% of insights from 20% of research
+4. Document confidence levels and assumptions
+5. Perfect information is impossible - make best decision with available data
+
+**Time-boxing template**:
+```markdown
+## Research Time Budget (8 hours total)
+
+- Competitive analysis (3 hours): Review 3-5 competitors
+- Market research (2 hours): Size, trends, growth rate
+- User feedback (2 hours): Review existing support tickets, user interviews
+- Technical research (1 hour): Industry standards, compliance requirements
+
+## Out of Scope for This Research:
+- Deep dive into every competitor feature
+- Primary user research (use existing data)
+- Building prototypes
+- Financial modeling beyond high-level ROI
+```
+
+---
+
+#### Issue: PRD keeps changing during validation iterations
+
+**Symptom**: After 5+ rounds of validation, still making changes
+
+**Cause**: Unclear initial vision or excessive perfectionism
+
+**Solution**:
+1. Accept that PRDs iterate - 2-3 validation cycles is normal
+2. After 3 cycles, lock the PRD and proceed
+3. Future changes can be versioned (create prd-v2.md if needed)
+4. Use lenient mode for draft validation, strict mode for final pass
+
+**Locking criteria**:
+- All required sections present
+- Zero critical validation errors
+- Stakeholders have reviewed and approved
+- Team understands what to build
+
+**Version control**:
+```bash
+# Lock v1
+mv docs/prds/project/prd.md docs/prds/project/prd-v1.md
+
+# Create v2 for major changes
+bash scripts/prd-authoring.sh create-prd project-v2
+
+# OR: Make incremental updates with changelog
+# Add "## Changelog" section to PRD documenting changes
+```
+
+---
+
+### Integration Issues
+
+#### Issue: Unclear how to transition from PRD to spec-authoring
+
+**Symptom**: PRD complete but don't know what to do next
+
+**Solution**:
+Follow the epic → spec transition workflow:
+
+```bash
+# 1. Ensure PRD decomposed into epics
+bash scripts/prd-authoring.sh decompose project-name
+
+# 2. Review and populate epics.md with requirements breakdown
+
+# 3. Generate spec proposal for first epic
+bash scripts/prd-authoring.sh generate-spec project-name "Epic 1 Name"
+
+# 4. Populate the spec proposal files:
+#    - proposal.md: Epic scope and objectives
+#    - spec-delta.md: Technical requirements and design
+#    - tasks.md: Implementation breakdown
+
+# 5. Transition to spec-authoring workflow
+#    Use spec-authoring skill to create Spec PR from proposal
+```
+
+**Traceability chain**:
+```
+Business Goal
+  → PRD Objective
+    → Epic
+      → Spec Proposal
+        → Spec PR
+          → GitHub Issues
+            → Code Implementation
+```
+
+---
+
+#### Issue: Multiple people working on same PRD causing conflicts
+
+**Symptom**: Git merge conflicts in PRD files
+
+**Solution**:
+1. Designate one PRD author (typically Product Manager or Tech Lead)
+2. Use comments/suggestions for collaboration instead of direct edits
+3. Hold review meetings to discuss changes instead of simultaneous editing
+4. Use git branches for major structural changes
+
+**Workflow**:
+```bash
+# Author makes changes
+git checkout -b prd-update-objectives
+# Edit PRD
+git commit -m "Update objectives based on stakeholder feedback"
+git push
+
+# Reviewers comment on GitHub PR
+# Author incorporates feedback
+# Merge when approved
+```
+
+---
+
 ## Notes
 
 - **PRDs are strategic documents**: They define WHAT and WHY, not HOW
