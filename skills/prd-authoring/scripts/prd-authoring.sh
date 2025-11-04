@@ -1954,6 +1954,591 @@ EOF
     echo "5. Transition to spec-authoring workflow for each epic"
 }
 
+# --- GENERATE-SPEC COMMAND ---
+
+function generate-spec() {
+    local project_name=$1
+    local epic_name=$2
+
+    if [ -z "$project_name" ] || [ -z "$epic_name" ]; then
+        echo "Error: Project name and epic name required for 'generate-spec' command." >&2
+        echo "Usage: $0 generate-spec <project-name> <epic-name>" >&2
+        exit 1
+    fi
+
+    check_prd_directory
+    check_project_exists "$project_name"
+
+    local project_dir="docs/prds/$project_name"
+    local prd_file="$project_dir/prd.md"
+    local epics_file="$project_dir/epics.md"
+
+    # Validate PRD and epics exist
+    if ! check_file_exists "$prd_file" "PRD"; then
+        echo "Run 'create-prd' command first to create the PRD." >&2
+        exit 1
+    fi
+
+    if ! check_file_exists "$epics_file" "Epic decomposition"; then
+        echo "Run 'decompose' command first to create epic decomposition." >&2
+        exit 1
+    fi
+
+    # Normalize epic name to kebab-case
+    local epic_dir_name=$(to_kebab_case "$epic_name")
+    local changes_dir="docs/changes/$epic_dir_name"
+
+    echo "Generating spec proposal for epic: $epic_name"
+
+    # Check if changes directory exists
+    if [ ! -d "docs/changes" ]; then
+        echo "Creating docs/changes directory..."
+        mkdir -p "docs/changes"
+    fi
+
+    # Check if spec proposal already exists
+    if [ -d "$changes_dir" ]; then
+        echo "Error: Spec proposal directory '$changes_dir' already exists." >&2
+        echo "Either use a different epic name or delete the existing directory." >&2
+        exit 1
+    fi
+
+    # Create changes directory
+    mkdir -p "$changes_dir"
+
+    local today=$(get_date)
+
+    # Extract epic information from epics.md
+    # This is a simplified extraction - looks for the epic by searching for the epic name in headers
+    local epic_found=0
+
+    # Try to find the epic section in epics.md
+    # We'll look for patterns like "## Epic N: <epic-name>" or just the epic name in headers
+    if grep -qi "^## .*$epic_name" "$epics_file"; then
+        epic_found=1
+        echo "Found epic '$epic_name' in $epics_file"
+    else
+        echo "Warning: Could not find epic '$epic_name' in $epics_file" >&2
+        echo "Generating generic spec proposal template. Please populate manually." >&2
+    fi
+
+    # Generate proposal.md
+    cat > "$changes_dir/proposal.md" << EOF
+---
+title: $epic_name
+type: spec-proposal
+status: draft
+prd: docs/prds/$project_name/prd.md
+epic: $epic_name
+created: $today
+updated: $today
+---
+
+# Proposal: $epic_name
+
+## Problem Statement
+
+<!-- Extract from PRD and epic scope -->
+<!-- What specific problem does this epic solve? -->
+<!-- Reference the PRD objectives this epic supports -->
+
+## Proposed Solution
+
+<!-- High-level overview of what will be built -->
+<!-- Based on the epic scope and requirements coverage -->
+
+## Benefits
+
+<!-- User benefits and business value -->
+<!-- Connect to PRD success criteria -->
+
+- **User Impact**: [How this improves user experience]
+- **Business Value**: [How this supports business objectives]
+- **Technical Impact**: [How this improves system architecture/quality]
+
+## Success Criteria
+
+<!-- Pull from epic success criteria in epics.md -->
+<!-- Must be specific, measurable, and testable -->
+
+**Functional Success**:
+- [ ] [Criterion from epic]
+- [ ] [Criterion from epic]
+
+**Quality Success**:
+- [ ] [Performance/quality target]
+- [ ] [Security/reliability requirement]
+
+**Business Success** (Measured post-launch):
+- [ ] [Business metric target]
+
+## Scope
+
+**In Scope**:
+<!-- Core features from epic scope -->
+- [Feature/capability 1]
+- [Feature/capability 2]
+- [Feature/capability 3]
+
+**Out of Scope**:
+<!-- Explicitly excluded from this epic -->
+- [Excluded feature/capability]
+- [Deferred to future phase]
+
+## Dependencies
+
+<!-- From epic dependencies section -->
+
+**Epic Dependencies**:
+- [Other epic or requirement]
+
+**Technical Dependencies**:
+- [System/service/API requirement]
+
+**Team Dependencies**:
+- [Required reviews or approvals]
+
+## Risks
+
+<!-- From epic risks & mitigations section -->
+
+**Risk 1**: [Description]
+- Likelihood: [High/Medium/Low]
+- Impact: [High/Medium/Low]
+- Mitigation: [Strategy]
+
+## Traceability
+
+**PRD Reference**: docs/prds/$project_name/prd.md
+
+**Requirements Coverage**:
+<!-- List specific PRD requirements this epic addresses -->
+- FR[N]: [Requirement name]
+- NFR[N]: [Non-functional requirement]
+
+**Success Metrics Mapping**:
+<!-- Map to PRD success criteria -->
+- [PRD metric]: [How this epic contributes]
+
+EOF
+
+    # Generate spec-delta.md
+    cat > "$changes_dir/spec-delta.md" << EOF
+---
+title: $epic_name Specification
+type: spec-delta
+status: draft
+prd: docs/prds/$project_name/prd.md
+epic: $epic_name
+created: $today
+updated: $today
+---
+
+# Spec Delta: $epic_name
+
+## Overview
+
+<!-- High-level description of what this spec defines -->
+<!-- Based on epic objective and scope -->
+
+This specification defines the implementation requirements for the "$epic_name" epic from the $project_name PRD.
+
+## Requirements
+
+### Functional Requirements
+
+<!-- Extract from PRD functional requirements that this epic covers -->
+<!-- Each requirement from the epic's "Requirements Coverage" section should be detailed here -->
+
+#### FR1: [Requirement Name]
+- **Description**: [What this functionality does]
+- **Inputs**: [What data or actions trigger this]
+- **Outputs**: [What results or changes occur]
+- **Business Rules**: [Constraints or special conditions]
+- **Acceptance Criteria**:
+  - [ ] [Specific, testable criterion]
+  - [ ] [Specific, testable criterion]
+  - [ ] [Specific, testable criterion]
+- **Priority**: [Must Have / Should Have / Could Have]
+- **PRD Reference**: FR[N] in docs/prds/$project_name/prd.md
+
+#### FR2: [Requirement Name]
+- **Description**:
+- **Inputs**:
+- **Outputs**:
+- **Business Rules**:
+- **Acceptance Criteria**:
+  - [ ]
+  - [ ]
+- **Priority**:
+- **PRD Reference**:
+
+### Non-Functional Requirements
+
+<!-- Extract from PRD non-functional requirements relevant to this epic -->
+
+#### NFR1: Performance
+- [Performance target from PRD]
+- [Measurement method]
+- **PRD Reference**: NFR[N] in docs/prds/$project_name/prd.md
+
+#### NFR2: Security
+- [Security requirement from PRD]
+- [Compliance requirement]
+- **PRD Reference**: NFR[N] in docs/prds/$project_name/prd.md
+
+#### NFR3: Reliability
+- [Reliability requirement from PRD]
+- [Error handling requirement]
+- **PRD Reference**: NFR[N] in docs/prds/$project_name/prd.md
+
+#### NFR4: Usability
+- [Usability requirement from PRD]
+- [User experience requirement]
+- **PRD Reference**: NFR[N] in docs/prds/$project_name/prd.md
+
+## Design Decisions
+
+<!-- Document key architectural and design choices -->
+
+### DD1: [Decision Name]
+**Decision**: [What was decided]
+
+**Rationale**:
+- [Reason for this approach]
+- [How it supports epic objectives]
+
+**Alternatives Considered**:
+- [Alternative approach]: [Why rejected]
+
+**Impact**: [Effect on system architecture or user experience]
+
+### DD2: [Decision Name]
+**Decision**:
+
+**Rationale**:
+-
+
+**Alternatives Considered**:
+-
+
+**Impact**:
+
+## Implementation Approach
+
+<!-- High-level technical approach -->
+<!-- Based on "Technical Approach" section from epic if present -->
+
+### Architecture
+
+[Describe component architecture, data flow, integration points]
+
+### Components
+
+**Component 1**: [Name/Purpose]
+- Responsibilities: [What it does]
+- Interfaces: [APIs or contracts]
+- Dependencies: [What it depends on]
+
+**Component 2**: [Name/Purpose]
+- Responsibilities:
+- Interfaces:
+- Dependencies:
+
+### Data Model
+
+<!-- If applicable, describe data structures, database schema changes, API contracts -->
+
+### Integration Points
+
+<!-- External systems, APIs, services this integrates with -->
+
+- [System/Service]: [Integration type and purpose]
+
+## Testing Strategy
+
+<!-- How this will be validated -->
+
+### Unit Testing
+- [What will be unit tested]
+- Target coverage: [Percentage]
+
+### Integration Testing
+- [What integration scenarios to test]
+- [Key workflows to validate]
+
+### End-to-End Testing
+- [User workflows to test]
+- [Success criteria validation]
+
+### Performance Testing
+- [Performance benchmarks to validate]
+- [Load testing approach]
+
+## Migration Path
+
+<!-- If applicable, how existing systems/data will be migrated -->
+
+### For New Installations
+[Approach for greenfield deployments]
+
+### For Existing Systems
+[Upgrade path, data migration, backward compatibility]
+
+## Dependencies
+
+<!-- Detailed dependency information -->
+
+### Upstream Dependencies
+<!-- What must exist before this can be implemented -->
+- [Dependency]: [What's required and why]
+
+### Downstream Impact
+<!-- What will be affected by this implementation -->
+- [Affected system/component]: [Nature of impact]
+
+## Success Metrics
+
+<!-- Specific metrics for this epic -->
+<!-- Derived from epic success criteria and PRD metrics -->
+
+### Launch Criteria
+- [ ] [Specific launch requirement]
+- [ ] [Specific launch requirement]
+
+### Post-Launch Metrics
+- **[Metric name]**: [Baseline] → [Target] within [timeframe]
+- **[Metric name]**: [Baseline] → [Target] within [timeframe]
+
+## Risks and Mitigations
+
+<!-- From epic risks section -->
+
+### Technical Risks
+- **Risk**: [Description]
+  - Likelihood: [High/Medium/Low]
+  - Impact: [High/Medium/Low]
+  - Mitigation: [Strategy]
+  - Contingency: [Fallback plan]
+
+### Schedule Risks
+- **Risk**: [Description]
+  - Mitigation: [Strategy]
+
+## Traceability Matrix
+
+<!-- Map spec requirements back to PRD -->
+
+| Spec Requirement | PRD Requirement | Epic Section | Coverage |
+|------------------|-----------------|--------------|----------|
+| FR1 | FR[N] | [Section] | Complete |
+| FR2 | FR[N] | [Section] | Partial |
+| NFR1 | NFR[N] | [Section] | Complete |
+
+**Coverage Summary**:
+- Total PRD requirements in epic: [Count]
+- Requirements addressed in spec: [Count]
+- Coverage percentage: [Percentage]
+
+EOF
+
+    # Generate tasks.md
+    cat > "$changes_dir/tasks.md" << EOF
+---
+title: $epic_name Tasks
+type: task-breakdown
+status: draft
+prd: docs/prds/$project_name/prd.md
+epic: $epic_name
+created: $today
+updated: $today
+---
+
+# Tasks: $epic_name
+
+<!-- This task breakdown will be refined during sprint planning -->
+<!-- Use epic "User Stories" section and requirements to identify tasks -->
+
+## Overview
+
+**Epic**: $epic_name
+**PRD**: docs/prds/$project_name/prd.md
+**Estimated Effort**: [From epic] sprints ([N] weeks)
+
+## Task Breakdown
+
+<!-- Break epic into implementable tasks -->
+<!-- Each task should be completable in a few hours to a few days -->
+<!-- Tasks should align with spec requirements -->
+
+---
+
+## Task 1: [Task Name]
+
+<!-- Foundation or setup task -->
+
+**Description**: [What needs to be done]
+
+**Subtasks**:
+- [ ] [Specific subtask]
+- [ ] [Specific subtask]
+- [ ] [Specific subtask]
+
+**Acceptance Criteria**:
+- [Specific, testable criterion]
+- [Specific, testable criterion]
+
+**Dependencies**:
+- [What must be complete first]
+
+**Estimated Effort**: [Hours or days]
+
+**Related Requirements**: FR[N], NFR[N]
+
+---
+
+## Task 2: [Task Name]
+
+<!-- Core implementation task -->
+
+**Description**:
+
+**Subtasks**:
+- [ ]
+- [ ]
+- [ ]
+
+**Acceptance Criteria**:
+-
+-
+
+**Dependencies**:
+- Task 1
+
+**Estimated Effort**:
+
+**Related Requirements**:
+
+---
+
+## Task 3: [Task Name]
+
+<!-- Testing or integration task -->
+
+**Description**:
+
+**Subtasks**:
+- [ ]
+- [ ]
+
+**Acceptance Criteria**:
+-
+-
+
+**Dependencies**:
+- Task 2
+
+**Estimated Effort**:
+
+**Related Requirements**:
+
+---
+
+## Task 4: [Task Name]
+
+<!-- Documentation or polish task -->
+
+**Description**:
+
+**Subtasks**:
+- [ ]
+- [ ]
+
+**Acceptance Criteria**:
+-
+-
+
+**Dependencies**:
+- Task 3
+
+**Estimated Effort**:
+
+**Related Requirements**:
+
+---
+
+## Summary
+
+**Total Tasks**: [Count]
+**Total Estimated Effort**: [Sum] hours/days
+**Sprint Allocation**: [How tasks map to sprints]
+
+### Task Dependencies
+
+\`\`\`
+Task 1 (Foundation)
+  │
+  ├─→ Task 2 (Core Implementation)
+  │     │
+  │     └─→ Task 3 (Integration)
+  │
+  └─→ Task 4 (Documentation) - Can run in parallel
+\`\`\`
+
+### Milestones
+
+1. **Foundation Complete** (Task 1): [Description]
+2. **Core Features** (Task 2): [Description]
+3. **Integration Ready** (Task 3): [Description]
+4. **Launch Ready** (Task 4): [Description]
+
+## Next Steps
+
+<!-- Actions to transition from tasks to execution -->
+
+1. **Review and Refine**
+   - Review task breakdown with team
+   - Validate effort estimates
+   - Identify any missing tasks
+
+2. **Sprint Planning**
+   - Use sprint-planner skill to create GitHub issues
+   - Allocate tasks across sprint(s)
+   - Assign team members
+
+3. **Begin Execution**
+   - Use issue-executor skill to start implementation
+   - Track progress through GitHub issues
+   - Update task status as work completes
+
+## Traceability
+
+**Epic**: $epic_name in docs/prds/$project_name/epics.md
+**PRD**: docs/prds/$project_name/prd.md
+**Spec**: docs/changes/$epic_dir_name/spec-delta.md
+
+**Requirements Covered**:
+<!-- List all PRD requirements addressed by these tasks -->
+- FR[N]: [Requirement name] - Tasks [N, N, N]
+- NFR[N]: [Requirement name] - Tasks [N, N]
+
+EOF
+
+    echo "Successfully generated spec proposal in $changes_dir"
+    echo ""
+    echo "Generated files:"
+    echo "  - $changes_dir/proposal.md"
+    echo "  - $changes_dir/spec-delta.md"
+    echo "  - $changes_dir/tasks.md"
+    echo ""
+    echo "Next steps:"
+    echo "1. Review and populate the generated files with epic details from $epics_file"
+    echo "2. Extract requirements from the epic section in epics.md"
+    echo "3. Link spec requirements back to PRD requirements"
+    echo "4. Validate traceability from spec to PRD"
+    echo "5. Open a Spec PR using spec-authoring workflow"
+}
+
 # --- MAIN ---
 
 COMMAND=$1
@@ -1978,17 +2563,21 @@ case "$COMMAND" in
     decompose)
         decompose "$@"
         ;;
+    generate-spec)
+        generate-spec "$@"
+        ;;
     *)
         echo "Error: Unknown command '$COMMAND'" >&2
-        echo "Usage: $0 {status|brief|research|create-prd|validate-prd|decompose} ..." >&2
+        echo "Usage: $0 {status|brief|research|create-prd|validate-prd|decompose|generate-spec} ..." >&2
         echo "" >&2
         echo "Commands:" >&2
-        echo "  status [project-name]        - Assess project readiness and show next steps" >&2
-        echo "  brief <project-name>         - Create product brief template" >&2
-        echo "  research <project-name>      - Create research template" >&2
-        echo "  create-prd <project-name>    - Create PRD template" >&2
-        echo "  validate-prd <project-name>  - Validate PRD quality" >&2
-        echo "  decompose <project-name>     - Break PRD into epics" >&2
+        echo "  status [project-name]                      - Assess project readiness and show next steps" >&2
+        echo "  brief <project-name>                       - Create product brief template" >&2
+        echo "  research <project-name>                    - Create research template" >&2
+        echo "  create-prd <project-name>                  - Create PRD template" >&2
+        echo "  validate-prd <project-name> [--lenient]    - Validate PRD quality" >&2
+        echo "  decompose <project-name>                   - Break PRD into epics" >&2
+        echo "  generate-spec <project-name> <epic-name>   - Generate spec proposal from epic" >&2
         exit 1
         ;;
 esac
