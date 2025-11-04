@@ -58,6 +58,8 @@ graph TD
 ### Core Skillsets
 
 - **`project-init`**: Scaffolds new projects with SynthesisFlow directory structure.
+- **`project-migrate`**: Migrates existing brownfield projects with established documentation to SynthesisFlow structure.
+- **`prd-authoring`**: Guides early-stage project planning through Product Requirements Documents (PRDs), bridging the gap between project ideas and spec-driven development.
 - **`doc-indexer`**: Provides just-in-time context of all project documentation to the AI without loading full content.
 - **`spec-authoring`**: Manages the creation, refinement, and approval of feature specifications via "Spec PRs".
 - **`sprint-planner`**: Organizes approved specs into sprints, creating Epics and atomic Task Issues on a GitHub Project Board.

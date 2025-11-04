@@ -16,6 +16,7 @@ Each skill contains comprehensive documentation in `SKILL.md` (50-262 lines) exp
 
 - **`.claude/skills/project-init/`**: Initialize SynthesisFlow directory structure in new projects. Creates docs/specs and docs/changes directories.
 - **`skills/project-migrate/`**: Migrate existing (brownfield) projects with established documentation to SynthesisFlow structure. Intelligently discovers, categorizes, and migrates documentation while preserving content, adding frontmatter, and maintaining git history.
+- **`skills/prd-authoring/`**: Guide early-stage project planning through Product Requirements Documents (PRDs). Manages the complete workflow from initial product briefs through market research, PRD creation, validation, and epic decomposition. Bridges the gap between project ideas and spec-driven development with data-driven requirements and measurable success criteria.
 - **`.claude/skills/doc-indexer/`**: Scan and index project documentation for just-in-time context discovery. Provides a map of all available docs without loading full content.
 - **`.claude/skills/spec-authoring/`**: Create and refine specification proposals via Spec PR workflow. Supports both proposing new specs and updating based on review feedback.
 - **`.claude/skills/sprint-planner/`**: Plan sprints by creating GitHub milestones and issues from approved specs. Automates issue creation while LLM guides strategic planning.
