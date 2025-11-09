@@ -80,7 +80,7 @@ summarize_retrospective() {
     echo "RETROSPECTIVE.md has $(wc -l < RETROSPECTIVE.md) lines. Summarizing with Gemini..."
 
     # Isolate content to summarize
-    local temp_summary_input="/tmp/retro_to_summarize_$$.md"
+    local temp_summary_input="retro_to_summarize_$$.md" # Create in CWD
     awk '/^## Sprint 4/{f=1}f' RETROSPECTIVE.md > "$temp_summary_input"
 
     # Preserve the header and historical learnings
