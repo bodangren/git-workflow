@@ -54,7 +54,7 @@ git pull
 # 3. Delete merged branch
 echo "Deleting merged branch: $BRANCH_NAME..."
 git push origin --delete "$BRANCH_NAME" || echo "Remote branch $BRANCH_NAME may have already been deleted."
-git branch -D "$BRANCH_NAME"
+git branch -D "$BRANCH_NAME" || true
 
 # 4. Integrate Spec (if a change directory was provided)
 if [ -n "$CHANGE_DIR" ] && [ -d "$CHANGE_DIR" ]; then
@@ -71,7 +71,7 @@ fi
 
 # 5. Update Project Board
 echo "Updating project board for item $ITEM_ID..."
-gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID"
+gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID" || true
 
 # 6. Update Retrospective
 echo "Updating retrospective..."
