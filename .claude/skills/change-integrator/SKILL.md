@@ -53,13 +53,15 @@ Determine what needs to be integrated:
 If using the automated script for integration:
 
 ```bash
-bash scripts/integrate-change.sh -p PR_NUMBER -b BRANCH_NAME -i ITEM_ID [-c CHANGE_DIR]
+bash scripts/integrate-change.sh -p PR_NUMBER -b BRANCH_NAME -i ITEM_ID -w "WENT_WELL" -l "LESSON" [-c CHANGE_DIR]
 ```
 
 **Parameters**:
 - `-p`: PR number that was merged
 - `-b`: Feature branch name (e.g., `feat/45-restructure-doc-indexer`)
 - `-i`: Project board item ID
+- `-w`: What went well with this change (quote if contains spaces)
+- `-l`: What was learned from this change (quote if contains spaces)
 - `-c`: Optional path to change proposal directory (e.g., `docs/changes/my-feature`)
 
 ### Step 4: Understand What the Script Does
@@ -88,7 +90,8 @@ The helper script automates these steps:
    - Uses project-specific field IDs
 
 6. **Updates retrospective**:
-   - Appends entry to RETROSPECTIVE.md
+   - Checks RETROSPECTIVE.md line count (fails if >100 lines)
+   - Appends entry with provided "went well" and "lesson" data
    - Commits the retrospective update
 
 7. **Pushes all changes**:

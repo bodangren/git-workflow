@@ -120,6 +120,30 @@ With full context loaded and feature branch created:
 4. Commit work incrementally
 5. Push to remote when ready for PR
 
+### Step 6: Complete Issue and Update Retrospective
+
+After implementation is complete and PR is merged:
+
+1. **Enable auto-merge**: `gh pr merge --squash --auto`
+2. **Wait for CI/CD**: `sleep 60` (or appropriate time)
+3. **Verify merge**: Check that PR merged successfully
+4. **Extract learnings**: Identify important insights from the issue that will help future issues
+5. **Update RETROSPECTIVE.md**: Add learnings while keeping file under 100 lines
+   - If file exceeds 100 lines, condense previous content by ~25%
+   - Keep most important or often repeated learnings
+   - Add new issue learnings at the end
+6. **Clean up**: Switch back to main, delete feature branch
+
+**Retrospective Update Pattern:**
+```
+### #ISSUE_NUMBER - TASK: Issue Title
+
+- **Went well:** What worked correctly during implementation
+- **Key challenges:** Problems encountered and how they were resolved  
+- **Important learnings:** Insights that will help future issues
+- **Complete workflow execution:** Confirmation that full SynthesisFlow workflow was executed
+```
+
 ### Step 6: When to Use Script vs Manual Steps
 
 **Use the helper script when**:
@@ -187,6 +211,7 @@ With full context loaded and feature branch created:
 - Branch naming follows convention: `feat/ISSUE_NUMBER-kebab-case-title`
 - Issue body should reference spec files as: `docs/specs/...` or `docs/changes/...`
 - Retrospective provides valuable lessons - pay attention to recent learnings
+- **RETROSPECTIVE.md management is required**: After completing an issue, update RETROSPECTIVE.md with important learnings. Keep file under 100 lines by condensing previous content by 25% when limit is reached.
 - Doc indexer shows what documentation exists without loading full content
 - For detailed workflow steps, see `references/work-on-issue.md`
 - The script is a helper to reduce repetitive context loading - Claude still executes the development workflow

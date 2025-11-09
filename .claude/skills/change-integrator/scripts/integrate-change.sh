@@ -4,26 +4,30 @@
 set -e
 
 usage() {
-    echo "Usage: $0 -p <pr-number> -b <branch-name> -i <item-id> [-c <change-dir>]"
+    echo "Usage: $0 -p <pr-number> -b <branch-name> -i <item-id> -w <went-well> -l <lesson> [-c <change-dir>]"
     echo "  -p: The number of the pull request that was merged."
     echo "  -b: The name of the feature branch that was merged."
     echo "  -i: The project board item ID for the task."
+    echo "  -w: What went well with this change."
+    echo "  -l: What was learned from this change."
     echo "  -c: (Optional) The path to the original change proposal directory."
     exit 1
 }
 
-while getopts ":p:b:i:c:" opt; do
+while getopts ":p:b:i:w:l:c:" opt; do
   case ${opt} in
     p ) PR_NUMBER=$OPTARG;; 
     b ) BRANCH_NAME=$OPTARG;; 
     i ) ITEM_ID=$OPTARG;; 
+    w ) WENT_WELL=$OPTARG;; 
+    l ) LESSON=$OPTARG;; 
     c ) CHANGE_DIR=$OPTARG;; 
     \? ) echo "Invalid option: $OPTARG" 1>&2; usage;; 
     : ) echo "Invalid option: $OPTARG requires an argument" 1>&2; usage;; 
   esac
 done
 
-if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ]; then
+if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
     usage
 fi
 
@@ -71,8 +75,17 @@ gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIE
 
 # 6. Update Retrospective
 echo "Updating retrospective..."
-# In a real implementation, this would be a more interactive process.
-RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** The auto-merge workflow completed successfully.\n- **Lesson:** N/A\n"
+
+# Check current retrospective length
+if [ -f "RETROSPECTIVE.md" ]; then
+    LINE_COUNT=$(wc -l < "RETROSPECTIVE.md")
+    if [ "$LINE_COUNT" -gt 100 ]; then
+        echo "Error: RETROSPECTIVE.md has $LINE_COUNT lines (over 100). Please compact by ~50% before continuing."
+        exit 1
+    fi
+fi
+
+RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n"
 echo -e "\n$RETRO_ENTRY" >> RETROSPECTIVE.md
 git add RETROSPECTIVE.md
 git commit -m "docs: Add retrospective for PR #$PR_NUMBER"
