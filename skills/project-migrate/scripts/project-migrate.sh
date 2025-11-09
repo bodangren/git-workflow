@@ -74,56 +74,36 @@ show_progress() {
   fi
 }
 
-# Function to detect documentation type from file path and name
+# Function to detect documentation type using Gemini
 detect_file_type() {
   local file="$1"
   local basename=$(basename "$file")
-  local lowercase=$(echo "$file" | tr '[:upper:]' '[:lower:]')
 
-  # ADR (Architectural Decision Record)
-  if [[ "$lowercase" =~ adr-[0-9]+ ]] || [[ "$lowercase" =~ /decisions/ ]] || [[ "$lowercase" =~ decision.*record ]]; then
-    echo "adr"
-    return
-  fi
-
-  # Retrospective
-  if [[ "$lowercase" =~ retrospective ]]; then
-    echo "retrospective"
-    return
-  fi
-
-  # Spec / Specification
-  if [[ "$lowercase" =~ spec ]] || [[ "$lowercase" =~ specification ]] || [[ "$lowercase" =~ requirements ]]; then
-    echo "spec"
-    return
-  fi
-
-  # Proposal / RFC / Draft
-  if [[ "$lowercase" =~ proposal ]] || [[ "$lowercase" =~ rfc ]] || [[ "$lowercase" =~ draft ]]; then
-    echo "proposal"
-    return
-  fi
-
-  # Design doc
-  if [[ "$lowercase" =~ design ]] || [[ "$lowercase" =~ architecture ]]; then
-    echo "design"
-    return
-  fi
-
-  # Plan
-  if [[ "$lowercase" =~ plan ]] || [[ "$lowercase" =~ roadmap ]]; then
-    echo "plan"
-    return
-  fi
-
-  # README (special case - keep in place)
+  # Handle README as a special case based on filename, not content
   if [[ "$basename" =~ ^README\.md$ ]] || [[ "$basename" =~ ^readme\.md$ ]]; then
     echo "readme"
     return
   fi
 
-  # Default: general documentation
-  echo "doc"
+  echo "Analyzing $file with Gemini to determine type..." >&2
+
+  # Use a temporary file for the prompt to handle special characters
+  local prompt_file=$(mktemp)
+  echo "Analyze the following document and determine its type. The type must be one of: 'spec', 'proposal', 'adr', 'design', 'plan', 'retrospective', or 'doc'. Return only the type as a single word." > "$prompt_file"
+  
+  # Call Gemini with the file and the prompt
+  local detected_type=$(gemini -p "@${prompt_file} @${file}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+  rm "$prompt_file"
+
+  # Validate the output from Gemini
+  case "$detected_type" in
+    spec|proposal|adr|design|plan|retrospective|doc)
+      echo "$detected_type"
+      ;;
+    *)
+      echo "doc" # Default if Gemini returns an invalid type or fails
+      ;;
+  esac
 }
 
 # Function to determine target category based on file type
@@ -1540,85 +1520,50 @@ prompt_phase_continue "Phase 6: Frontmatter Generation" \
    You'll review each suggested frontmatter (title, type, metadata).
    You can accept, edit, skip individual files, or batch-apply to all."
 
-# Function to extract title from markdown file
-extract_title_from_file() {
+# Function to generate frontmatter for a file using Gemini
+generate_frontmatter() {
   local file="$1"
+  echo "Generating frontmatter for $file with Gemini..." >&2
 
-  # Try to find first # heading (not ##)
-  local title=$(grep -m 1 '^# ' "$file" 2>/dev/null | sed 's/^# //')
-
-  # If no heading found, use filename without extension
-  if [ -z "$title" ]; then
-    title=$(basename "$file" .md | sed 's/-/ /g; s/_/ /g')
-    # Capitalize first letter of each word
-    title=$(echo "$title" | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+  # Get git metadata if available
+  local git_metadata_prompt=""
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    local creation_date=$(git log --follow --format=%aI --reverse "$file" 2>/dev/null | head -n 1)
+    local author=$(git log --follow --format='%an' --reverse "$file" 2>/dev/null | head -n 1)
+    if [ -n "$creation_date" ] && [ -n "$author" ]; then
+      git_metadata_prompt="The file was created on '${creation_date}' by '${author}'. Use these for the 'created' and 'author' fields."
+    fi
   fi
 
-  echo "$title"
-}
+  local prompt_file=$(mktemp)
+  cat > "$prompt_file" <<EOF
+Analyze the following document and generate a complete YAML frontmatter for it.
+The frontmatter must include:
+- 'title': A concise, descriptive title based on the content.
+- 'type': One of 'spec', 'proposal', 'adr', 'design', 'plan', 'retrospective', or 'doc'.
+- 'description': A one-sentence summary of the document's purpose.
+- 'created': The creation date.
+- 'author': The original author.
 
-# Function to detect file type from path and name patterns
-detect_frontmatter_type() {
-  local file="$1"
-  local lowercase=$(echo "$file" | tr '[:upper:]' '[:lower:]')
+${git_metadata_prompt}
 
-  # Retrospective
-  if [[ "$lowercase" =~ retrospective ]]; then
-    echo "retrospective"
-    return
-  fi
+Return *only* the complete YAML block starting with '---' and ending with '---'. Do not include any other text or explanation.
+EOF
 
-  # ADR (Architectural Decision Record)
-  if [[ "$lowercase" =~ adr-[0-9]+ ]] || [[ "$lowercase" =~ /decisions/ ]] || [[ "$lowercase" =~ decision.*record ]]; then
-    echo "adr"
-    return
-  fi
+  # Call Gemini with the file and the prompt
+  local generated_frontmatter=$(gemini -p "@${prompt_file} @${file}")
+  rm "$prompt_file"
 
-  # Spec / Specification
-  if [[ "$lowercase" =~ spec ]] || [[ "$lowercase" =~ specification ]]; then
-    echo "spec"
-    return
-  fi
-
-  # Proposal / RFC / Draft
-  if [[ "$lowercase" =~ proposal ]] || [[ "$lowercase" =~ rfc ]] || [[ "$lowercase" =~ draft ]]; then
-    echo "proposal"
-    return
-  fi
-
-  # Design doc
-  if [[ "$lowercase" =~ design ]] || [[ "$lowercase" =~ architecture ]]; then
-    echo "design"
-    return
-  fi
-
-  # Plan
-  if [[ "$lowercase" =~ plan ]] || [[ "$lowercase" =~ roadmap ]]; then
-    echo "plan"
-    return
-  fi
-
-  # Default: general documentation
-  echo "doc"
-}
-
-# Function to get git metadata for a file
-get_git_metadata() {
-  local file="$1"
-
-  # Check if file is in git
-  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo ""
-    return
-  fi
-
-  # Get creation date (first commit date) and author
-  local creation_date=$(git log --follow --format=%aI --reverse "$file" 2>/dev/null | head -n 1)
-  local author=$(git log --follow --format='%an' --reverse "$file" 2>/dev/null | head -n 1)
-
-  if [ -n "$creation_date" ] && [ -n "$author" ]; then
-    echo "created: $creation_date"
-    echo "author: $author"
+  # Basic validation and fallback
+  if echo "$generated_frontmatter" | head -n 1 | grep -q '^---$'; then
+    echo "$generated_frontmatter"
+  else
+    # Fallback to a very basic frontmatter if Gemini fails
+    echo "---"
+    echo "title: $(basename "$file")"
+    echo "type: doc"
+    echo "description: (migration placeholder)"
+    echo "---"
   fi
 }
 
@@ -1632,27 +1577,6 @@ has_frontmatter() {
   else
     return 1  # No frontmatter
   fi
-}
-
-# Function to generate frontmatter for a file
-generate_frontmatter() {
-  local file="$1"
-
-  local title=$(extract_title_from_file "$file")
-  local file_type=$(detect_frontmatter_type "$file")
-  local git_metadata=$(get_git_metadata "$file")
-
-  # Build frontmatter
-  echo "---"
-  echo "title: $title"
-  echo "type: $file_type"
-
-  # Add git metadata if available
-  if [ -n "$git_metadata" ]; then
-    echo "$git_metadata"
-  fi
-
-  echo "---"
 }
 
 # Function to validate YAML syntax (basic check)

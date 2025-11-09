@@ -55,14 +55,74 @@ read -p "Enter the name for the new sprint milestone (e.g., 'Sprint 3'): " SPRIN
 echo "Creating new milestone: $SPRINT_NAME"
 gh api --method POST -H "Accept: application/vnd.github.v3+json" "/repos/$REPO/milestones" -f title="$SPRINT_NAME"
 
-# 5. Parse the tasks from the spec file and create issues
-echo "Parsing tasks from $SPEC_FILE and creating issues..."
-# This awk script will find lines starting with '- [ ]' and extract the title
-awk -F'**|:**' '/^- \[ \]/{gsub(/^ *| *$/, "", $2); print $2}' "$SPEC_FILE" | while read -r task_title; do
-    if [ -n "$task_title" ]; then
-        echo "Creating issue for task: $task_title"
-        gh issue create --title "TASK: $task_title" --body "From spec: '$SPEC_FILE'. Parent Epic: #$SELECTED_EPIC_NUMBER" --milestone "$SPRINT_NAME"
-    fi
-done
+# 5. Decompose the spec into tasks using Gemini and create issues
+echo "Decomposing spec file $SPEC_FILE into tasks with Gemini..."
+
+EPIC_TITLE=$(echo "$SELECTED_EPIC_JSON" | jq -r '.content.title')
+
+GEMINI_PROMPT="Read the following specification document and the parent epic. Your task is to decompose this spec into a list of atomic, actionable tasks for a GitHub sprint. For each task, provide a clear, imperative title and a brief one-sentence description.
+
+Format the output as a simple, machine-readable list, with each task on a new line, formatted as:
+**Title:** A brief, clear title for the task.
+**Description:** A one-sentence description of what needs to be done.
+---
+
+Here is the parent epic:
+Title: ${EPIC_TITLE}
+Body:
+${EPIC_BODY}
+
+Here is the full specification document:
+@${SPEC_FILE}
+"
+
+# Call Gemini and parse the output
+gemini_output=$(gemini -p "$GEMINI_PROMPT")
+
+# Process the output using awk for more robust parsing
+echo "$gemini_output" | awk -v spec_file="$SPEC_FILE" -v epic_number="$SELECTED_EPIC_NUMBER" -v sprint_name="$SPRINT_NAME" '
+BEGIN { RS = "---\n" }
+{
+    title = ""
+    desc = ""
+    # Use a loop to handle fields that might be out of order
+    for (i = 1; i <= NF; i++) {
+        if ($i ~ /\*\*Title:\*\*/) {
+            # Reconstruct the line from the field onwards to capture the full title
+            title_line = $i
+            for (j = i + 1; j <= NF; j++) {
+                title_line = title_line " " $j
+            }
+            sub(/.*\*\*Title:\*\* /, "", title_line)
+            title = title_line
+        }
+        if ($i ~ /\*\*Description:\*\*/) {
+            # Reconstruct the line from the field onwards to capture the full description
+            desc_line = $i
+            for (j = i + 1; j <= NF; j++) {
+                desc_line = desc_line " " $j
+            }
+            sub(/.*\*\*Description:\*\* /, "", desc_line)
+            desc = desc_line
+        }
+    }
+    
+    # Clean up any potential newlines within the captured title/desc
+    gsub(/\n/, " ", title)
+    gsub(/\n/, " ", desc)
+    
+    if (title != "" && desc != "") {
+        # Escape quotes for the shell command
+        gsub(/"/, "\\\"", title)
+        gsub(/"/, "\\\"", desc)
+        
+        # Construct the shell command to create the issue
+        command = "gh issue create --title \"TASK: " title "\" --body \"" desc ".\\n\\nFrom spec: '"'"'" spec_file "'"'"'.\\nParent Epic: #" epic_number "'\" --milestone \"'"'"'" sprint_name "'"'"'\""
+        
+        # Print a user-friendly message and then execute the command
+        print "echo \"Creating issue for task: " title "\""
+        print command
+    }
+}' | sh
 
 echo "Sprint planning complete. Issues have been created and assigned to milestone '$SPRINT_NAME'."

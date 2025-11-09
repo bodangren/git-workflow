@@ -1,6 +1,6 @@
 ---
 name: change-integrator
-description: Use this skill after a code PR is merged to integrate approved specs into the source-of-truth, update the retrospective with learnings, and clean up branches. Triggers include "integrate change", "post-merge cleanup", or completing a feature implementation.
+description: Use this skill after a code PR is merged to integrate approved specs, update the retrospective with learnings, and clean up branches. It now automatically summarizes the retrospective file to keep it concise. Triggers include "integrate change", "post-merge cleanup", or completing a feature implementation.
 ---
 
 # Change Integrator Skill
@@ -8,6 +8,8 @@ description: Use this skill after a code PR is merged to integrate approved spec
 ## Purpose
 
 Perform post-merge integration tasks after a code PR is successfully merged. This skill completes the development cycle by moving approved specs from `docs/changes/` to `docs/specs/`, updating the retrospective with learnings, cleaning up feature branches, and updating project board status. It ensures the repository remains clean and the documentation reflects the current state.
+
+A key feature of this skill is the **automated maintenance of `RETROSPECTIVE.md`**. When the file grows too large, the script automatically uses the Gemini CLI to summarize older entries, keeping the document concise and readable while preserving key historical learnings.
 
 ## When to Use
 
@@ -26,6 +28,7 @@ Use this skill in the following situations:
 - PR number is known
 - Project board item ID is known (if using project boards)
 - `gh` CLI tool installed and authenticated
+- `gemini` CLI tool installed and authenticated
 - Currently on main branch with latest changes
 
 ## Workflow
@@ -53,46 +56,28 @@ Determine what needs to be integrated:
 If using the automated script for integration:
 
 ```bash
-bash scripts/integrate-change.sh -p PR_NUMBER -b BRANCH_NAME -i ITEM_ID [-c CHANGE_DIR]
+bash scripts/integrate-change.sh -p PR_NUMBER -b BRANCH_NAME -i ITEM_ID -w "WENT_WELL" -l "LESSON" [-c CHANGE_DIR]
 ```
 
 **Parameters**:
 - `-p`: PR number that was merged
 - `-b`: Feature branch name (e.g., `feat/45-restructure-doc-indexer`)
 - `-i`: Project board item ID
+- `-w`: A quote about what went well.
+- `-l`: A quote about the key lesson learned.
 - `-c`: Optional path to change proposal directory (e.g., `docs/changes/my-feature`)
 
 ### Step 4: Understand What the Script Does
 
 The helper script automates these steps:
 
-1. **Verifies PR is merged**:
-   - Queries GitHub API for PR status
-   - Aborts if PR is not in MERGED state
-
-2. **Switches to main and pulls**:
-   - Ensures working on latest main branch
-   - Pulls all merged changes
-
-3. **Deletes feature branch**:
-   - Removes remote branch: `git push origin --delete BRANCH_NAME`
-   - Removes local branch: `git branch -D BRANCH_NAME`
-
-4. **Integrates spec files (if applicable)**:
-   - Moves `spec-delta.md` from `docs/changes/` to `docs/specs/`
-   - Removes the change proposal directory
-   - Commits the integration
-
-5. **Updates project board**:
-   - Sets task status to "Done" on project board
-   - Uses project-specific field IDs
-
-6. **Updates retrospective**:
-   - Appends entry to RETROSPECTIVE.md
-   - Commits the retrospective update
-
-7. **Pushes all changes**:
-   - Pushes integration commits to main
+1.  **Verifies PR is merged**: Queries GitHub API and aborts if PR is not in MERGED state.
+2.  **Switches to main and pulls**: Ensures work is on the latest main branch.
+3.  **Deletes feature branch**: Removes both remote and local branches.
+4.  **Integrates spec files (if applicable)**: Moves `spec-delta.md` to `docs/specs/` and commits the change.
+5.  **Updates project board**: Sets the task status to "Done".
+6.  **Updates retrospective**: Appends a new entry. If `RETROSPECTIVE.md` exceeds a line limit (e.g., 150 lines), it **automatically summarizes older sprint entries** using the Gemini CLI to keep the file manageable.
+7.  **Pushes all changes**: Pushes integration commits to main.
 
 ### Step 5: Manual Integration (Alternative)
 
@@ -179,6 +164,20 @@ tail -20 RETROSPECTIVE.md
 gh project item-list PROJECT_NUMBER --owner @me
 ```
 
+## Automated Retrospective Summarization
+
+To prevent `RETROSPECTIVE.md` from becoming unmanageably long, the `integrate-change.sh` script includes an automated summarization feature powered by the Gemini CLI.
+
+**How it works:**
+1.  **Threshold Check**: Before adding a new entry, the script checks the line count of `RETROSPECTIVE.md`.
+2.  **Trigger**: If the line count exceeds a defined threshold (e.g., 150 lines), the summarization process is triggered.
+3.  **Preservation**: The script preserves the initial sections of the file, including the introduction and the "Historical Learnings" section.
+4.  **Summarization**: It takes the older sprint entries, sends them to the `gemini` CLI, and requests a concise summary that preserves key learnings and markdown structure.
+5.  **Reconstruction**: The script then overwrites `RETROSPECTIVE.md` with the preserved header, a new "Summarized Sprints (via Gemini)" section, and the newly generated summary.
+6.  **New Entry**: Finally, it appends the new retrospective entry to the freshly summarized file.
+
+This ensures that the file remains a valuable and readable source of information without requiring manual pruning.
+
 ## Error Handling
 
 ### PR Not Merged
@@ -220,15 +219,25 @@ gh project item-list PROJECT_NUMBER --owner @me
 - Check `gh` authentication: `gh auth status`
 - Update script configuration variables if needed
 
-### Retrospective Format Issues
+### Gemini CLI Issues
 
-**Symptom**: Retrospective update doesn't follow format
+**Symptom**: The script fails during the "Updating retrospective..." step with an error related to the `gemini` command.
 
 **Solution**:
-- Manually edit RETROSPECTIVE.md
-- Follow established format from previous entries
-- Focus on learnings, not just completion status
-- Keep entries concise and actionable
+- Ensure the `gemini` CLI is installed and in your system's PATH.
+- Verify you are authenticated. Run `gemini auth` if needed.
+- Check for any Gemini API-related issues or outages.
+- If the issue persists, you can temporarily increase the `RETROSPECTIVE_MAX_LINES` variable in the script to bypass the summarization and add your entry.
+
+### Retrospective Format Issues
+
+**Symptom**: The automated summary has formatting problems or seems to have lost critical information.
+
+**Solution**:
+- The summarization is automated and may not be perfect. The original, unsummarized content is not retained by the script.
+- You can review the commit history for `RETROSPECTIVE.md` in git to find the previous version if you need to recover information.
+- Manually edit the summarized content to fix any formatting issues.
+- Consider adjusting the prompt sent to the Gemini CLI within the `summarize_retrospective` function in the script for better results in the future.
 
 ## Configuration Notes
 

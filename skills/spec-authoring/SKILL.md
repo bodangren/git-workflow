@@ -1,241 +1,125 @@
 ---
 name: spec-authoring
-description: Use this skill when proposing new features or changes via the Spec PR process. Manages the creation, refinement, and approval of feature specifications before any code is written. Triggers include "create spec", "propose change", "start spec PR", or beginning feature definition.
+description: Use this skill to propose changes via the Spec PR process. It uses the Gemini CLI to generate high-quality draft specifications and to analyze PR feedback, accelerating the spec-driven development workflow. Triggers include "create spec" or "propose change".
 ---
 
 # Spec Authoring Skill
 
 ## Purpose
 
-Manage the creation and refinement of feature specifications through the Spec PR process. This skill enables spec-driven development where all changes are defined, reviewed, and approved before implementation begins. Specifications are proposed in the `docs/changes/` directory, reviewed via Pull Request, and merged to `docs/specs/` upon approval.
+To manage the creation and refinement of feature specifications using a powerful, AI-assisted workflow. This skill leverages the **Gemini CLI** to accelerate the spec-driven development process by:
+1.  **Generating Drafts**: Automatically creates high-quality, multi-file draft proposals for new features.
+2.  **Analyzing Feedback**: Synthesizes review comments from Pull Requests into an actionable summary of recommended changes.
+
+This approach allows developers and product managers to move from idea to an approved, implementation-ready specification with greater speed and clarity.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Proposing a new feature or significant change
-- Defining requirements before implementation
-- Creating a Spec PR for team review
-- Updating a proposal based on review feedback
-- Following the spec-driven development workflow
+- Proposing a new feature or significant change.
+- Generating a first draft of a specification for review.
+- Processing and incorporating feedback from a Spec PR.
 
 ## Prerequisites
 
-- Project initialized with SynthesisFlow structure (docs/specs, docs/changes directories exist)
-- GitHub repository set up
-- `gh` CLI tool installed and authenticated
+- Project initialized with SynthesisFlow structure (`docs/specs/` and `docs/changes/` directories exist).
+- GitHub repository set up.
+- `gh` CLI tool installed and authenticated.
+- `gemini` CLI tool installed and authenticated.
 
 ## Spec PR Philosophy
 
-**Specs as Code**: All specification changes follow the same rigor as code changes - proposed via branches, reviewed via PRs, and merged upon approval.
+**Specs as Code**: All specification changes follow the same rigor as code changes—proposed via branches, reviewed via PRs, and merged upon approval. This skill supercharges that philosophy with AI.
 
-**Benefits**:
-- **Review before implementation**: Catch design issues early when changes are cheap
-- **Clear requirements**: Implementation has explicit acceptance criteria
-- **Historical record**: Approved specs document what was intended and why
-- **Team alignment**: Stakeholders review and approve before development starts
-
-**Workflow**:
-1. Changes proposed in `docs/changes/` directory (isolated from source-of-truth)
-2. Spec PR opened for review
-3. Team reviews and provides feedback
-4. Proposal refined based on feedback
-5. Spec PR approved and merged
-6. Approved spec moves to `docs/specs/` (via change-integrator skill)
+---
 
 ## The `propose` Command
 
 ### Purpose
 
-Create a new change proposal with the necessary file structure.
+Generate a comprehensive, multi-file draft proposal for a new feature from a single command.
 
 ### Workflow
 
 #### Step 1: Define the Proposal Name
 
-Discuss with the user what feature or change to propose. Choose a clear, descriptive name:
-- "User Authentication System"
-- "Real-time Notifications"
-- "Performance Optimization"
+Choose a clear, descriptive name for your feature, such as "User Authentication System" or "Real-time Notifications".
 
 #### Step 2: Run the Helper Script
 
-Execute the script to create the proposal directory structure:
-
+Execute the script to generate the draft proposal:
 ```bash
 bash scripts/spec-authoring.sh propose "Feature Name"
 ```
 
 The script will:
-- Convert the name to kebab-case (e.g., "Feature Name" → "feature-name")
-- Create `docs/changes/feature-name/` directory
-- Create three empty files:
-  - `proposal.md` - High-level overview and problem statement
-  - `spec-delta.md` - Detailed specifications and requirements
-  - `tasks.md` - Breakdown of implementation tasks
+1.  Create a new directory in `docs/changes/feature-name/`.
+2.  Make three parallel calls to the **Gemini CLI** to generate drafts for `proposal.md`, `spec-delta.md`, and `tasks.md`.
+    - **`proposal.md`**: A high-level overview with problem statement, proposed solution, and success criteria.
+    - **`spec-delta.md`**: A detailed technical specification with requirements and design decisions.
+    - **`tasks.md`**: A preliminary breakdown of implementation tasks.
+3.  Save the AI-generated content into these files.
 
-#### Step 3: Populate proposal.md
+#### Step 3: Review and Refine the Drafts
 
-Work with the user to create a clear proposal:
+The script provides you with a complete, context-aware first draft of your entire proposal. Your next step is to review and refine these documents to ensure they align with your vision before opening a Spec PR.
 
-```markdown
-# Proposal: Feature Name
-
-## Problem Statement
-[What problem does this solve? Why is it needed?]
-
-## Proposed Solution
-[High-level approach to solving the problem]
-
-## Benefits
-[What value does this provide?]
-
-## Success Criteria
-[How do we know this is successful?]
-```
-
-#### Step 4: Populate spec-delta.md
-
-Define detailed specifications:
-
-```markdown
-# Spec Delta: Feature Name
-
-## Overview
-[Detailed description of what's being added/modified/removed]
-
-## Requirements
-[Specific, testable requirements]
-
-## Design Decisions
-[Key architectural or design choices]
-
-## Migration Path
-[How to transition from current state if applicable]
-```
-
-#### Step 5: Populate tasks.md
-
-Break down implementation into atomic tasks:
-
-```markdown
-# Tasks: Feature Name
-
-## Task 1: Component A
-- [ ] Subtask 1
-- [ ] Subtask 2
-
-**Acceptance Criteria**:
-- Criteria 1
-- Criteria 2
-
-## Task 2: Component B
-...
-```
-
-#### Step 6: Create Spec PR
-
-After populating files:
-
-1. Create feature branch: `git checkout -b spec/feature-name`
-2. Add files: `git add docs/changes/feature-name/`
-3. Commit: `git commit -m "spec: Propose Feature Name"`
-4. Push: `git push -u origin spec/feature-name`
-5. Create PR: `gh pr create --title "Spec: Feature Name" --body "..."`
-
-Label as "spec" or "proposal" if labels are available.
+---
 
 ## The `update` Command
 
 ### Purpose
 
-Fetch review comments from a Spec PR to incorporate feedback.
+Intelligently process feedback from a Spec PR by using AI to analyze review comments and generate a summarized action plan.
 
 ### Workflow
 
 #### Step 1: Identify the PR Number
 
-Determine which Spec PR needs updates based on review feedback.
+Determine which Spec PR you need to update.
 
-#### Step 2: Fetch Review Comments
+#### Step 2: Run the Feedback Analysis Script
 
-Run the helper script to view all comments:
-
+Execute the script with the PR number:
 ```bash
 bash scripts/spec-authoring.sh update PR_NUMBER
 ```
 
-This displays:
-- All PR comments with context
-- Review feedback from team members
-- Suggestions and questions
+This command will:
+1.  Find the local files associated with the PR's branch.
+2.  Fetch all review comments from the PR.
+3.  Send the full content of your spec files and all the comments to the **Gemini CLI**.
+4.  Ask the AI to act as a reviewer and provide a summarized list of recommended changes for each file.
 
-#### Step 3: Discuss Feedback with User
+#### Step 3: Address the Synthesized Feedback
 
-Review the comments together and determine:
-- Which suggestions to incorporate
-- What clarifications are needed
-- What changes to make to the proposal
+The script will output a clear, actionable plan that synthesizes all the reviewer feedback. Use this analysis to efficiently update your proposal files, address the comments, and push your changes for re-review.
 
-#### Step 4: Update Proposal Files
-
-Edit the files in `docs/changes/feature-name/` based on feedback:
-- Clarify unclear sections
-- Add missing requirements
-- Adjust design decisions
-- Refine task breakdown
-
-#### Step 5: Push Updates
-
-Commit and push changes to the same branch:
-
-```bash
-git add docs/changes/feature-name/
-git commit -m "spec: Address review feedback for Feature Name"
-git push
-```
-
-The Spec PR automatically updates with new changes.
-
-#### Step 6: Request Re-review
-
-If needed, request reviewers take another look at the updated proposal.
+---
 
 ## Error Handling
 
+### Gemini CLI Issues
+
+**Symptom**: The script fails during the `propose` or `update` commands with an error related to the `gemini` command.
+**Solution**:
+- Ensure the `gemini` CLI is installed and in your system's PATH.
+- Verify you are authenticated (`gemini auth`).
+- Check for Gemini API outages or network issues.
+
 ### Proposal Directory Already Exists
 
-**Symptom**: Script reports directory already exists
+**Symptom**: The `propose` command reports that the directory already exists.
+**Solution**: Choose a different name for your proposal or work with the existing one.
 
-**Solution**:
-- Check if proposal is already in progress: `ls docs/changes/`
-- Either use a different name or work with existing proposal
-- Consider if this is an update to existing proposal
+### Could Not Find Proposal Directory
 
-### Missing GitHub CLI
-
-**Symptom**: `gh: command not found` when using update command
-
-**Solution**:
-- Install GitHub CLI: https://cli.github.com/
-- Authenticate: `gh auth login`
-- Verify: `gh auth status`
-
-### No Review Comments
-
-**Symptom**: Update command shows no comments
-
-**Solution**:
-- Verify PR number is correct
-- Check if PR has any comments yet
-- Wait for reviewers to provide feedback
+**Symptom**: The `update` command cannot find the local files for the PR.
+**Solution**: Ensure you have the correct PR branch checked out and that the local directory in `docs/changes/` matches the branch name.
 
 ## Notes
 
-- **Spec PRs are lightweight**: Focus on clarity over perfection - they can be refined
-- **Iterate on feedback**: Multiple rounds of review are normal and healthy
-- **Keep proposals focused**: One feature/change per proposal makes review easier
-- **Link related work**: Reference existing specs or issues in the proposal
-- **The `propose` command only creates structure**: You must populate the files with content
-- **Spec PRs merge to main**: After approval, specs become source-of-truth in `docs/specs/`
-- **Use change-integrator**: After code PR merges, run change-integrator to move approved specs
+- **AI-Assisted Workflow**: This skill is designed to be a powerful assistant. It generates high-quality drafts and analyzes feedback, but the final strategic decisions and refinements are yours to make.
+- **Speed and Quality**: By automating the initial drafting and feedback synthesis, this skill allows you to focus on the high-value work of design, review, and alignment.
+- **Iterative Process**: Use the `propose` command to start, and the `update` command to iterate based on team feedback, creating a rapid and efficient spec development cycle.

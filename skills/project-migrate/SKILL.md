@@ -1,34 +1,34 @@
 ---
 name: project-migrate
-description: Use this skill to migrate existing (brownfield) projects with established documentation to the SynthesisFlow structure. Intelligently discovers, categorizes, and migrates documentation while preserving content, adding frontmatter, and maintaining git history.
+description: Use this skill to migrate existing projects to the SynthesisFlow structure. It uses an AI-powered analysis to intelligently discover, categorize, and migrate documentation, generate rich frontmatter, and preserve git history.
 ---
 
 # Project Migrate Skill
 
 ## Purpose
 
-Intelligently migrate existing projects (brownfield) to the SynthesisFlow directory structure while preserving all existing documentation. This skill provides safe, guided migration with discovery, analysis, backup, and validation phases to ensure zero data loss.
+To intelligently migrate existing projects (brownfield) to the SynthesisFlow directory structure using a powerful, AI-assisted workflow. This skill goes beyond simple file moving by leveraging the **Gemini CLI** to analyze document content, ensuring accurate categorization and the generation of rich, meaningful metadata. It provides a safe, guided migration with discovery, analysis, backup, and validation phases to ensure zero data loss and high-quality results.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Adding SynthesisFlow to an existing project with established documentation
-- Migrating docs from ad-hoc structure to SynthesisFlow conventions
-- Projects with existing specs, ADRs, design docs, or other markdown files
-- Need to preserve documentation while adopting SynthesisFlow methodology
-- Want safe migration with backups and rollback capability
+- Adding SynthesisFlow to an existing project with established documentation.
+- Migrating docs from an ad-hoc structure to SynthesisFlow conventions.
+- When you want to automatically and intelligently categorize and add metadata to existing documents.
+- To ensure a safe migration with backups and rollback capabilities.
 
 ## Prerequisites
 
-- Project with existing documentation (docs/, documentation/, wiki/, or markdown files)
-- Git repository initialized
-- Write permissions to project directory
-- `doc-indexer` skill available for frontmatter compliance checking
+- Project with existing documentation (`docs/`, `documentation/`, `wiki/`, or markdown files).
+- Git repository initialized.
+- Write permissions to the project directory.
+- `gemini` CLI tool installed and authenticated.
+- `doc-indexer` skill available for final compliance checking.
 
 ## Workflow
 
-The skill guides you through 7 phases with phase-by-phase approval.
+The skill guides you through a series of phases with interactive approval.
 
 ### Step 1: Run the Migration Script
 
@@ -39,110 +39,67 @@ Execute with one of three modes:
 bash scripts/project-migrate.sh
 ```
 
-**Dry-run** - Preview plan without execution:
+**Dry-run** - Preview the plan without making any changes:
 ```bash
 bash scripts/project-migrate.sh --dry-run
 ```
 
-**Auto-approve** - Skip prompts for automation:
+**Auto-approve** - Skip prompts for automation (useful for CI/CD):
 ```bash
 bash scripts/project-migrate.sh --auto-approve
 ```
 
 ### Step 2: Review Each Phase
 
-**Phase 1 - Discovery**: Scans for all markdown files and categorizes them (spec, ADR, design, proposal, etc.)
+**Phase 1 & 2 - AI-Powered Discovery and Analysis**:
+The script scans for all markdown files. For each file, it calls the **Gemini CLI** to analyze the document's *content*, not just its filename. This results in a much more accurate categorization of files into types like `spec`, `proposal`, `adr`, etc. The output is a detailed plan mapping each file to its new, correct location in the SynthesisFlow structure.
 
-**Phase 2 - Analysis**: Maps each file to target location in SynthesisFlow structure with conflict detection
+**Phase 3 - Planning**:
+Shows you the complete, AI-driven migration plan for your approval. You can review source and target mappings before any files are moved.
 
-**Phase 3 - Planning**: Shows complete migration plan with source → target mappings for your approval
+**Phase 4 - Backup**:
+Creates a timestamped backup directory of your entire `docs/` folder and includes a `rollback.sh` script before any changes are made.
 
-**Phase 4 - Backup**: Creates timestamped backup directory with rollback script before any changes
+**Phase 5 - Migration**:
+Executes the plan, moving files using `git mv` to preserve history and creating the necessary directory structure.
 
-**Phase 5 - Migration**: Moves files using `git mv` to preserve history, creates directory structure
+**Phase 6 - Link Updates**:
+Automatically recalculates and updates all relative markdown links within the migrated files to ensure they don't break.
 
-**Phase 6 - Link Updates**: Recalculates and updates all relative markdown links to reflect new locations
+**Phase 7 - Validation**:
+Verifies that all files were migrated correctly, checks link integrity, and validates the new directory structure.
 
-**Phase 7 - Validation**: Verifies all files migrated correctly, checks link integrity, validates structure
-
-**Phase 8 - Frontmatter (Optional)**: Generates and inserts doc-indexer compliant frontmatter for files missing it
+**Phase 8 - AI-Powered Frontmatter Generation (Optional)**:
+For files that lack YAML frontmatter, the script uses the **Gemini CLI** to read the file content and generate rich, `doc-indexer` compliant frontmatter. This includes a suggested `title`, the `type` determined during the analysis phase, and a concise `description` summarizing the document's purpose.
 
 ### Step 3: Post-Migration
 
 After successful completion:
-- Review validation report for any warnings
-- Run `doc-indexer` to verify compliance
-- Commit migration changes to git
-- Delete backup once satisfied (or keep for reference)
+- Review the validation report for any warnings.
+- Run the `doc-indexer` skill to verify full documentation compliance.
+- Commit the migration changes to git.
 
 ## Error Handling
 
-### Permission Denied
+### Gemini CLI Issues
 
-**Symptom**: Cannot create directories or move files
-
-**Solution**:
-- Verify write permissions to project directory
-- Check parent directory exists
-- Run with appropriate permissions if necessary
-
-### Conflicts Detected
-
-**Symptom**: Target location already has files
+**Symptom**: The script fails during the "Analysis" or "Frontmatter Generation" phase with an error related to the `gemini` command.
 
 **Solution**:
-- Review conflict resolution options in plan
-- Choose to merge, create subdirectory, or skip
-- Script defaults to safe option (create subdirectory)
+- Ensure the `gemini` CLI is installed and in your system's PATH.
+- Verify you are authenticated by running `gemini auth`.
+- Check for Gemini API outages or network connectivity issues.
+- The script has basic fallbacks, but for best results, ensure the Gemini CLI is functional.
 
-### Broken Links After Migration
+### Other Issues
 
-**Symptom**: Validation reports broken links
-
-**Solution**:
-- Check link update logic worked correctly
-- Manually fix any complex link patterns
-- Re-run validation after fixes
-
-### Frontmatter Generation Failed
-
-**Symptom**: Cannot extract title or detect file type
-
-**Solution**:
-- Manually add frontmatter to problematic files
-- Skip frontmatter generation and add later
-- Check file has proper markdown structure
-
-### Need to Rollback
-
-**Symptom**: Migration didn't work as expected
-
-**Solution**:
-- Navigate to backup directory
-- Run the generated rollback script
-- Review rollback instructions
-- Restore to pre-migration state
-
-## Categorization Rules
-
-The analysis phase categorizes files using pattern matching:
-
-- **Specs** (→ docs/specs/): Contains "spec", "specification", "requirements"
-- **Proposals** (→ docs/changes/): Contains "proposal", "rfc", "draft"
-- **ADRs** (→ docs/specs/decisions/): Matches `ADR-*` pattern or in `decisions/` directory
-- **Design Docs** (→ docs/specs/): Contains "design", "architecture"
-- **Plans** (→ docs/): Contains "plan", "roadmap"
-- **Retrospectives** (→ RETROSPECTIVE.md): Contains "retrospective"
-- **READMEs**: Preserved in original location
+For issues related to permissions, conflicts, or broken links, the script provides detailed error messages and resolution suggestions during its interactive execution. The backup and rollback script is always available for a safe exit.
 
 ## Notes
 
-- **Safe by default**: Backup created before any changes
-- **Git-aware**: Preserves file history when possible
-- **Interactive**: Review plan before execution
-- **Rollback support**: Easy restoration if needed
-- **Doc-indexer integration**: Ensures frontmatter compliance
-- **Conflict handling**: Never overwrites existing files
-- **Link integrity**: Automatically updates relative links
-- **Progress reporting**: Visibility into each step
-
+- **AI-Enhanced**: Uses Gemini for intelligent content analysis, not just simple pattern matching.
+- **Safe by default**: Creates a full backup with a rollback script before making any changes.
+- **Git-aware**: Preserves file history using `git mv`.
+- **Interactive**: You review and approve the AI-generated plan before execution.
+- **Rich Metadata**: Generates high-quality frontmatter, including titles and descriptions.
+- **Link Integrity**: Automatically updates relative links to prevent breakage.
