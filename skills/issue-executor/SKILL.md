@@ -1,55 +1,51 @@
 ---
 name: issue-executor
-description: Use this skill to start work on an assigned GitHub issue. This is the core implementation loop of the SynthesisFlow methodology. Guides the AI to load full context (specs, plans, retrospective), create a feature branch, and begin implementation. Triggers include "start work on issue", "implement issue #X", or beginning development work.
+description: Use this skill to start work on a GitHub issue. It synthesizes all relevant context (specs, retrospective, issue details) using the Gemini CLI to generate a step-by-step implementation plan, then creates a feature branch to begin work. Triggers include "start work on issue #X" or "implement issue".
 ---
 
 # Issue Executor
 
 ## Purpose
 
-Execute the core development workflow for a single, atomic GitHub issue within the SynthesisFlow methodology. This skill ensures all necessary context is loaded before any code is written, work is isolated on a dedicated feature branch, and the implementation follows the spec-driven approach.
+To kickstart the development workflow for a single GitHub issue by generating a comprehensive, context-aware implementation plan. This skill leverages the Gemini CLI to synthesize issue details, relevant specifications, and historical learnings from the project retrospective into a clear, actionable plan. It then creates an isolated feature branch, setting the stage for focused, spec-driven development.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Starting work on a planned GitHub issue from the current sprint
-- Beginning a work session and ready to implement a specific task
-- Need to load full context for an issue before coding
-- Want to follow the complete SynthesisFlow development workflow
+- Starting work on a planned GitHub issue from the current sprint.
+- Beginning a work session and wanting a synthesized plan before coding.
+- Needing to load and understand all context for an issue efficiently.
 
 ## Prerequisites
 
-- GitHub repository with issues created (via sprint-planner skill)
-- Git working directory is clean (no uncommitted changes)
-- Currently on main branch
-- `gh` CLI tool installed and authenticated
-- `jq` tool installed for JSON parsing
-- Project has docs/ structure with specs and retrospective
+- GitHub repository with issues created (via sprint-planner skill).
+- Git working directory is clean (no uncommitted changes).
+- Currently on the `main` branch.
+- `gh` CLI tool installed and authenticated.
+- `jq` tool installed for JSON parsing.
+- `gemini` CLI tool installed and authenticated.
+- Project has a `docs/` structure with specs and a `RETROSPECTIVE.md`.
 
 ## Core Principles
 
 ### Context is King
 
-Load all relevant context before writing any code:
-- **Issue details**: Requirements and acceptance criteria
-- **Spec files**: Related specifications from docs/specs or docs/changes
-- **Retrospective**: Learnings from past issues to avoid repeating mistakes
-- **Doc index**: Map of all available documentation
+Instead of just viewing files, the skill synthesizes all relevant context into a coherent plan:
+- **Issue details**: Requirements and acceptance criteria.
+- **Spec files**: All specifications referenced in the issue.
+- **Retrospective**: Learnings from past work to avoid repeating mistakes.
 
 ### Isolation
 
 All work happens on a dedicated feature branch to:
-- Protect main branch from work-in-progress
-- Enable clean PR workflow
-- Allow abandoning work without impact
+- Protect the `main` branch from work-in-progress.
+- Enable a clean Pull Request workflow.
+- Allow abandoning work without impacting the main codebase.
 
 ### Atomic Work
 
-Each issue represents a single, well-defined task that can be:
-- Completed independently
-- Reviewed as a unit
-- Merged without dependencies
+Each issue represents a single, well-defined task that can be completed and reviewed as a unit.
 
 ## Workflow
 
@@ -57,136 +53,71 @@ Each issue represents a single, well-defined task that can be:
 
 Determine which issue to work on. The user specifies the issue number (e.g., #45).
 
-Check open issues if needed:
-```bash
-gh issue list --assignee @me --state open
-```
-
 ### Step 2: Run the Helper Script
 
-Execute the work-on-issue script with the issue number:
+Execute the `work-on-issue.sh` script with the issue number:
 
-```bash
-bash scripts/work-on-issue.sh ISSUE_NUMBER
-```
-
-For example:
 ```bash
 bash scripts/work-on-issue.sh 45
 ```
 
 ### Step 3: Understand What the Script Does
 
-The helper script automates these steps:
+The helper script automates these critical setup steps:
 
-1. **Validates prerequisites**:
-   - Checks jq is installed
-   - Verifies git working directory is clean
-   - Ensures no uncommitted changes exist
+1.  **Validates Prerequisites**: Checks for `jq`, a clean git status, and being on the `main` branch.
+2.  **Fetches Issue Details**: Retrieves the issue title and body from GitHub.
+3.  **Finds Context Files**: Locates all referenced spec files (`.md`) in `docs/specs/` or `docs/changes/` and identifies `RETROSPECTIVE.md`.
+4.  **Synthesizes Implementation Plan**: Constructs a detailed prompt with the issue details and file context (`@file` syntax) and calls the `gemini` CLI. It asks Gemini to produce a step-by-step implementation plan based on all provided information.
+5.  **Displays the Plan**: Prints the generated plan from Gemini to the console.
+6.  **Creates Feature Branch**: Generates a conventional branch name (e.g., `feat/45-restructure-doc-indexer`) and checks it out.
+7.  **Confirms Readiness**: Displays a success message confirming that the branch is ready and the plan has been generated.
 
-2. **Loads issue context**:
-   - Fetches issue title and body from GitHub
-   - Extracts associated spec file references
-   - Reads spec files if they exist
+### Step 4: Review the Implementation Plan
 
-3. **Loads project context**:
-   - Reads RETROSPECTIVE.md for lessons learned
-   - Runs doc-indexer to get documentation map
-
-4. **Creates feature branch**:
-   - Generates branch name from issue (e.g., `feat/45-restructure-doc-indexer`)
-   - Checks out new branch
-
-5. **Confirms readiness**:
-   - Displays success message
-   - Confirms branch created and context loaded
-
-### Step 4: Review Loaded Context
-
-After the script completes, review the context it loaded:
-
-- **Issue details**: Understand requirements and acceptance criteria
-- **Spec files**: Review specifications for what needs to be built
-- **Retrospective**: Note any relevant lessons from past work
-- **Doc index**: Identify other relevant documentation to read
+After the script completes, carefully review the implementation plan generated by Gemini. This plan is your starting guide for the implementation, synthesized from all available project context.
 
 ### Step 5: Begin Implementation
 
-With full context loaded and feature branch created:
+With the plan and feature branch ready:
 
-1. Plan the implementation approach
-2. Write code following the acceptance criteria
-3. Test the changes
-4. Commit work incrementally
-5. Push to remote when ready for PR
-
-### Step 6: When to Use Script vs Manual Steps
-
-**Use the helper script when**:
-- Starting fresh work on a new issue
-- Need to load all context automatically
-- Want the standard workflow enforced
-
-**Use manual steps when**:
-- Already familiar with the issue context
-- Continuing work on an existing branch
-- Need to customize the workflow for special cases
+1.  Follow the steps outlined in the generated plan.
+2.  Write code that meets the acceptance criteria.
+3.  Test your changes thoroughly.
+4.  Commit work incrementally.
+5.  Push to the remote branch when ready to create a Pull Request.
 
 ## Error Handling
 
-### Working Directory Not Clean
+### Working Directory Not Clean / Not on Main Branch
 
-**Symptom**: Script reports uncommitted changes
+**Symptom**: Script reports uncommitted changes or that you are not on the `main` branch.
+**Solution**: Commit, stash, or discard your changes. Switch back to the `main` branch before re-running the script.
 
+### Missing `jq` or `gemini` Tool
+
+**Symptom**: Script reports that `jq` or `gemini` is not installed.
+**Solution**: Install the required tool. For `jq`, use `sudo apt install jq` or `brew install jq`. For `gemini`, follow its official installation instructions.
+
+### Gemini CLI Issues
+
+**Symptom**: The script fails while generating the implementation plan, showing an error from the `gemini` command.
 **Solution**:
-- Commit current work: `git add . && git commit -m "..."`
-- Or stash changes: `git stash`
-- Or discard changes: `git restore .` (careful!)
-- Then run script again
-
-### Not on Main Branch
-
-**Symptom**: Currently on a feature branch
-
-**Solution**:
-- Finish current work and create PR
-- Or switch to main: `git switch main`
-- Then run script again
-
-### Missing jq Tool
-
-**Symptom**: Script reports jq not installed
-
-**Solution**:
-- Install jq: `sudo apt install jq` (Linux)
-- Or: `brew install jq` (Mac)
-- Or manually parse JSON without script
+- Ensure the `gemini` CLI is installed correctly and is in your system's PATH.
+- Verify your authentication status with `gemini auth`.
+- Check for Gemini API outages or connectivity issues.
+- Examine the prompt being sent to Gemini for any syntax errors.
 
 ### Spec File Not Found
 
-**Symptom**: Script reports spec file doesn't exist
-
+**Symptom**: The script runs, but the plan doesn't seem to include context from a spec file you expected.
 **Solution**:
-- Verify the spec file path in the issue body
-- Check if spec is in docs/changes/ (proposed) vs docs/specs/ (approved)
-- Read the spec from docs/changes/ if it's a new feature
-- Proceed without spec if issue doesn't require one
-
-### Branch Already Exists
-
-**Symptom**: Git reports branch name already exists
-
-**Solution**:
-- Check if you're resuming work: `git switch feat/45-...`
-- Or delete old branch: `git branch -D feat/45-...`
-- Then run script again
+- Ensure the issue body explicitly references the spec file with its full path (e.g., `docs/specs/my-spec.md`). The script only includes files that are directly mentioned.
+- Verify the referenced file path is correct and the file exists.
 
 ## Notes
 
-- The script loads context but doesn't write code - that's the AI's job with full understanding
-- Branch naming follows convention: `feat/ISSUE_NUMBER-kebab-case-title`
-- Issue body should reference spec files as: `docs/specs/...` or `docs/changes/...`
-- Retrospective provides valuable lessons - pay attention to recent learnings
-- Doc indexer shows what documentation exists without loading full content
-- For detailed workflow steps, see `references/work-on-issue.md`
-- The script is a helper to reduce repetitive context loading - Claude still executes the development workflow
+- The script's primary output is now an **actionable implementation plan**, not just a list of files.
+- The quality of the plan depends on the quality of the input (issue description, specs, retrospective).
+- The generated plan is a guide; use your own expertise to adapt and improve it as you work.
+- Branch naming follows the convention: `feat/ISSUE_NUMBER-kebab-case-title`.

@@ -4,26 +4,30 @@
 set -e
 
 usage() {
-    echo "Usage: $0 -p <pr-number> -b <branch-name> -i <item-id> [-c <change-dir>]"
+    echo "Usage: $0 -p <pr-number> -b <branch-name> -i <item-id> -w <went-well> -l <lesson> [-c <change-dir>]"
     echo "  -p: The number of the pull request that was merged."
     echo "  -b: The name of the feature branch that was merged."
     echo "  -i: The project board item ID for the task."
+    echo "  -w: What went well with this change."
+    echo "  -l: What was learned from this change."
     echo "  -c: (Optional) The path to the original change proposal directory."
     exit 1
 }
 
-while getopts ":p:b:i:c:" opt; do
+while getopts ":p:b:i:w:l:c:" opt; do
   case ${opt} in
-    p ) PR_NUMBER=$OPTARG;; 
-    b ) BRANCH_NAME=$OPTARG;; 
-    i ) ITEM_ID=$OPTARG;; 
-    c ) CHANGE_DIR=$OPTARG;; 
+    p ) PR_NUMBER=$OPTARG;;
+    b ) BRANCH_NAME=$OPTARG;;
+    i ) ITEM_ID=$OPTARG;;
+    w ) WENT_WELL=$OPTARG;;
+    l ) LESSON=$OPTARG;;
+    c ) CHANGE_DIR=$OPTARG;;
     \? ) echo "Invalid option: $OPTARG" 1>&2; usage;; 
     : ) echo "Invalid option: $OPTARG requires an argument" 1>&2; usage;; 
   esac
 done
 
-if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ]; then
+if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
     usage
 fi
 
@@ -71,8 +75,43 @@ gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIE
 
 # 6. Update Retrospective
 echo "Updating retrospective..."
-# In a real implementation, this would be a more interactive process.
-RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** The auto-merge workflow completed successfully.\n- **Lesson:** N/A\n"
+
+summarize_retrospective() {
+    echo "RETROSPECTIVE.md has $(wc -l < RETROSPECTIVE.md) lines. Summarizing with Gemini..."
+
+    # Isolate content to summarize
+    local temp_summary_input="/tmp/retro_to_summarize_$$.md"
+    awk '/^## Sprint 4/{f=1}f' RETROSPECTIVE.md > "$temp_summary_input"
+
+    # Preserve the header and historical learnings
+    local header_content
+    header_content=$(awk '/^## Sprint 4/{exit}1' RETROSPECTIVE.md)
+
+    # Call Gemini to summarize
+    local summarized_sprints
+    summarized_sprints=$(gemini -p "Summarize the following sprint retrospective entries into a more concise format, extracting the most important, recurring, or impactful learnings. Preserve the markdown structure with '### #PR' headers. @$temp_summary_input")
+
+    # Clean up the temp file
+    rm "$temp_summary_input"
+
+    # Reconstruct the file
+    echo "$header_content" > RETROSPECTIVE.md
+    echo -e "\n## Summarized Sprints (via Gemini)\n" >> RETROSPECTIVE.md
+    echo "$summarized_sprints" >> RETROSPECTIVE.md
+
+    echo "Retrospective summarized and overwritten."
+}
+
+# Check current retrospective length and summarize if needed
+if [ -f "RETROSPECTIVE.md" ]; then
+    LINE_COUNT=$(wc -l < "RETROSPECTIVE.md")
+    RETROSPECTIVE_MAX_LINES=150
+    if [ "$LINE_COUNT" -gt $RETROSPECTIVE_MAX_LINES ]; then
+        summarize_retrospective
+    fi
+fi
+
+RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n"
 echo -e "\n$RETRO_ENTRY" >> RETROSPECTIVE.md
 git add RETROSPECTIVE.md
 git commit -m "docs: Add retrospective for PR #$PR_NUMBER"

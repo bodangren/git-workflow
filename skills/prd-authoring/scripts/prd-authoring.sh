@@ -211,155 +211,27 @@ function brief() {
 
     local today=$(get_date)
 
-    cat > "$brief_file" << EOF
----
-title: $project_name
-type: product-brief
-status: draft
-created: $today
-updated: $today
----
+    local today=$(get_date)
+    echo "Generating a draft product brief with Gemini..."
 
-# Product Brief: $project_name
+    local gemini_prompt="Generate a comprehensive and well-structured product brief for a new project called '${project_name}'.
+The brief should be in markdown format and include the following sections:
+- A YAML frontmatter with title, type (product-brief), status (draft), created, and updated fields.
+- A main title: '# Product Brief: ${project_name}'
+- ## Problem Statement: Articulate a specific, measurable, and customer-focused problem.
+- ## Target Users: Define primary and secondary user personas.
+- ## Proposed Solution: Give a high-level overview of the solution.
+- ## Value Proposition: Detail user and business benefits.
+- ## Success Metrics: Define specific, measurable, achievable, relevant, and time-bound (SMART) metrics for launch and long-term success.
 
-<!-- This brief defines the high-level vision and scope for the project -->
-<!-- Complete this before conducting detailed research or writing the PRD -->
+Flesh out each section with plausible, high-quality example content appropriate for a project of this nature. The goal is to create a strong first draft that can be reviewed and refined."
 
-## Problem Statement
+    # Call Gemini and write the output to the file
+    gemini -p "$gemini_prompt" > "$brief_file"
 
-<!-- This section articulates the core problem we're solving -->
-<!-- A strong problem statement is specific, measurable, and customer-focused -->
-
-**What problem exists?**
-<!-- Describe the current state and its deficiencies -->
-<!-- Example: "Users abandon checkout 40% of the time due to complex payment flows" -->
-
-**Who experiences this problem?**
-<!-- Identify the affected users or stakeholders -->
-<!-- Example: "E-commerce customers making purchases over \$100" -->
-<!-- Example: "Customer support teams handling payment issues" -->
-
-**How often does it occur?**
-<!-- Quantify the frequency or scope -->
-<!-- Example: "Affects 15,000 transactions per month" -->
-
-**What's the business impact?**
-<!-- Express impact in business terms (revenue, costs, customer satisfaction) -->
-<!-- Example: "Lost revenue of \$2M annually" -->
-<!-- Example: "20 support hours per week addressing payment issues" -->
-
-## Target Users
-
-<!-- This section defines who will benefit from the solution -->
-<!-- Understanding users drives better product decisions -->
-
-### Primary Users
-<!-- The main users who will directly interact with the solution -->
-
-**Persona 1: [Name/Role]**
-- **Who they are**: [Demographics, role, experience level]
-- **Key goals**: [What they're trying to achieve]
-- **Pain points**: [Current frustrations and obstacles]
-- **Frequency of use**: [How often they'll use this solution]
-
-**Persona 2: [Name/Role]**
-- **Who they are**:
-- **Key goals**:
-- **Pain points**:
-- **Frequency of use**:
-
-### Secondary Users
-<!-- Users who indirectly benefit or have supporting roles -->
-
-- [Stakeholder type]: [How they're affected]
-- [Stakeholder type]: [How they're affected]
-
-## Proposed Solution
-
-<!-- This section provides a high-level view of what we'll build -->
-<!-- Focus on the "what" and "why", not implementation details -->
-
-**Solution Overview**
-<!-- In 2-3 sentences, describe what you'll build -->
-<!-- Example: "A streamlined one-click payment system that securely stores user payment methods and enables instant checkout with biometric authentication." -->
-
-**How it addresses the problem**
-<!-- Connect solution back to the problem statement -->
-<!-- Explain the causal relationship between solution and problem resolution -->
-
-**Key capabilities** (3-5 bullet points)
-<!-- High-level features that enable the solution -->
-<!-- Example: "Secure payment method storage with PCI compliance" -->
-<!-- Example: "Biometric authentication for instant verification" -->
-
-- [Capability 1]
-- [Capability 2]
-- [Capability 3]
-
-**What makes this solution different?**
-<!-- How does this differ from current state or alternatives? -->
-<!-- What's innovative or improved? -->
-
-## Value Proposition
-
-<!-- This section articulates why this solution is worth building -->
-<!-- Strong value props are specific, quantifiable, and tied to outcomes -->
-
-### User Benefits
-<!-- How users directly benefit from this solution -->
-
-- **[Benefit category]**: [Specific improvement]
-  - Example: "Speed: Reduce checkout time from 3 minutes to 15 seconds"
-- **[Benefit category]**: [Specific improvement]
-  - Example: "Security: Eliminate need to re-enter card details"
-- **[Benefit category]**: [Specific improvement]
-  - Example: "Convenience: Single-tap payment on mobile devices"
-
-### Business Benefits
-<!-- How the organization benefits -->
-
-- **[Revenue/Cost/Efficiency]**: [Expected impact]
-  - Example: "Revenue: Increase conversion rate by 25%, generating \$500K additional annual revenue"
-- **[Revenue/Cost/Efficiency]**: [Expected impact]
-  - Example: "Cost savings: Reduce support costs by \$100K/year"
-
-### Competitive Advantages
-<!-- What strategic advantages does this provide? -->
-
-- [Advantage over competitors or alternatives]
-- [Market positioning benefit]
-- [Long-term strategic value]
-
-## Success Metrics
-
-<!-- This section defines how we'll measure success -->
-<!-- Metrics should be SMART: Specific, Measurable, Achievable, Relevant, Time-bound -->
-
-### Launch Success Criteria
-<!-- Metrics that indicate a successful launch (measured in first 30 days) -->
-
-- **[Metric name]**: [Baseline] → [Target]
-  - Example: "Checkout conversion rate: 60% → 75%"
-- **[Metric name]**: [Baseline] → [Target]
-  - Example: "Average checkout time: 180 seconds → 30 seconds"
-- **[Metric name]**: [Baseline] → [Target]
-  - Example: "Payment failure rate: 5% → 1%"
-
-### Long-term Success Metrics
-<!-- Metrics tracked over 6-12 months post-launch -->
-
-- **[Metric name]**: [Target within timeframe]
-  - Example: "User adoption: 50% of customers using one-click payment within 6 months"
-- **[Metric name]**: [Target within timeframe]
-  - Example: "Customer satisfaction: NPS score increase from 40 to 60"
-
-### Leading Indicators
-<!-- Early signals that predict success -->
-
-- [Metric that indicates progress toward success]
-- Example: "75% of users save payment method on first use"
-
-EOF
+    # Ensure the frontmatter has the correct dates
+    sed -i "s/created: .*/created: $today/" "$brief_file"
+    sed -i "s/updated: .*/updated: $today/" "$brief_file"
 
     echo "Successfully created product brief at $brief_file"
     echo ""
@@ -400,310 +272,32 @@ function research() {
 
     local today=$(get_date)
 
-    cat > "$research_file" << EOF
----
-title: $project_name Research
-type: research
-status: in-progress
-created: $today
-updated: $today
----
-
-# Research: $project_name
-
-<!-- This research document supports PRD development with market intelligence -->
-<!-- Complete this after the product brief but before creating the PRD -->
-
-## Competitive Analysis
-
-<!-- This section analyzes the competitive landscape -->
-<!-- Identify 3-5 direct competitors or alternative solutions -->
-<!-- Understanding competition helps identify gaps and opportunities -->
-
-### Competitor 1: [Name]
-
-**Overview**
-<!-- Brief description of competitor and their market presence -->
-<!-- Example: "Market leader with 40% market share, targeting enterprise customers" -->
-
-**Strengths** (What they do well)
-- [Strength 1]: [Specific capability or feature]
-  - Example: "Superior mobile experience with 4.8 app store rating"
-- [Strength 2]: [Why this matters to users]
-  - Example: "24/7 customer support in 15 languages"
-
-**Weaknesses** (What they do poorly)
-- [Weakness 1]: [Specific limitation or problem]
-  - Example: "Complex pricing structure confuses small business customers"
-- [Weakness 2]: [User complaints or gaps]
-  - Example: "No API access below enterprise tier"
-
-**Key Features** (Notable capabilities)
-- [Feature 1]: [Brief description]
-- [Feature 2]: [Brief description]
-- [Feature 3]: [Brief description]
-
-**Pricing Model**
-<!-- How do they monetize? What's the pricing structure? -->
-<!-- Example: "Freemium: Free up to 100 transactions/month, then \$49-\$299/month tiers" -->
-
-**Market Position**
-<!-- Who are they targeting? What's their positioning? -->
-<!-- Example: "Premium solution for mid-market B2B companies" -->
-
-**Our Advantage Over Them**
-<!-- How can we differentiate or beat them? -->
-<!-- Example: "We can offer simpler onboarding and transparent pricing" -->
-
----
-
-### Competitor 2: [Name]
-
-**Overview**
-
-**Strengths**
--
--
-
-**Weaknesses**
--
--
-
-**Key Features**
--
-
-**Pricing Model**
-
-**Market Position**
-
-**Our Advantage Over Them**
-
----
-
-### Competitor 3: [Name]
-
-<!-- Repeat structure above -->
-
----
-
-## Market Insights
-
-<!-- This section provides broader market context beyond specific competitors -->
-
-### Market Size & Growth
-<!-- How big is the addressable market? -->
-<!-- What are the growth trends? -->
-<!-- Example: "Global market: \$15B, growing at 23% CAGR" -->
-
-### Target Market Segments
-<!-- What customer segments exist? Which should we target? -->
-<!-- Example: "SMBs (63% of market), Enterprise (25%), Individual creators (12%)" -->
-
-**Primary segment**: [Description]
-- Size: [Market size or customer count]
-- Growth rate: [Percentage]
-- Key characteristics: [What defines this segment]
-
-**Secondary segment**: [Description]
-- Size:
-- Growth rate:
-- Key characteristics:
-
-### Market Trends
-<!-- What directional shifts are happening? -->
-<!-- Example: "Shift from on-premise to cloud-based solutions (75% adoption)" -->
-
-- [Trend 1]: [Description and implications]
-- [Trend 2]: [Description and implications]
-- [Trend 3]: [Description and implications]
-
-### Regulatory & Compliance
-<!-- What regulations apply? What compliance is required? -->
-<!-- Example: "Must comply with PCI-DSS Level 1 for payment processing" -->
-<!-- Example: "GDPR compliance required for EU customers" -->
-
-- [Requirement 1]: [Description and impact]
-- [Requirement 2]: [Description and impact]
-
-### Industry Standards & Best Practices
-<!-- What standards or practices are expected? -->
-<!-- Example: "OAuth 2.0 is industry standard for authentication" -->
-
-- [Standard/Practice]: [Why it matters]
-- [Standard/Practice]: [Why it matters]
-
-## User Feedback Analysis
-
-<!-- This section synthesizes what users say about existing solutions -->
-<!-- Sources: user interviews, reviews, support tickets, forums, surveys -->
-
-### Common Pain Points
-<!-- What frustrates users about current solutions? -->
-<!-- Quantify when possible: "65% of reviews mention slow performance" -->
-
-1. **[Pain point category]**: [Specific issue]
-   - Frequency: [How often mentioned]
-   - User quote: "[Direct user feedback example]"
-   - Example: "Onboarding complexity: 40% of users abandon during setup"
-
-2. **[Pain point category]**: [Specific issue]
-   - Frequency:
-   - User quote:
-
-3. **[Pain point category]**: [Specific issue]
-   - Frequency:
-   - User quote:
-
-### Desired Features
-<!-- What features do users request or expect? -->
-<!-- Distinguish between "nice to have" and "must have" -->
-
-**Must-have features** (Table stakes)
-- [Feature]: [Why users consider this essential]
-- [Feature]: [Why users consider this essential]
-
-**High-value features** (Strong differentiators)
-- [Feature]: [Why users would pay more or switch for this]
-- [Feature]: [Why users would pay more or switch for this]
-
-**Nice-to-have features** (Future consideration)
-- [Feature]: [Lower priority request]
-
-### User Preferences & Expectations
-<!-- What do users expect in terms of experience? -->
-
-- **[Category]**: [Preference]
-  - Example: "Onboarding: Expect to be productive within 5 minutes"
-- **[Category]**: [Preference]
-  - Example: "Support: Expect live chat, not just email"
-- **[Category]**: [Preference]
-  - Example: "Pricing: Prefer simple per-user pricing over complex tiers"
-
-## Technical Considerations
-
-<!-- This section examines technical approaches and implications -->
-
-### Competitor Technical Approaches
-<!-- How do competitors solve technical challenges? -->
-<!-- What can we learn from their choices? -->
-
-- **[Technical area]**: [How competitors approach it]
-  - Example: "Authentication: Most use OAuth 2.0 with JWT tokens"
-  - Trade-offs: [Pros and cons of this approach]
-
-- **[Technical area]**: [How competitors approach it]
-  - Example: "Data storage: 80% use PostgreSQL for transactional data"
-  - Trade-offs:
-
-### Architecture Patterns
-<!-- What architectural patterns are common or recommended? -->
-
-- **[Pattern]**: [Description and use case]
-  - Pros: [Benefits]
-  - Cons: [Drawbacks]
-  - Example: "Microservices: Better scalability but increased operational complexity"
-
-### Integration Requirements
-<!-- What systems need to integrate? What protocols are standard? -->
-
-- [Integration point]: [Requirements or standards]
-  - Example: "Payment gateways: Must support Stripe, PayPal APIs"
-- [Integration point]: [Requirements or standards]
-
-### Performance & Scalability
-<!-- What are performance expectations? How must the system scale? -->
-
-- **Expected load**: [Transaction volume, user count, data volume]
-  - Example: "Handle 10,000 concurrent users, 1M transactions/day"
-- **Performance targets**: [Response times, throughput]
-  - Example: "API response time <200ms at p95"
-- **Scalability approach**: [How to achieve scale]
-  - Example: "Horizontal scaling with load balancing across regions"
-
-### Technical Risks
-<!-- What technical challenges or risks exist? -->
-
-- [Risk]: [Description and potential mitigation]
-  - Example: "Third-party API dependency: Stripe downtime impacts our service"
-
-## Recommendations
-
-<!-- This section provides actionable recommendations based on research -->
-<!-- These recommendations should inform PRD development -->
-
-### Priority Features
-<!-- Based on competitive analysis and user feedback, what should we build? -->
-
-**Must-build** (Required for competitive parity)
-1. [Feature]: [Why it's essential]
-   - Supporting evidence: [What research supports this]
-
-2. [Feature]: [Why it's essential]
-   - Supporting evidence:
-
-**Should-build** (Differentiators that provide competitive advantage)
-1. [Feature]: [Why it differentiates us]
-   - Supporting evidence: [What research supports this]
-
-2. [Feature]: [Why it differentiates us]
-   - Supporting evidence:
-
-**Could-build** (Future opportunities)
-- [Feature]: [Why it's lower priority]
-
-### Technical Approach
-<!-- What technical approach is recommended? -->
-
-**Recommended architecture**: [High-level approach]
-- Rationale: [Why this approach fits our needs]
-- Example: "Cloud-native microservices for scalability and independent deployment"
-
-**Key technology choices**:
-- [Technology category]: [Recommendation]
-  - Rationale: [Why this choice]
-- [Technology category]: [Recommendation]
-  - Rationale:
-
-### Go-to-Market Positioning
-<!-- How should we position against competitors? -->
-
-**Positioning statement**:
-<!-- Example: "The simplest enterprise-grade solution for SMBs" -->
-
-**Target segment**: [Which market segment to focus on]
-**Key differentiators**: [What makes us different]
-- [Differentiator 1]
-- [Differentiator 2]
-
-### Constraints & Considerations
-<!-- What constraints must we work within? -->
-
-**Compliance constraints**:
-- [Constraint]: [Impact on design]
-
-**Budget constraints**:
-- [Constraint]: [Impact on scope]
-
-**Timeline constraints**:
-- [Constraint]: [Impact on MVP definition]
-
-**Resource constraints**:
-- [Constraint]: [Impact on technical approach]
-
-### Risk Assessment
-<!-- What are the key risks to success? -->
-
-1. **[Risk category]**: [Specific risk]
-   - Likelihood: [High/Medium/Low]
-   - Impact: [High/Medium/Low]
-   - Mitigation: [How to address]
-
-2. **[Risk category]**: [Specific risk]
-   - Likelihood:
-   - Impact:
-   - Mitigation:
-
-EOF
+    local today=$(get_date)
+    local brief_file="$project_dir/product-brief.md"
+    echo "Generating a draft research document with Gemini..."
+
+    local gemini_prompt="Based on the following product brief, generate a comprehensive market research document for the project '${project_name}'.
+The research document should be in markdown format and include:
+- A YAML frontmatter with title, type (research), status (in-progress), created, and updated fields.
+- A main title: '# Research: ${project_name}'
+- ## Competitive Analysis: Identify 2-3 potential competitors and analyze their strengths, weaknesses, and market position.
+- ## Market Insights: Discuss market size, trends, and any relevant regulations.
+- ## User Feedback Analysis: Synthesize potential user pain points and desired features.
+- ## Technical Considerations: Examine common technical approaches, architecture patterns, and risks.
+- ## Recommendations: Provide actionable recommendations for priority features, technical approach, and go-to-market positioning.
+
+Flesh out each section with plausible, high-quality example content that logically follows from the product brief. The goal is to create a strong first draft that can be reviewed and refined.
+
+Here is the product brief for context:
+@${brief_file}
+"
+
+    # Call Gemini and write the output to the file
+    gemini -p "$gemini_prompt" > "$research_file"
+
+    # Ensure the frontmatter has the correct dates
+    sed -i "s/created: .*/created: $today/" "$research_file"
+    sed -i "s/updated: .*/updated: $today/" "$research_file"
 
     echo "Successfully created research document at $research_file"
     echo ""
@@ -756,8 +350,38 @@ function create-prd() {
 
     local today=$(get_date)
 
-    cat > "$prd_file" << EOF
----
+    local today=$(get_date)
+    local brief_file="$project_dir/product-brief.md"
+    local research_file="$project_dir/research.md"
+    echo "Generating a draft PRD with Gemini..."
+
+    local gemini_prompt="Based on the following product brief and research document, generate a comprehensive Product Requirements Document (PRD) for the project '${project_name}'.
+The PRD should be in markdown format and include:
+- A YAML frontmatter with title, type (prd), status (draft), created, and updated fields.
+- A main title: '# Product Requirements Document: ${project_name}'
+- ## Objectives: Define 2-3 primary, SMART objectives.
+- ## Success Criteria: Detail both launch criteria and post-launch success metrics.
+- ## Functional Requirements: List at least 3-5 detailed functional requirements (FRs) with descriptions, user stories, and acceptance criteria.
+- ## Non-Functional Requirements: Detail requirements for Performance, Security, Reliability, and Usability.
+- ## Constraints: List any known technical, business, or resource constraints.
+- ## Assumptions: Document key assumptions being made.
+- ## Out of Scope: Clearly define what will not be built.
+
+Flesh out each section with plausible, high-quality example content that logically follows from the provided context. The requirements should be specific and testable, and the success criteria should be measurable. The goal is to create a strong first draft that can be reviewed and refined.
+
+Here is the product brief for context:
+@${brief_file}
+
+Here is the research document for context:
+@${research_file}
+"
+
+    # Call Gemini and write the output to the file
+    gemini -p "$gemini_prompt" > "$prd_file"
+
+    # Ensure the frontmatter has the correct dates
+    sed -i "s/created: .*/created: $today/" "$prd_file"
+    sed -i "s/updated: .*/updated: $today/" "$prd_file"
 title: $project_name PRD
 type: prd
 status: draft
