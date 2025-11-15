@@ -35,6 +35,33 @@ if [ ! -f "$TASKS_FILE" ]; then
     exit 1
 fi
 
+# Validate YAML structure
+echo "Validating tasks.yml structure..."
+if ! yq '.' "$TASKS_FILE" > /dev/null 2>&1; then
+    echo "Error: Invalid YAML syntax in $TASKS_FILE" >&2
+    exit 1
+fi
+
+# Check for required root-level 'epic' field
+if ! yq '.epic' "$TASKS_FILE" > /dev/null 2>&1; then
+    echo "Error: Missing required 'epic' field in $TASKS_FILE" >&2
+    exit 1
+fi
+
+# Check for required root-level 'tasks' array
+if ! yq '.tasks' "$TASKS_FILE" > /dev/null 2>&1; then
+    echo "Error: Missing required 'tasks' array in $TASKS_FILE" >&2
+    exit 1
+fi
+
+TASK_COUNT=$(yq '.tasks | length' "$TASKS_FILE")
+if [ "$TASK_COUNT" -eq 0 ]; then
+    echo "Error: No tasks found in $TASKS_FILE" >&2
+    exit 1
+fi
+
+echo "✓ Validated YAML structure with $TASK_COUNT tasks"
+
 # --- SCRIPT LOGIC ---
 
 echo "Planning new sprint from $TASKS_FILE..."
@@ -70,7 +97,7 @@ echo "Parent Epic issue #$EPIC_ISSUE_NUMBER created."
 
 # 4. Ensure all labels exist
 echo "Ensuring all necessary labels exist..."
-ALL_LABELS=$(yq -r '.tasks[].labels | .type + "\n" + .component + "\n" + .priority' "$TASKS_FILE" | sort -u)
+ALL_LABELS=$(yq -r '.tasks[].labels | .type + "\n" + .component + "\n" + (.priority // "")' "$TASKS_FILE" | sort -u | grep -v '^$')
 
 while IFS= read -r label; do
     if [ -n "$label" ]; then
@@ -105,18 +132,43 @@ fi
 echo "Creating issues for all tasks..."
 
 # Use yq to output each task's fields separated by a pipe for safe reading
-yq -r '.tasks[] | .title +"|" + .description +"|" + .labels.type +"|" + .labels.component +"|" + .labels.priority' "$TASKS_FILE" | while IFS='|' read -r title description type component priority;
+yq -r '.tasks[] | .title +"|" + .description +"|" + .labels.type +"|" + .labels.component +"|" + (.labels.priority // "")' "$TASKS_FILE" | while IFS='|' read -r title description type component priority;
 
 do
-    
+
     echo "---"
-    echo "Creating issue for task: $title"
-    
+    echo "Processing task: $title"
+
+    # Validate required fields
+    if [ -z "$title" ]; then
+        echo "Error: Task missing required 'title' field. Skipping." >&2
+        continue
+    fi
+
+    if [ -z "$description" ]; then
+        echo "Error: Task '$title' missing required 'description' field. Skipping." >&2
+        continue
+    fi
+
+    if [ -z "$type" ]; then
+        echo "Error: Task '$title' missing required 'labels.type' field. Skipping." >&2
+        continue
+    fi
+
+    if [ -z "$component" ]; then
+        echo "Error: Task '$title' missing required 'labels.component' field. Skipping." >&2
+        continue
+    fi
+
     # Construct the issue body
     BODY=$(printf "%s\n\n**Parent Epic:** #%s" "$description" "$EPIC_ISSUE_NUMBER")
 
-    # Construct the labels string
-    LABELS="$type,$component,$priority"
+    # Construct the labels string (priority is optional)
+    if [ -n "$priority" ]; then
+        LABELS="$type,$component,$priority"
+    else
+        LABELS="$type,$component"
+    fi
 
     # --- DEBUGGING ---
     echo "  - Title: $title"
