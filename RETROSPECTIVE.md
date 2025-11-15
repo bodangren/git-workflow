@@ -4,46 +4,20 @@ This file captures learnings from completed tasks to inform and improve future d
 
 ## Historical Learnings (Sprints 1-3)
 
-**Key Patterns Established:**
+**Core Patterns:**
 - Auto-merge workflow (`gh pr merge --auto --squash --delete-branch`) streamlines PR process
-- Git doesn't track empty directories - use `.gitkeep` files
-- `skills/` is source-of-truth for development; `.claude/skills/` is for installed version
-- Idempotent scripts are crucial for reliable automation
-- Shell scripts with case statements work well for multi-function skills
-- Providing both human-readable and JSON output modes adds flexibility
-- Parameterizing scripts from the start makes them reusable
-- Structured data (JSON) + parsing tools (`jq`) more reliable than placeholder logic
-- `gh project` command flags are inconsistent (--owner sometimes required/unsupported)
-
-**Spec-Driven Workflow:**
-- `propose-change` → Spec PR → approval → `plan-sprint` cycle is effective
-- Spec PRs provide clear review points before implementation
-- Breaking work into atomic issues improves focus and tracking
+- `skills/` is source-of-truth; `.claude/skills/` is installed version
+- Idempotent scripts with case statements work well for multi-function skills
+- Parameterize scripts from the start; structured data (JSON) + `jq` > placeholder logic
+- Spec-driven workflow: `propose-change` → Spec PR → approval → `plan-sprint` → atomic issues
 
 ---
-
-## Summarized Sprints (via Gemini)
 
 ### #45 - TASK: Restructure doc-indexer skill
 - **Lesson:** The SynthesisFlow philosophy is not about replacing scripts with AI, but about AI executing workflow steps with strategic reasoning, using scripts as context-efficient helpers for complex automation. Dogfooding the workflow on itself was critical for uncovering this misunderstanding and other bugs. A key process gap was forgetting to update `RETROSPECTIVE.md` after closing an issue, which is a required step.
 
-### #46 - TASK: Restructure project-init skill
-- **Lesson:** Establishing a clear, repeatable pattern for restructuring skills (move script, expand SKILL.md, test, follow PR workflow) significantly accelerated the process. The template approach was validated.
-
-### #47 - TASK: Restructure spec-authoring skill
-- **Lesson:** Complex skills with multiple sub-commands require more comprehensive documentation in `SKILL.md` to explain the strategic intent and usage of each command, justifying a longer file.
-
-### #49 - TASK: Restructure issue-executor skill
-- **Lesson:** The existing structure of this skill, which combined a `SKILL.md` overview with a detailed `references/work-on-issue.md` document, is a good pattern for other complex workflow skills. Restructuring also uncovered and fixed a critical syntax error.
-
-### #48 - TASK: Restructure sprint-planner skill
-- **Lesson:** After five restructurings, the pattern is solid and execution is fast. For skills that require user configuration, documenting common error scenarios and providing clear setup guidance is essential.
-
-### #50 - TASK: Restructure change-integrator skill
-- **Lesson:** For skills that automate a process, documenting both the automated script usage and a manual step-by-step alternative provides valuable flexibility for users.
-
-### #51 - TASK: Restructure agent-integrator skill
-- **Lesson:** Documentation depth should match skill complexity. Simpler, infrequently used maintenance skills can have more concise documentation. This completed the restructuring of all 7 core skills, validating the template approach across different skill types.
+### #46-51 - Core Skills Restructuring Sprint
+- **Lesson:** Established clear restructuring pattern: move script, expand SKILL.md, test, follow PR workflow. Documentation depth should match skill complexity - complex skills need comprehensive docs, simple skills can be concise. Combined SKILL.md + reference docs pattern works well for complex workflows. Completed restructuring of all 7 core skills, validating template approach.
 
 ### #52 - TASK: Create skill validation script
 - **Lesson:** An automated validation script provides objective, repeatable quality assurance and is invaluable for maintaining consistency across a suite of skills, making it perfect for CI/CD pipelines. The script achieved 96.8% compliance, validating the restructuring effort.
@@ -118,4 +92,11 @@ This file captures learnings from completed tasks to inform and improve future d
 
 - **Went well:** Successfully implemented parent epic context fetching and fixed a grep bug.
 - **Lesson:** Always verify assumptions about CLI tool capabilities (e.g., gh issue view JSON fields).
+
+### #124 - feat: Add RETROSPECTIVE.md context and improve sprint-planner flexibility
+
+- **Went well:** Successfully added RETROSPECTIVE.md context loading to sprint-planner while maintaining YAML parsing compliance and improving script flexibility with parameterizable input.
+- **Key challenges:** Resolved conflict between original request (add RETROSPECTIVE.md for LLM context) and specification (remove LLM calls) by implementing human-readable context loading instead.
+- **Important learnings:** Make scripts parameterizable from the start rather than hardcoding file paths. Design for flexibility and reusability even when requirements seem simple.
+- **Complete workflow execution:** Full SynthesisFlow workflow completed successfully from issue-executor through PR creation to change integration.
 
