@@ -92,7 +92,7 @@ GEMINI_PROMPT+="\n\nBased on all this context, what are the key steps I should t
 
 # 2d. Call Gemini
 echo "------------------------- GEMINI IMPLEMENTATION PLAN -------------------------"
-gemini -p "$GEMINI_PROMPT"
+gemini --model gemini-2.5-flash -p "$GEMINI_PROMPT"
 echo "----------------------------------------------------------------------------"
 echo "Context loaded and implementation plan generated."
 
