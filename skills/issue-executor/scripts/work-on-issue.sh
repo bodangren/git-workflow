@@ -44,16 +44,58 @@ ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 # 2b. Find all associated spec files
 echo "Finding associated spec files..."
 # This pattern finds all markdown files in docs/specs and docs/changes
-SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md')
+SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md' || true)
 
-# 2c. Construct the Gemini prompt
-GEMINI_PROMPT="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
+# 2c. Fetch issue comments
+echo "Fetching issue comments..."
+COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
+COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
+
+# 2c.1. Fetch parent epic details
+echo "Fetching parent epic details (if any)..."
+PARENT_EPIC_CONTEXT=""
+
+# Try to find a parent epic issue number in the issue body
+PARENT_EPIC_NUMBER=$(echo "$ISSUE_BODY" | grep -oP '(?:Epic|parent) issue #\K\d+' | head -1)
+
+if [ -n "$PARENT_EPIC_NUMBER" ]; then
+    echo "Found parent epic: #$PARENT_EPIC_NUMBER in issue body."
+
+    PARENT_EPIC_JSON=$(gh issue view "$PARENT_EPIC_NUMBER" --json title,body,comments)
+    PARENT_EPIC_TITLE=$(echo "$PARENT_EPIC_JSON" | jq -r '.title')
+    PARENT_EPIC_BODY=$(echo "$PARENT_EPIC_JSON" | jq -r '.body')
+    PARENT_EPIC_COMMENTS=$(echo "$PARENT_EPIC_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"' || true)
+
+    PARENT_EPIC_CONTEXT="**Parent Epic Details (Issue #${PARENT_EPIC_NUMBER}):**
+Title: ${PARENT_EPIC_TITLE}
+Body:
+${PARENT_EPIC_BODY}
+"
+    if [ -n "$PARENT_EPIC_COMMENTS" ]; then
+        PARENT_EPIC_CONTEXT+="\n**Parent Epic Comments:**\n${PARENT_EPIC_COMMENTS}"
+    fi
+fi
+
+# 2d. Construct the Gemini prompt
+GEMINI_PROMPT=""
+
+if [ -n "$PARENT_EPIC_CONTEXT" ]; then
+    GEMINI_PROMPT+="$PARENT_EPIC_CONTEXT\n\n"
+fi
+
+GEMINI_PROMPT+="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
 
 **Issue Details:**
 Title: ${ISSUE_TITLE}
 Body:
 ${ISSUE_BODY}
 "
+
+# Add comments to prompt if they exist
+if [ -n "$COMMENTS" ]; then
+    GEMINI_PROMPT+="\n**Issue Comments:**\n${COMMENTS}"
+fi
+
 
 # Add retrospective to prompt if it exists
 if [ -f "RETROSPECTIVE.md" ]; then
