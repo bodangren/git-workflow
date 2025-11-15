@@ -14,9 +14,11 @@ Initialize a new project with the SynthesisFlow directory structure and configur
 Use this skill in the following situations:
 
 - Starting a completely new project that will use SynthesisFlow
-- Adding SynthesisFlow methodology to an existing project
+- Adding SynthesisFlow methodology to an existing project **with no existing documentation**
 - Setting up a consistent structure for spec-driven development
 - Ensuring project follows SynthesisFlow conventions from the beginning
+
+**Important**: If the project already has documentation in a `docs/` directory, use the **project-migrate** skill instead. It will properly catalog, categorize, and migrate existing documentation into the SynthesisFlow structure while preserving git history and updating links.
 
 ## Prerequisites
 
@@ -30,7 +32,15 @@ Use this skill in the following situations:
 Before initializing, determine:
 - Is this a brand new project or an existing codebase?
 - Does a `docs/` directory already exist?
+- If `docs/` exists, does it contain markdown files?
 - Where should the SynthesisFlow structure be created?
+
+**Decision Tree**:
+- **No docs/ directory**: Proceed with project-init (this skill)
+- **Empty docs/ directory**: Proceed with project-init (this skill)
+- **docs/ with existing markdown files**: Use **project-migrate** skill instead
+
+The init-project.sh script will automatically detect existing documentation and suggest using project-migrate if appropriate.
 
 ### Step 2: Run the Initialization Script
 
@@ -168,6 +178,33 @@ docs/changes/
 
 **Workflow**: Changes start in `docs/changes/`, get approved via Spec PR, then move to `docs/specs/`
 
+## project-init vs project-migrate
+
+Understanding when to use each skill:
+
+### Use project-init when:
+- Starting a **brand new project** from scratch
+- Project has **no existing documentation**
+- docs/ directory is **empty** or doesn't exist
+- You just need the basic SynthesisFlow directory structure
+
+### Use project-migrate when:
+- Project has **existing documentation** in docs/ or other locations
+- You want to **migrate legacy docs** into SynthesisFlow structure
+- You need to **preserve git history** during migration
+- Documentation has **relative links** that need updating
+- You want **doc-indexer compliant frontmatter** added automatically
+
+### Smooth Handoff
+
+The init-project.sh script automatically detects existing documentation and will:
+1. Count markdown files in docs/ (excluding docs/specs/ and docs/changes/)
+2. If found, display a recommendation to use project-migrate
+3. Show the benefits of using project-migrate over basic initialization
+4. Give you the option to continue with project-init or cancel
+
+This ensures you always use the right skill for your situation.
+
 ## Notes
 
 - The script is **idempotent** - safe to run multiple times
@@ -176,3 +213,4 @@ docs/changes/
 - Consider adding `.gitkeep` files to track empty directories in git
 - This is just the directory scaffold - content comes from using other skills
 - The structure is intentionally minimal - projects add what they need
+- **Detection logic**: The script checks for markdown files in docs/, excluding those already in specs/ or changes/ subdirectories

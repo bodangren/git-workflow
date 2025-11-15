@@ -16,18 +16,18 @@ usage() {
 
 while getopts ":p:b:i:w:l:c:" opt; do
   case ${opt} in
-    p ) PR_NUMBER=$OPTARG;; 
-    b ) BRANCH_NAME=$OPTARG;; 
-    i ) ITEM_ID=$OPTARG;; 
-    w ) WENT_WELL=$OPTARG;; 
-    l ) LESSON=$OPTARG;; 
-    c ) CHANGE_DIR=$OPTARG;; 
+    p ) PR_NUMBER=$OPTARG;;
+    b ) BRANCH_NAME=$OPTARG;;
+    i ) ITEM_ID=$OPTARG;;
+    w ) WENT_WELL=$OPTARG;;
+    l ) LESSON=$OPTARG;;
+    c ) CHANGE_DIR=$OPTARG;;
     \? ) echo "Invalid option: $OPTARG" 1>&2; usage;; 
     : ) echo "Invalid option: $OPTARG requires an argument" 1>&2; usage;; 
   esac
 done
 
-if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
+if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
     usage
 fi
 
@@ -54,7 +54,7 @@ git pull
 # 3. Delete merged branch
 echo "Deleting merged branch: $BRANCH_NAME..."
 git push origin --delete "$BRANCH_NAME" || echo "Remote branch $BRANCH_NAME may have already been deleted."
-git branch -D "$BRANCH_NAME"
+git branch -D "$BRANCH_NAME" || true
 
 # 4. Integrate Spec (if a change directory was provided)
 if [ -n "$CHANGE_DIR" ] && [ -d "$CHANGE_DIR" ]; then
@@ -70,18 +70,48 @@ else
 fi
 
 # 5. Update Project Board
-echo "Updating project board for item $ITEM_ID..."
-gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID"
+if [ -n "$ITEM_ID" ]; then
+    echo "Updating project board for item $ITEM_ID..."
+    gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID" || true
+else
+    echo "No project board item ID provided, skipping project board update."
+fi
 
 # 6. Update Retrospective
 echo "Updating retrospective..."
 
-# Check current retrospective length
+summarize_retrospective() {
+    echo "RETROSPECTIVE.md has $(wc -l < RETROSPECTIVE.md) lines. Summarizing with Gemini..."
+
+    # Isolate content to summarize
+    local temp_summary_input="retro_to_summarize_$$.md" # Create in CWD
+    awk '/^## Sprint 4/{f=1}f' RETROSPECTIVE.md > "$temp_summary_input"
+
+    # Preserve the header and historical learnings
+    local header_content
+    header_content=$(awk '/^## Sprint 4/{exit}1' RETROSPECTIVE.md)
+
+    # Call Gemini to summarize
+    local summarized_sprints
+    summarized_sprints=$(gemini -p "Summarize the following sprint retrospective entries into a more concise format, extracting the most important, recurring, or impactful learnings. Preserve the markdown structure with '### #PR' headers. @$temp_summary_input")
+
+    # Clean up the temp file
+    rm "$temp_summary_input"
+
+    # Reconstruct the file
+    echo "$header_content" > RETROSPECTIVE.md
+    echo -e "\n## Summarized Sprints (via Gemini)\n" >> RETROSPECTIVE.md
+    echo "$summarized_sprints" >> RETROSPECTIVE.md
+
+    echo "Retrospective summarized and overwritten."
+}
+
+# Check current retrospective length and summarize if needed
 if [ -f "RETROSPECTIVE.md" ]; then
     LINE_COUNT=$(wc -l < "RETROSPECTIVE.md")
-    if [ "$LINE_COUNT" -gt 100 ]; then
-        echo "Error: RETROSPECTIVE.md has $LINE_COUNT lines (over 100). Please compact by ~50% before continuing."
-        exit 1
+    RETROSPECTIVE_MAX_LINES=150
+    if [ "$LINE_COUNT" -gt $RETROSPECTIVE_MAX_LINES ]; then
+        summarize_retrospective
     fi
 fi
 

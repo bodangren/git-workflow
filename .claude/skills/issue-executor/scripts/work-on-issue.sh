@@ -32,8 +32,8 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 echo "Git status is clean."
 
-# 2. Load Context
-echo "Loading context for Issue #$ISSUE_NUMBER..."
+# 2. Synthesize Implementation Plan with Gemini
+echo "Synthesizing implementation plan for Issue #$ISSUE_NUMBER with Gemini..."
 
 # 2a. Read issue details from GitHub
 echo "Fetching issue details..."
@@ -41,34 +41,60 @@ ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" --json title,body)
 ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
 ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 
-# 2b. Find and read the associated spec file
-echo "Finding associated spec file..."
-# This is a simplified pattern match. A more robust version would be needed for complex bodies.
-# Match both docs/specs/ and docs/changes/ paths
-SPEC_FILE=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*' || true)
+# 2b. Find all associated spec files
+echo "Finding associated spec files..."
+# This pattern finds all markdown files in docs/specs and docs/changes
+SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md' || true)
 
-if [ -n "$SPEC_FILE" ] && [ -f "$SPEC_FILE" ]; then
-    echo "Found associated spec: $SPEC_FILE"
-    cat "$SPEC_FILE"
-else
-    echo "No specific spec file linked in issue body."
+# 2c. Fetch issue comments
+echo "Fetching issue comments..."
+COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
+COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
+
+# 2d. Construct the Gemini prompt
+GEMINI_PROMPT=""
+
+if [ -n "$PARENT_EPIC_CONTEXT" ]; then
+    GEMINI_PROMPT+="$PARENT_EPIC_CONTEXT\n\n"
 fi
 
-# 2c. Read the retrospective
-echo "Reading RETROSPECTIVE.md..."
+GEMINI_PROMPT+="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
+
+**Issue Details:**
+Title: ${ISSUE_TITLE}
+Body:
+${ISSUE_BODY}
+"
+
+# Add comments to prompt if they exist
+if [ -n "$COMMENTS" ]; then
+    GEMINI_PROMPT+="\n**Issue Comments:**\n${COMMENTS}"
+fi
+
+
+# Add retrospective to prompt if it exists
 if [ -f "RETROSPECTIVE.md" ]; then
-    cat RETROSPECTIVE.md
-else
-    echo "No RETROSPECTIVE.md file found."
+    GEMINI_PROMPT+="\n**Retrospective Learnings:**\n@RETROSPECTIVE.md"
 fi
 
-# 2d. Run the doc-indexer to get a map of all docs
-echo "Running doc-indexer skill..."
-if [ -f ".claude/skills/doc-indexer/scripts/scan-docs.sh" ]; then
-    bash .claude/skills/doc-indexer/scripts/scan-docs.sh
-else
-    echo "Warning: doc-indexer skill not found."
+# Add spec files to prompt
+if [ -n "$SPEC_FILES" ]; then
+    GEMINI_PROMPT+="\n\n**Referenced Specifications:**"
+    for spec in $SPEC_FILES; do
+        if [ -f "$spec" ]; then
+            GEMINI_PROMPT+="\n@$spec"
+        fi
+    done
 fi
+
+# Add final instruction to prompt
+GEMINI_PROMPT+="\n\nBased on all this context, what are the key steps I should take to implement this feature correctly, keeping in mind past learnings and adhering to the specifications? Provide a clear, actionable plan."
+
+# 2d. Call Gemini
+echo "------------------------- GEMINI IMPLEMENTATION PLAN -------------------------"
+gemini -p "$GEMINI_PROMPT"
+echo "----------------------------------------------------------------------------"
+echo "Context loaded and implementation plan generated."
 
 # 3. Create a feature branch
 echo "Generating branch name..."

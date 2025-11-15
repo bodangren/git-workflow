@@ -1,63 +1,44 @@
 ---
 name: sprint-planner
-description: Use this skill when planning a new sprint by selecting approved specs from the project board and creating atomic GitHub issues for the development team. Triggers include "plan sprint", "create sprint", "start new sprint", or beginning a development cycle.
+description: Use this skill to plan a new sprint. It uses the Gemini CLI to intelligently decompose approved specs into atomic GitHub issues for the development team. Triggers include "plan sprint", "create sprint", or "start new sprint".
 ---
 
 # Sprint Planner Skill
 
 ## Purpose
 
-Plan and initialize a new sprint by selecting approved specifications from the project board, creating a milestone, and generating atomic GitHub issues for each task. This skill bridges the gap between approved specs and executable work items, breaking down high-level features into trackable, atomic tasks for the development team.
+To plan and initialize a new sprint by intelligently decomposing approved specifications into a comprehensive set of atomic GitHub issues. This skill bridges the gap between high-level specs and executable work items by using the **Gemini CLI** to analyze the spec's content and generate a thoughtful task breakdown. It then automates the creation of these tasks as GitHub issues within a new sprint milestone.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Starting a new sprint or development cycle
-- Converting approved specs into actionable GitHub issues
-- Creating a milestone and task breakdown for a feature
-- Initializing work items from the project board backlog
-- Breaking down an epic into atomic implementation tasks
+- Starting a new sprint or development cycle.
+- Converting an approved spec into actionable GitHub issues.
+- When you want an AI-assisted breakdown of an epic into atomic implementation tasks.
 
 ## Prerequisites
 
-- Project board configured with "Approved Backlog" status
-- Approved spec files exist in `docs/specs/` directory
-- Specs have task lists with `- [ ]` checkbox format
-- GitHub repository set up with project board
-- `gh` CLI tool installed and authenticated
-- `jq` tool installed for JSON parsing
-- Epic issues linked to spec files in issue body
+- Project board configured with an "Approved Backlog" status column.
+- Approved spec files exist in the `docs/specs/` directory.
+- An Epic issue exists on GitHub that links to the spec file in its body.
+- `gh` CLI tool installed and authenticated.
+- `jq` tool installed for JSON parsing.
+- `gemini` CLI tool installed and authenticated.
 
 ## Workflow
 
 ### Step 1: Review Project Board
 
-Check the project board for approved specs ready to be planned:
-
-```bash
-gh project item-list PROJECT_NUMBER --owner @me --format json
-```
-
-Identify epics in the "Approved Backlog" status. These represent specs that have been reviewed, approved, and are ready for implementation.
+Check the project board for approved specs (represented as Epics) ready to be planned.
 
 ### Step 2: Discuss Sprint Scope with User
 
-Engage the user to determine:
-- Which epic(s) to include in the sprint
-- Sprint timeline and duration
-- Sprint goals and priorities
-- Resource availability
-
-Review the available epics together and select which work to prioritize for this sprint.
+Engage the user to determine which epic(s) from the "Approved Backlog" to include in the sprint.
 
 ### Step 3: Define Sprint Metadata
 
-Work with the user to establish:
-- **Sprint name**: e.g., "Sprint 4", "Q1 2025 Sprint 2"
-- **Sprint goals**: High-level objectives for this development cycle
-- **Timeline**: Start and end dates (if applicable)
-- **Success criteria**: How to measure sprint completion
+Work with the user to establish the sprint name (e.g., "Sprint 4").
 
 ### Step 4: Run the Helper Script
 
@@ -71,173 +52,53 @@ bash scripts/create-sprint-issues.sh
 
 The helper script automates these steps:
 
-1. **Queries project board**:
-   - Fetches all items in "Approved Backlog" status
-   - Displays available epics with their issue numbers
-
-2. **Prompts for epic selection**:
-   - User enters the epic issue number to plan
-   - Script retrieves epic details and body
-
-3. **Extracts spec file**:
-   - Parses epic body to find associated spec file path
-   - Validates the spec file exists
-
-4. **Prompts for milestone name**:
-   - User enters sprint milestone name
-   - Script creates the GitHub milestone
-
-5. **Parses tasks from spec**:
-   - Reads spec file for task list items (`- [ ] **Title**: Description`)
-   - Creates a GitHub issue for each task
-
-6. **Creates GitHub issues**:
-   - Each task becomes an issue with "TASK: " prefix
-   - Issues reference the spec file and parent epic
-   - Issues are assigned to the sprint milestone
+1.  **Queries Project Board**: Fetches all items from the "Approved Backlog" and prompts you to select an Epic to plan.
+2.  **Extracts Spec File**: Parses the selected Epic's body to find the associated spec file path.
+3.  **Creates Milestone**: Prompts you for a sprint name and creates the corresponding GitHub milestone.
+4.  **Decomposes Spec with AI**: Instead of relying on a rigid format, the script sends the full content of the spec file and the parent Epic to the **Gemini CLI**. It asks the AI to generate a list of atomic, actionable tasks based on its understanding of the document.
+5.  **Creates GitHub Issues**: The script parses the structured task list from Gemini's response and creates a GitHub issue for each task. Each issue is automatically titled, assigned to the new milestone, and includes a description and references to the parent Epic and spec file.
 
 ### Step 6: Verify Issue Creation
 
-After the script completes:
+After the script completes, review the newly created issues in your milestone.
 
 ```bash
-gh issue list --milestone "Sprint 4"
+gh issue list --milestone "Your Sprint Name"
 ```
-
-Review that:
-- All expected tasks are present
-- Issue titles are clear and actionable
-- Issues reference correct spec and epic
-- Milestone assignment is correct
 
 ### Step 7: Review Created Issues with User
 
-Walk through the created issues together:
-- Confirm task breakdown is complete
-- Verify priorities are set appropriately
-- Discuss any missing tasks or adjustments needed
-- Assign issues if team members are identified
-
-### Step 8: Update Project Board (Optional)
-
-If using project board automation:
-- Move epic from "Approved Backlog" to "In Sprint"
-- Verify task issues appear on project board
-- Set priorities or labels as needed
-
-### Step 9: Document Sprint Plan (Optional)
-
-Consider creating a sprint planning document:
-
-```markdown
-# Sprint 4 Plan
-
-**Timeline**: Nov 1 - Nov 15, 2025
-**Epic**: #44 - Claude Code Skill Compliance
-**Milestone**: Sprint 4
-
-## Goals
-- Restructure all 7 SynthesisFlow skills
-- Improve Claude Code compliance
-- Validate with skill validation script
-
-## Tasks
-- #45 - Restructure doc-indexer skill
-- #46 - Restructure project-init skill
-...
-```
+Walk through the AI-generated issues with your team. The generated tasks provide a strong baseline, but you should review them to confirm completeness, adjust priorities, and make any necessary refinements.
 
 ## Error Handling
 
-### jq Not Installed
+### jq or Gemini Not Installed
 
-**Symptom**: Script reports jq command not found
-
-**Solution**:
-- Install jq: `sudo apt install jq` (Linux)
-- Or: `brew install jq` (Mac)
-- Verify: `jq --version`
+**Symptom**: Script reports that `jq` or `gemini` command is not found.
+**Solution**: Install the required tool and ensure it's in your system's PATH.
 
 ### No Approved Epics Found
 
-**Symptom**: Script reports no epics in approved backlog
-
-**Solution**:
-- Verify project board has "Approved Backlog" status
-- Check if epics are in correct status column
-- Confirm specs have been approved via spec PR
-- Run spec-authoring skill to create and approve specs first
+**Symptom**: Script reports no epics in the approved backlog.
+**Solution**: Ensure your Epics are in the correct status column on your project board.
 
 ### Epic Body Missing Spec Reference
 
-**Symptom**: Script cannot find spec file in epic body
+**Symptom**: Script cannot find a spec file path in the Epic's body.
+**Solution**: Edit the Epic's issue body on GitHub to include a valid path to a spec file (e.g., `docs/specs/my-feature.md`).
 
+### Gemini CLI Issues
+
+**Symptom**: The script fails during the task decomposition step with an error from the `gemini` command.
 **Solution**:
-- Update epic issue body to include spec file path
-- Format: `docs/specs/feature-name/spec.md`
-- Ensure spec file actually exists at that path
-- Follow spec-authoring workflow to create spec if needed
-
-### Milestone Already Exists
-
-**Symptom**: GitHub API returns error that milestone exists
-
-**Solution**:
-- Use a different milestone name
-- Or manually delete existing milestone if unused
-- Or add tasks to existing milestone via `gh issue create`
-
-### Spec File Missing Task List
-
-**Symptom**: Script creates no issues or very few issues
-
-**Solution**:
-- Verify spec file has task list in correct format: `- [ ] **Title**: Description`
-- Ensure tasks are in a clear section (e.g., `## Tasks` or `## Implementation`)
-- Review spec-delta.md template for proper task formatting
-- Update spec file to include detailed task breakdown
-
-### Permission Denied Creating Milestone
-
-**Symptom**: GitHub API returns 403 or permission error
-
-**Solution**:
-- Verify `gh` CLI is authenticated: `gh auth status`
-- Ensure you have repository write access
-- Re-authenticate if needed: `gh auth login`
-- Verify repository name is correct in script REPO variable
-
-## Configuration Notes
-
-The script uses these configuration variables (lines 6-11):
-
-```bash
-PROJECT_NUMBER="1"
-APPROVED_BACKLOG_ID="888736cd"
-OWNER="@me"
-REPO="bodangren/git-workflow"
-```
-
-**To adapt for your project:**
-1. Update `PROJECT_NUMBER` to your GitHub project number
-2. Find `APPROVED_BACKLOG_ID` by querying project field values
-3. Update `REPO` to your repository path (owner/repo)
-4. Keep `OWNER="@me"` to use current authenticated user
-
-**Finding your Approved Backlog ID:**
-```bash
-gh project field-list PROJECT_NUMBER --owner @me
-```
+- Ensure the `gemini` CLI is installed and authenticated (`gemini auth`).
+- Check for API outages or network issues.
+- The quality of the task breakdown depends on a functional Gemini CLI.
 
 ## Notes
 
-- **Script automates repetitive work**: Creating dozens of issues manually is tedious and error-prone
-- **LLM guides the strategic decisions**: Which specs to plan, sprint scope, timeline
-- **Task format matters**: Spec files must use `- [ ] **Title**: Description` format for parsing
-- **One epic per sprint run**: Run the script multiple times if planning multiple epics
-- **Milestone groups tasks**: All tasks from same epic share a milestone for easy filtering
-- **Epic remains parent**: Each task issue references parent epic for traceability
-- **Project board integration**: Issues can be automatically added to project board if configured
-- **Idempotent considerations**: Running script twice creates duplicate issues - be careful
-- **Manual refinement expected**: Review and adjust created issues as needed after script runs
-- **Sprint planning is collaborative**: Engage user throughout the process for priorities and scope
+- **Intelligent Decomposition**: The skill no longer relies on a rigid task format in spec files. Gemini reads and understands the document to create tasks.
+- **LLM guides strategy, script executes**: You decide which spec to plan; the script uses AI to handle the tedious decomposition and issue creation.
+- **One epic per run**: Run the script once for each Epic you want to plan for the sprint.
+- **Traceability is built-in**: Each created task issue automatically references the parent Epic and the source spec file.
+- **Manual refinement is expected**: The AI-generated task list is a starting point. Review and adjust it with your team.
