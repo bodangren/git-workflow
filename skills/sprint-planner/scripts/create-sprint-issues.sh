@@ -3,10 +3,23 @@
 
 set -e
 
+# --- USAGE ---
+usage() {
+    echo "Usage: $0 [TASKS_FILE]"
+    echo "  TASKS_FILE: Path to the tasks.yml file (default: docs/changes/sprint-7-framework-improvements/tasks.yml)"
+    exit 1
+}
+
+# Parse command line arguments
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    usage
+fi
+
+TASKS_FILE="${1:-docs/changes/sprint-7-framework-improvements/tasks.yml}"
+
 # --- CONFIGURATION ---
 # In a real scenario, this should be detected dynamically from the git remote URL
 REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
-TASKS_FILE="docs/changes/sprint-1-framework-improvements/tasks.yml"
 
 # --- VALIDATION ---
 if ! command -v gh &> /dev/null; then
@@ -76,7 +89,19 @@ while IFS= read -r label; do
 done <<< "$ALL_LABELS"
 echo "Label setup complete."
 
-# 5. Parse the tasks.yml file and create an issue for each task
+# 5. Load context from RETROSPECTIVE.md to inform better task creation
+echo "Loading context from RETROSPECTIVE.md..."
+RETROSPECTIVE_FILE="RETROSPECTIVE.md"
+if [ -f "$RETROSPECTIVE_FILE" ]; then
+    echo "✓ Found RETROSPECTIVE.md with past learnings"
+    # Count recent learnings to inform user about context
+    RECENT_LEARNINGS=$(grep -c "^### #[0-9]" "$RETROSPECTIVE_FILE" 2>/dev/null || echo "0")
+    echo "  - Contains $RECENT_LEARNINGS completed issues with learnings"
+else
+    echo "⚠ RETROSPECTIVE.md not found - no historical context available"
+fi
+
+# 6. Parse the tasks.yml file and create an issue for each task
 echo "Creating issues for all tasks..."
 
 # Use yq to output each task's fields separated by a pipe for safe reading
