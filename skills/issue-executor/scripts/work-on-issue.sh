@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 # This script manages the core development loop for a single issue.
 
 set -e
