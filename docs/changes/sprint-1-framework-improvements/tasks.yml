@@ -1,99 +1,99 @@
-epic: "Sprint 1: Framework Improvements"
-tasks:
-  # Epic 1: Enhanced Context Provisioning
-  - title: "Task: Enhance issue-executor to fetch issue comments"
-    description: "Modify skills/issue-executor/scripts/work-on-issue.sh to automatically fetch all comments from the target GitHub issue and append them to the context provided to the LLM."
-    labels:
-      type: "enhancement"
-      component: "issue-executor"
-      priority: "P1"
-  - title: "Task: Enhance issue-executor to fetch parent epic context"
-    description: "Add logic to skills/issue-executor/scripts/work-on-issue.sh to identify a linked parent/epic issue, fetch its details (title, body, comments), and include them in the LLM's context."
-    labels:
-      type: "enhancement"
-      component: "issue-executor"
-      priority: "P1"
-  - title: "Task: Add RETROSPECTIVE.md to sprint-planner context"
-    description: "Modify skills/sprint-planner/scripts/create-sprint-issues.sh to include the RETROSPECTIVE.md file in the context for the LLM, to inform better task creation."
-    labels:
-      type: "enhancement"
-      component: "sprint-planner"
-      priority: "P2"
-
-  # Epic 2: Workflow Automation & Reliability
-  - title: "Task: Define tasks.yml format"
-    description: "Create a formal specification or documentation for the new machine-readable tasks.yml format, including required and optional fields and labels."
-    labels:
-      type: "docs"
-      component: "framework"
-      priority: "P0"
-  - title: "Task: Refactor sprint-planner to parse tasks.yml"
-    description: "Remove the LLM call from create-sprint-issues.sh and replace it with a YAML parser to read tasks.yml directly and create issues automatically."
-    labels:
-      type: "refactor"
-      component: "sprint-planner"
-      priority: "P0"
-  - title: "Task: Update spec-authoring to generate tasks.yml"
-    description: "Update skills/spec-authoring/scripts/spec-authoring.sh to generate a tasks.yml file with the new YAML structure instead of a tasks.md file."
-    labels:
-      type: "enhancement"
-      component: "spec-authoring"
-      priority: "P1"
-  - title: "Task: Refactor project-migrate to use LLM for link correction"
-    description: "Replace the brittle shell function for link correction in project-migrate.sh with a more robust LLM-based approach."
-    labels:
-      type: "refactor"
-      component: "project-migrate"
-      priority: "P2"
-
-  # Epic 3: Agent & Skill Framework Improvements
-  - title: "Task: Create skill-lister skill"
-    description: "Create a new skill that scans the .claude/skills/ directory and lists all available skills and their scripts, to provide a bootstrap context for any LLM."
-    labels:
-      type: "feature"
-      component: "framework"
-      priority: "P0"
-  - title: "Task: Update agent-integrator to recommend skill-lister"
-    description: "Modify skills/agent-integrator/scripts/update-agents-file.sh to include instructions in AGENTS.md for the LLM to run the skill-lister at the start of a session."
-    labels:
-      type: "enhancement"
-      component: "agent-integrator"
-      priority: "P0"
-  - title: "Task: Create doc-validator skill"
-    description: "Create a new skill that scans for markdown files in non-standard locations to prevent documentation sprawl and enforce repository structure."
-    labels:
-      type: "feature"
-      component: "framework"
-      priority: "P1"
-  - title: "Task: Integrate doc-validator into issue-executor"
-    description: "Modify the issue-executor workflow to run the doc-validator script at the beginning to check for stray documents."
-    labels:
-      type: "enhancement"
-      component: "issue-executor"
-      priority: "P2"
-  - title: "Task: Integrate doc-validator into change-integrator"
-    description: "Modify the change-integrator workflow to run the doc-validator script as a final quality gate before merging."
-    labels:
-      type: "enhancement"
-      component: "change-integrator"
-      priority: "P2"
-
-  # Epic 4: LLM-Powered Quality & Refinement
-  - title: "Task: Use LLM in change-integrator for structured retrospective entries"
-    description: "Enhance the change-integrator script to use an LLM to generate structured, high-quality retrospective entries from the 'went well' and 'lesson learned' inputs."
-    labels:
-      type: "enhancement"
-      component: "change-integrator"
-      priority: "P2"
-  - title: "Task: Use LLM in prd-authoring for advanced validation"
-    description: "Augment the validate-prd function in prd-authoring.sh to use an LLM to analyze the PRD for untestable requirements or unclear success criteria."
-    labels:
-      type: "enhancement"
-      component: "prd-authoring"
-      priority: "P2"
-  - title: "Task: Refactor spec-authoring for chained LLM calls"
-    description: "Modify spec-authoring.sh to chain the LLM calls, using the output of the proposal generation as context for the spec generation, and both for task generation."
-    labels:
-      type: "refactor"
-      component: "spec-authoring"
-      priority: "P1"
++epic: "Sprint 1: Framework Improvements"
++tasks:
++  # Epic 1: Enhanced Context Provisioning
++  - title: "Task: Enhance issue-executor to fetch issue comments"
++    description: "Modify skills/issue-executor/scripts/work-on-issue.sh to automatically fetch all comments from the target GitHub issue and append them to the context provided to the LLM."
++    labels:
++      type: "enhancement"
++      component: "issue-executor"
++      priority: "P1"
++  - title: "Task: Enhance issue-executor to fetch parent epic context"
++    description: "Add logic to skills/issue-executor/scripts/work-on-issue.sh to identify a linked parent/epic issue, fetch its details (title, body, comments), and include them in the LLM's context."
++    labels:
++      type: "enhancement"
++      component: "issue-executor"
++      priority: "P1"
++  - title: "Task: Add RETROSPECTIVE.md to sprint-planner context"
++    description: "Modify skills/sprint-planner/scripts/create-sprint-issues.sh to include the RETROSPECTIVE.md file in the context for the LLM, to inform better task creation."
++    labels:
++      type: "enhancement"
++      component: "sprint-planner"
++      priority: "P2"
++
++  # Epic 2: Workflow Automation & Reliability
++  - title: "Task: Define tasks.yml format"
++    description: "Create a formal specification or documentation for the new machine-readable tasks.yml format, including required and optional fields and labels."
++    labels:
++      type: "docs"
++      component: "framework"
++      priority: "P0"
++  - title: "Task: Refactor sprint-planner to parse tasks.yml"
++    description: "Remove the LLM call from create-sprint-issues.sh and replace it with a YAML parser to read tasks.yml directly and create issues automatically."
++    labels:
++      type: "refactor"
++      component: "sprint-planner"
++      priority: "P0"
++  - title: "Task: Update spec-authoring to generate tasks.yml"
++    description: "Update skills/spec-authoring/scripts/spec-authoring.sh to generate a tasks.yml file with the new YAML structure instead of a tasks.md file."
++    labels:
++      type: "enhancement"
++      component: "spec-authoring"
++      priority: "P1"
++  - title: "Task: Refactor project-migrate to use LLM for link correction"
++    description: "Replace the brittle shell function for link correction in project-migrate.sh with a more robust LLM-based approach."
++    labels:
++      type: "refactor"
++      component: "project-migrate"
++      priority: "P2"
++
++  # Epic 3: Agent & Skill Framework Improvements
++  - title: "Task: Create skill-lister skill"
++    description: "Create a new skill that scans the .claude/skills/ directory and lists all available skills and their scripts, to provide a bootstrap context for any LLM."
++    labels:
++      type: "feature"
++      component: "framework"
++      priority: "P0"
++  - title: "Task: Update agent-integrator to recommend skill-lister"
++    description: "Modify skills/agent-integrator/scripts/update-agents-file.sh to include instructions in AGENTS.md for the LLM to run the skill-lister at the start of a session."
++    labels:
++      type: "enhancement"
++      component: "agent-integrator"
++      priority: "P0"
++  - title: "Task: Create doc-validator skill"
++    description: "Create a new skill that scans for markdown files in non-standard locations to prevent documentation sprawl and enforce repository structure."
++    labels:
++      type: "feature"
++      component: "framework"
++      priority: "P1"
++  - title: "Task: Integrate doc-validator into issue-executor"
++    description: "Modify the issue-executor workflow to run the doc-validator script at the beginning to check for stray documents."
++    labels:
++      type: "enhancement"
++      component: "issue-executor"
++      priority: "P2"
++  - title: "Task: Integrate doc-validator into change-integrator"
++    description: "Modify the change-integrator workflow to run the doc-validator script as a final quality gate before merging."
++    labels:
++      type: "enhancement"
++      component: "change-integrator"
++      priority: "P2"
++
++  # Epic 4: LLM-Powered Quality & Refinement
++  - title: "Task: Use LLM in change-integrator for structured retrospective entries"
++    description: "Enhance the change-integrator script to use an LLM to generate structured, high-quality retrospective entries from the 'went well' and 'lesson learned' inputs."
++    labels:
++      type: "enhancement"
++      component: "change-integrator"
++      priority: "P2"
++  - title: "Task: Use LLM in prd-authoring for advanced validation"
++    description: "Augment the validate-prd function in prd-authoring.sh to use an LLM to analyze the PRD for untestable requirements or unclear success criteria."
++    labels:
++      type: "enhancement"
++      component: "prd-authoring"
++      priority: "P2"
++  - title: "Task: Refactor spec-authoring for chained LLM calls"
++    description: "Modify spec-authoring.sh to chain the LLM calls, using the output of the proposal generation as context for the spec generation, and both for task generation."
++    labels:
++      type: "refactor"
++      component: "spec-authoring"
++      priority: "P1"
