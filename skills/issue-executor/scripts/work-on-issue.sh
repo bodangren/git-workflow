@@ -46,7 +46,12 @@ echo "Finding associated spec files..."
 # This pattern finds all markdown files in docs/specs and docs/changes
 SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md')
 
-# 2c. Construct the Gemini prompt
+# 2c. Fetch issue comments
+echo "Fetching issue comments..."
+COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
+COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
+
+# 2d. Construct the Gemini prompt
 GEMINI_PROMPT="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
 
 **Issue Details:**
@@ -54,6 +59,12 @@ Title: ${ISSUE_TITLE}
 Body:
 ${ISSUE_BODY}
 "
+
+# Add comments to prompt if they exist
+if [ -n "$COMMENTS" ]; then
+    GEMINI_PROMPT+="\n**Issue Comments:**\n${COMMENTS}"
+fi
+
 
 # Add retrospective to prompt if it exists
 if [ -f "RETROSPECTIVE.md" ]; then
