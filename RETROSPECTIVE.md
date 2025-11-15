@@ -54,3 +54,8 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully created comprehensive tasks.yml format specification covering all acceptance criteria from issue #125. Provided clear schema, validation rules, migration guidance, and integration notes for automation.
 - **Lesson:** Clear specification with examples and validation rules enables reliable automation and reduces parsing errors compared to prose-based tasks.md. Machine-readable formats significantly improve framework reliability.
 
+### #126 - refactor: Remove LLM calls from sprint-planner and implement YAML parsing
+
+- **Went well:** Successfully replaced LLM dependency with robust YAML parsing using yq, adding comprehensive validation for malformed files and missing required fields. Implemented graceful handling of optional priority labels and clear error messaging for debugging.
+- **Lesson:** Removing external API dependencies improves reliability, performance, and maintainability. Proper validation with informative error messages is essential for automation scripts. Testing edge cases (malformed YAML, missing fields, optional data) ensures robust production behavior.
+
