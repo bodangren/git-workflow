@@ -51,8 +51,38 @@ echo "Fetching issue comments..."
 COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
 COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
 
+# 2c.1. Fetch parent epic details
+echo "Fetching parent epic details (if any)..."
+PARENT_EPIC_URL=$(gh issue view "$ISSUE_NUMBER" --json timelineItems -q '.timelineItems[] | select(.source.type == "EPIC") | .source.issue.url' || true)
+PARENT_EPIC_CONTEXT=""
+
+if [ -n "$PARENT_EPIC_URL" ]; then
+    PARENT_EPIC_NUMBER=$(basename "$PARENT_EPIC_URL")
+    echo "Found parent epic: #$PARENT_EPIC_NUMBER"
+
+    PARENT_EPIC_JSON=$(gh issue view "$PARENT_EPIC_NUMBER" --json title,body,comments)
+    PARENT_EPIC_TITLE=$(echo "$PARENT_EPIC_JSON" | jq -r '.title')
+    PARENT_EPIC_BODY=$(echo "$PARENT_EPIC_JSON" | jq -r '.body')
+    PARENT_EPIC_COMMENTS=$(echo "$PARENT_EPIC_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"' || true)
+
+    PARENT_EPIC_CONTEXT="**Parent Epic Details (Issue #${PARENT_EPIC_NUMBER}):**
+Title: ${PARENT_EPIC_TITLE}
+Body:
+${PARENT_EPIC_BODY}
+"
+    if [ -n "$PARENT_EPIC_COMMENTS" ]; then
+        PARENT_EPIC_CONTEXT+="\n**Parent Epic Comments:**\n${PARENT_EPIC_COMMENTS}"
+    fi
+fi
+
 # 2d. Construct the Gemini prompt
-GEMINI_PROMPT="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
+GEMINI_PROMPT=""
+
+if [ -n "$PARENT_EPIC_CONTEXT" ]; then
+    GEMINI_PROMPT+="$PARENT_EPIC_CONTEXT\n\n"
+fi
+
+GEMINI_PROMPT+="I am about to start work on GitHub issue #${ISSUE_NUMBER}. Here is all the context. Please provide a concise, step-by-step implementation plan.
 
 **Issue Details:**
 Title: ${ISSUE_TITLE}
