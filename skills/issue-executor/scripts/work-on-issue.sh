@@ -51,31 +51,6 @@ echo "Fetching issue comments..."
 COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
 COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
 
-# 2c.1. Fetch parent epic details
-echo "Fetching parent epic details (if any)..."
-PARENT_EPIC_CONTEXT=""
-
-# Try to find a parent epic issue number in the issue body
-PARENT_EPIC_NUMBER=$(echo "$ISSUE_BODY" | grep -oP '(?:Epic|parent) issue #\K\d+' | head -1)
-
-if [ -n "$PARENT_EPIC_NUMBER" ]; then
-    echo "Found parent epic: #$PARENT_EPIC_NUMBER in issue body."
-
-    PARENT_EPIC_JSON=$(gh issue view "$PARENT_EPIC_NUMBER" --json title,body,comments)
-    PARENT_EPIC_TITLE=$(echo "$PARENT_EPIC_JSON" | jq -r '.title')
-    PARENT_EPIC_BODY=$(echo "$PARENT_EPIC_JSON" | jq -r '.body')
-    PARENT_EPIC_COMMENTS=$(echo "$PARENT_EPIC_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"' || true)
-
-    PARENT_EPIC_CONTEXT="**Parent Epic Details (Issue #${PARENT_EPIC_NUMBER}):**
-Title: ${PARENT_EPIC_TITLE}
-Body:
-${PARENT_EPIC_BODY}
-"
-    if [ -n "$PARENT_EPIC_COMMENTS" ]; then
-        PARENT_EPIC_CONTEXT+="\n**Parent Epic Comments:**\n${PARENT_EPIC_COMMENTS}"
-    fi
-fi
-
 # 2d. Construct the Gemini prompt
 GEMINI_PROMPT=""
 
