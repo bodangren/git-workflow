@@ -59,3 +59,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully replaced LLM dependency with robust YAML parsing using yq, adding comprehensive validation for malformed files and missing required fields. Implemented graceful handling of optional priority labels and clear error messaging for debugging.
 - **Lesson:** Removing external API dependencies improves reliability, performance, and maintainability. Proper validation with informative error messages is essential for automation scripts. Testing edge cases (malformed YAML, missing fields, optional data) ensures robust production behavior.
 
+
+### #144 - feat/128-refactor-project-migrate-to-use-llm-for-link-correction
+
+- **Went well:** Successfully replaced brittle shell-based link correction with robust LLM approach. The new Python script is cleaner, more maintainable, and provides better error handling with graceful fallbacks.
+- **Lesson:** LLM-based approaches can dramatically simplify complex string manipulation tasks. Using Gemini Flash 2.5 model provides good balance of cost and capability. Proper fallback handling is essential when depending on external APIs.
+
