@@ -44,7 +44,7 @@ ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 # 2b. Find all associated spec files
 echo "Finding associated spec files..."
 # This pattern finds all markdown files in docs/specs and docs/changes
-SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md')
+SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md' || true)
 
 # 2c. Fetch issue comments
 echo "Fetching issue comments..."
