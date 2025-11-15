@@ -42,6 +42,7 @@ This project uses SynthesisFlow, a modular, spec-driven development methodology.
 
 ## Available Skillsets
 - **`.claude/skills/project-init/`**: For initial project scaffolding.
+- **`.claude/skills/skill-lister/`**: For discovering all available skills and their capabilities.
 - **`.claude/skills/doc-indexer/`**: For real-time documentation discovery.
 - **`.claude/skills/spec-authoring/`**: For proposing and refining new specifications.
 - **`.claude/skills/sprint-planner`**: For creating GitHub issues from approved specs.
@@ -49,7 +50,7 @@ This project uses SynthesisFlow, a modular, spec-driven development methodology.
 - **`.claude/skills/change-integrator/`**: For finalizing and archiving a completed change.
 - **`.claude/skills/agent-integrator/`**: For creating or updating this guide in `AGENTS.md`.
 
-To begin, always assess the current state by checking the git branch and running the `doc-indexer`.
+To begin, always assess the current state by checking the git branch, running the `skill-lister` to understand available capabilities, and running the `doc-indexer` to understand available documentation.
 <!-- SYNTHESIS_FLOW_END -->
 EOM
 
