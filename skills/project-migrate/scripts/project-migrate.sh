@@ -1205,8 +1205,8 @@ calculate_relative_path() {
   echo "${result}${to_base}"
 }
 
-# Function to update relative links in a markdown file
-update_markdown_links() {
+# Function to update relative links in a markdown file using LLM
+llm_update_markdown_links() {
   local file="$1"
   local old_location="$2"
   local new_location="$3"
@@ -1216,97 +1216,49 @@ update_markdown_links() {
     return 0
   fi
 
-  # Track statistics
-  local links_found=0
-  local links_updated=0
-  local links_broken=0
+  # Get the script directory
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local llm_script="$script_dir/correct_links_llm.py"
 
-  # Get directories for path calculations
-  local old_dir=$(dirname "$old_location")
-  local new_dir=$(dirname "$new_location")
+  # Check if LLM script exists
+  if [ ! -f "$llm_script" ]; then
+    echo "    ⚠️  Warning: LLM link correction script not found: $llm_script" >&2
+    echo "      Skipping link correction for $(basename "$file")" >&2
+    return 1
+  fi
 
-  # Create temporary file for updated content
+  # Check if Python 3 is available
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "    ⚠️  Warning: Python 3 not available for LLM link correction" >&2
+    echo "      Skipping link correction for $(basename "$file")" >&2
+    return 1
+  fi
+
+  # Create temporary file for corrected content
   local temp_file=$(mktemp)
 
-  # Read file line by line and update links
-  while IFS= read -r line; do
-    local updated_line="$line"
-
-    # Find all markdown links: [text](path) and ![alt](path)
-    # Use grep to find lines with links, then process each link
-    if echo "$line" | grep -qE '\[[^]]*\]\([^)]+\)'; then
-      # Extract and process each link on the line using a simpler approach
-      local temp_line="$line"
-      local link_pattern='\[([^]]*)\]\(([^)]+)\)'
-
-      while [[ "$temp_line" =~ $link_pattern ]]; do
-        local link_text="${BASH_REMATCH[1]}"
-        local link_path="${BASH_REMATCH[2]}"
-
-        # Skip absolute URLs (http://, https://, etc.)
-        if [[ "$link_path" =~ ^https?:// ]] || [[ "$link_path" =~ ^mailto: ]] || [[ "$link_path" =~ ^# ]]; then
-          # Remove this match from temp_line to find next link
-          temp_line="${temp_line#*]($link_path)}"
-          continue
-        fi
-
-        links_found=$((links_found + 1))
-
-        # Calculate the absolute path of the linked file from old location
-        local linked_file_abs=""
-        if [[ "$link_path" = /* ]]; then
-          # Absolute path from project root
-          linked_file_abs="$link_path"
-        else
-          # Relative path from old location
-          if [ "$old_dir" = "." ]; then
-            linked_file_abs="$link_path"
-          else
-            linked_file_abs="$old_dir/$link_path"
-          fi
-        fi
-
-        # Normalize path (remove ./ and resolve ..)
-        linked_file_abs=$(echo "$linked_file_abs" | sed 's|/\./|/|g')
-
-        # Calculate new relative path from new location to linked file
-        local new_link_path=$(calculate_relative_path "$new_location" "$linked_file_abs")
-
-        # Update the link in the line if it changed
-        if [ "$link_path" != "$new_link_path" ]; then
-          updated_line=$(echo "$updated_line" | sed "s|]($link_path)|]($new_link_path)|")
-          links_updated=$((links_updated + 1))
-
-          # Validate that the linked file exists
-          if [ ! -f "$linked_file_abs" ] && [ ! -d "$linked_file_abs" ]; then
-            links_broken=$((links_broken + 1))
-            if [ "$DRY_RUN" = false ]; then
-              echo "    ⚠️  Warning: Link target not found: $link_path → $new_link_path (target: $linked_file_abs)" >&2
-            fi
-          fi
-        fi
-
-        # Remove this match from temp_line to find next link
-        temp_line="${temp_line#*]($link_path)}"
-      done
-    fi
-
-    echo "$updated_line" >> "$temp_file"
-  done < "$file"
-
-  # Replace original file with updated content if changes were made
-  if [ "$links_updated" -gt 0 ]; then
-    if [ "$DRY_RUN" = false ]; then
-      mv "$temp_file" "$file"
-      echo "    Updated $links_updated link(s) in $(basename "$file") (found: $links_found, broken: $links_broken)"
-    else
-      echo "    [DRY RUN] Would update $links_updated link(s) in $(basename "$file") (found: $links_found, broken: $links_broken)"
-      rm "$temp_file"
-    fi
+  if [ "$DRY_RUN" = true ]; then
+    echo "    [DRY RUN] Would perform LLM-based link correction on $(basename "$file")"
+    # In dry run mode, just show what would be analyzed
+    echo "      Total links to analyze: $(grep -o '\[[^]]*\]([^)]*)' "$file" | wc -l)"
   else
-    rm "$temp_file"
-    if [ "$links_found" -gt 0 ]; then
-      echo "    No link updates needed in $(basename "$file") ($links_found link(s) already correct)"
+    # Apply LLM-based link correction
+    if cat "$file" | python3 "$llm_script" --file "$file" > "$temp_file" 2>/dev/null; then
+      # Check if any changes were made by comparing files
+      if ! cmp -s "$file" "$temp_file"; then
+        # File was modified, update it
+        mv "$temp_file" "$file"
+        echo "    Applied LLM-based link corrections to $(basename "$file")"
+      else
+        # No changes made
+        rm "$temp_file"
+        echo "    No link corrections needed in $(basename "$file")"
+      fi
+    else
+      # LLM processing failed
+      echo "    ⚠️  Warning: LLM link correction failed for $(basename "$file")" >&2
+      rm -f "$temp_file"
+      return 1
     fi
   fi
 
@@ -1453,8 +1405,8 @@ execute_migration() {
     if migrate_file "$file" "$target" true; then
       success_count=$((success_count + 1))
 
-      # Update links in the migrated file
-      update_markdown_links "$target" "$file" "$target"
+      # Update links in the migrated file using LLM
+      llm_update_markdown_links "$target" "$file" "$target"
     else
       error_count=$((error_count + 1))
     fi
