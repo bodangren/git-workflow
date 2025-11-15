@@ -23,34 +23,48 @@ while getopts ":j" opt; do
 done
 
 if [ "$JSON_OUTPUT" = true ]; then
-    echo "["
-    first_entry=true
+    # Use a temporary file to store the JSON objects
+    json_objects_file=$(mktemp)
+    
     while IFS= read -r -d '' file; do
         frontmatter=$(awk '/^---$/{if(c>0){exit} c++} c>0' "$file" | sed '1d')
-
-        if [ "$first_entry" = false ]; then
-            echo ","
-        fi
-        first_entry=false
 
         # Basic JSON escaping for file path
         escaped_file=$(echo "$file" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
-        echo "  {"
-        echo "    \"file\": \"$escaped_file\","
+        json_object="{"
+        json_object+="\"file\": \"$escaped_file\","
         if [ -n "$frontmatter" ]; then
-            echo "    \"compliant\": true,"
-            echo "    \"frontmatter\": {"
-            # Basic YAML to JSON conversion
-            echo "$frontmatter" | awk -F': ' 'NF>1{gsub(/"/, "\\\""); printf "      \"%s\": \"%s\",\n", $1, $2}' | sed '$ s/,$//'
-            echo "    }"
+            json_object+="\"compliant\": true,"
+            json_object+="\"frontmatter\": {"
+            
+            # Convert YAML to JSON:
+            # 1. Remove leading/trailing whitespace
+            # 2. Escape double quotes
+            # 3. Add quotes around keys and values
+            # 4. Join with commas
+            frontmatter_json=$(echo "$frontmatter" | sed -e 's/^[ \t]*//;s/[ \t]*$//' | awk -F': ' 'NF>1{gsub(/"/, "\\\""); printf "\"%s\": \"%s\",", $1, $2}' | sed 's/,$//')
+            
+            json_object+="$frontmatter_json"
+            json_object+="}"
         else
-            echo "    \"compliant\": false,"
-            echo "    \"frontmatter\": null"
+            json_object+="\"compliant\": false,"
+            json_object+="\"frontmatter\": null"
         fi
-        echo "  }"
+        json_object+="}"
+        
+        echo "$json_object" >> "$json_objects_file"
     done < <(find docs -name "*.md" -print0)
+
+    # Now, assemble the final JSON array
+    echo "["
+    if [ -s "$json_objects_file" ]; then
+        paste -sd, "$json_objects_file"
+    fi
     echo "]"
+    
+    # Clean up the temporary file
+    rm "$json_objects_file"
 else
     while IFS= read -r -d '' file; do
         frontmatter=$(awk '/^---$/{if(c>0){exit} c++} c>0' "$file" | sed '1d')
