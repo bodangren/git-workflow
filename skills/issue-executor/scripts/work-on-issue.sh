@@ -53,12 +53,13 @@ COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.au
 
 # 2c.1. Fetch parent epic details
 echo "Fetching parent epic details (if any)..."
-PARENT_EPIC_URL=$(gh issue view "$ISSUE_NUMBER" --json timelineItems -q '.timelineItems[] | select(.source.type == "EPIC") | .source.issue.url' || true)
 PARENT_EPIC_CONTEXT=""
 
-if [ -n "$PARENT_EPIC_URL" ]; then
-    PARENT_EPIC_NUMBER=$(basename "$PARENT_EPIC_URL")
-    echo "Found parent epic: #$PARENT_EPIC_NUMBER"
+# Try to find a parent epic issue number in the issue body
+PARENT_EPIC_NUMBER=$(echo "$ISSUE_BODY" | grep -oP '(?:Epic|parent) issue #\K\d+' | head -1)
+
+if [ -n "$PARENT_EPIC_NUMBER" ]; then
+    echo "Found parent epic: #$PARENT_EPIC_NUMBER in issue body."
 
     PARENT_EPIC_JSON=$(gh issue view "$PARENT_EPIC_NUMBER" --json title,body,comments)
     PARENT_EPIC_TITLE=$(echo "$PARENT_EPIC_JSON" | jq -r '.title')
