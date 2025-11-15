@@ -116,6 +116,7 @@ GEMINI_PROMPT+="\n\nBased on all this context, what are the key steps I should t
 
 # 2d. Call Gemini
 echo "------------------------- GEMINI IMPLEMENTATION PLAN -------------------------"
+echo "$GEMINI_PROMPT" # For debugging
 gemini -p "$GEMINI_PROMPT"
 echo "----------------------------------------------------------------------------"
 echo "Context loaded and implementation plan generated."
