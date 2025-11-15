@@ -113,3 +113,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully integrated Gemini CLI into six core SynthesisFlow skills, replacing brittle parsing/templating with AI-powered content generation and analysis. Enhanced RETROSPECTIVE.md summarization, issue-executor planning, prd-authoring drafting, project-migrate categorization/frontmatter, sprint-planner task decomposition, and spec-authoring drafting/feedback analysis. Followed SynthesisFlow methodology for implementation, testing, and documentation updates for each skill.
 - **Lesson:** The gh CLI commands for project items can be tricky to navigate, requiring careful use of project list and item-list with jq to extract the correct IDs. Integrating AI into existing shell scripts requires careful prompt engineering and robust parsing of AI output. Parallel execution of AI calls (& and wait) can significantly speed up content generation. Updating SKILL.md documentation is crucial to reflect new AI capabilities and prerequisites.
 
+
+### #137 - feat/123-enhance-issue-executor-to-fetch-parent-epic-context
+
+- **Went well:** Successfully implemented parent epic context fetching and fixed a grep bug.
+- **Lesson:** Always verify assumptions about CLI tool capabilities (e.g., gh issue view JSON fields).
+
