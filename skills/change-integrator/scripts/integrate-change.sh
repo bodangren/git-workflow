@@ -27,7 +27,7 @@ while getopts ":p:b:i:w:l:c:" opt; do
   esac
 done
 
-if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$ITEM_ID" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
+if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
     usage
 fi
 
@@ -70,8 +70,12 @@ else
 fi
 
 # 5. Update Project Board
-echo "Updating project board for item $ITEM_ID..."
-gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID" || true
+if [ -n "$ITEM_ID" ]; then
+    echo "Updating project board for item $ITEM_ID..."
+    gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$FIELD_ID" --single-select-option-id "$DONE_OPTION_ID" || true
+else
+    echo "No project board item ID provided, skipping project board update."
+fi
 
 # 6. Update Retrospective
 echo "Updating retrospective..."
