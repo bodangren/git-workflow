@@ -83,3 +83,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully implemented doc-validator skill with comprehensive pattern matching for Markdown files. The Gemini-generated implementation plan provided excellent guidance and the script works flawlessly after fixing the pattern matching logic.
 - **Lesson:** When implementing glob pattern matching with ** (recursive) and * (single-level) wildcards in bash, use placeholder substitution to avoid double regex replacement. Replace ** with a placeholder first, then replace *, then replace the placeholder with .* to ensure correct regex conversion.
 
+
+### #148 - feat/132-integrate-doc-validator-into-issue-executor
+
+- **Went well:** Integration was straightforward and well-tested. The doc-validator path resolution worked correctly on first try.
+- **Lesson:** Always test integration points with actual test data. The test markdown file helped verify the integration before committing.
+
