@@ -89,3 +89,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Integration was straightforward and well-tested. The doc-validator path resolution worked correctly on first try.
 - **Lesson:** Always test integration points with actual test data. The test markdown file helped verify the integration before committing.
 
+
+### #149 - feat/133-integrate-doc-validator-into-change-integrator
+
+- **Went well:** Successfully integrated doc-validator into change-integrator workflow with clear error handling and output logging. The implementation was straightforward and met all acceptance criteria on first try.
+- **Lesson:** When integrating validation scripts, leveraging existing 'set -e' behavior simplifies error handling - no need for explicit exit code checks when the script already halts on failures.
+
