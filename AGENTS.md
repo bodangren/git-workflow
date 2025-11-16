@@ -23,6 +23,7 @@ Each skill contains comprehensive documentation in `SKILL.md` (50-262 lines) exp
 - **`skills/sprint-planner/`**: Plan sprints by creating GitHub milestones and issues from approved specs. Automates issue creation while LLM guides strategic planning.
 - **`skills/issue-executor/`**: Execute development workflow for a single issue. Loads full context (specs, retrospective, doc index) and creates feature branch.
 - **`skills/change-integrator/`**: Integrate completed changes post-merge. Moves specs to source-of-truth, updates retrospective, and cleans up branches.
+- **`skills/doc-validator/`**: Validate that Markdown files are in standard locations. Scans for .md files outside of predefined allowed directories and outputs warnings to prevent documentation sprawl.
 - **`skills/agent-integrator/`**: Create or update this AGENTS.md file. Uses marker-based idempotent updates to register SynthesisFlow capabilities.
 
 ## Getting Started
