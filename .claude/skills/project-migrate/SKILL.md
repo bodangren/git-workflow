@@ -63,8 +63,8 @@ Creates a timestamped backup directory of your entire `docs/` folder and include
 **Phase 5 - Migration**:
 Executes the plan, moving files using `git mv` to preserve history and creating the necessary directory structure.
 
-**Phase 6 - Link Updates**:
-Automatically recalculates and updates all relative markdown links within the migrated files to ensure they don't break.
+**Phase 6 - LLM-Based Link Updates**:
+Uses the Gemini CLI to intelligently identify and correct broken or outdated relative links within migrated files. This LLM-based approach is more robust than simple path recalculation, as it understands document context and can handle edge cases that pattern matching might miss.
 
 **Phase 7 - Validation**:
 Verifies that all files were migrated correctly, checks link integrity, and validates the new directory structure.
@@ -102,4 +102,4 @@ For issues related to permissions, conflicts, or broken links, the script provid
 - **Git-aware**: Preserves file history using `git mv`.
 - **Interactive**: You review and approve the AI-generated plan before execution.
 - **Rich Metadata**: Generates high-quality frontmatter, including titles and descriptions.
-- **Link Integrity**: Automatically updates relative links to prevent breakage.
+- **LLM-Powered Link Correction**: Uses Gemini to intelligently update relative links with context awareness.
