@@ -14,6 +14,7 @@ This project uses SynthesisFlow, a modular, spec-driven development methodology.
 
 Each skill contains comprehensive documentation in `SKILL.md` (50-262 lines) explaining purpose, workflow, and error handling. Helper scripts are located in each skill's `scripts/` directory.
 
+- **`.claude/skills/skill-lister/`**: For listing all available skills and their descriptions.
 - **`.claude/skills/project-init/`**: Initialize SynthesisFlow directory structure in new projects. Creates docs/specs and docs/changes directories.
 - **`skills/project-migrate/`**: Migrate existing (brownfield) projects with established documentation to SynthesisFlow structure. Intelligently discovers, categorizes, and migrates documentation while preserving content, adding frontmatter, and maintaining git history.
 - **`skills/prd-authoring/`**: Guide early-stage project planning through Product Requirements Documents (PRDs). Manages the complete workflow from initial product briefs through market research, PRD creation, validation, and epic decomposition. Bridges the gap between project ideas and spec-driven development with data-driven requirements and measurable success criteria.
@@ -28,9 +29,10 @@ Each skill contains comprehensive documentation in `SKILL.md` (50-262 lines) exp
 
 To begin working on this project:
 1. Check current git branch and status
-2. Run `doc-indexer` skill to get documentation map
-3. Review `RETROSPECTIVE.md` for recent learnings
-4. Use `issue-executor` skill to start work on assigned issues
+2. Run `skill-lister` to see the list of available tools and their descriptions
+3. Run `doc-indexer` skill to get documentation map
+4. Review `RETROSPECTIVE.md` for recent learnings
+5. Use `issue-executor` skill to start work on assigned issues
 
 Each skill's `SKILL.md` provides detailed workflow instructions and explains when to use the skill.
 <!-- SYNTHESIS_FLOW_END -->
