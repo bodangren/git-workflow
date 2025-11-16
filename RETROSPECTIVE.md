@@ -71,3 +71,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully implemented skill-lister skill with comprehensive documentation, dual output modes (human-readable and JSON), and automated skill discovery. The implementation followed established patterns from scan-docs.sh, ensuring consistency with existing SynthesisFlow skills.
 - **Lesson:** Following established patterns from existing skills (using scan-docs.sh as a model) significantly accelerates development and ensures consistency. Clear acceptance criteria in issues make validation straightforward. The skill-lister itself demonstrates the value of discoverable, self-documenting systems.
 
+
+### #146 - feat/130-update-agent-integrator-to-recommend-skill-lister
+
+- **Went well:** Successfully updated agent-integrator skill to recommend skill-lister early in workflow
+- **Lesson:** Important to understand the difference between .claude/skills/ (for skill distribution) and skills/ (for skill development)
+
