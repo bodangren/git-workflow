@@ -382,516 +382,6 @@ Here is the research document for context:
     # Ensure the frontmatter has the correct dates
     sed -i "s/created: .*/created: $today/" "$prd_file"
     sed -i "s/updated: .*/updated: $today/" "$prd_file"
-title: $project_name PRD
-type: prd
-status: draft
-created: $today
-updated: $today
----
-
-# Product Requirements Document: $project_name
-
-<!-- This PRD translates the product brief and research into specific, actionable requirements -->
-<!-- PRDs should be: Specific, Measurable, Testable, Unambiguous, and Complete -->
-<!-- Review the product brief and research documents before completing this PRD -->
-
-## Objectives
-
-<!-- This section defines what we're trying to achieve and why -->
-<!-- Good objectives are SMART: Specific, Measurable, Achievable, Relevant, Time-bound -->
-<!-- Each objective should link back to problems identified in the product brief -->
-
-### Primary Objectives
-
-<!-- These are the core goals that define project success -->
-<!-- Usually 2-4 primary objectives -->
-
-1. **[Objective Name]**
-   - **Goal**: [What we're trying to accomplish]
-   - **Measure**: [How we'll measure success with specific metrics]
-   - **Target**: [Specific numeric target]
-   - **Timeline**: [When we aim to achieve this]
-   - **Why it matters**: [Business or user impact]
-   - Example: "Reduce customer onboarding time by 50%, from 10 minutes to 5 minutes, within 3 months of launch to decrease abandonment"
-
-2. **[Objective Name]**
-   - **Goal**:
-   - **Measure**:
-   - **Target**:
-   - **Timeline**:
-   - **Why it matters**:
-
-3. **[Objective Name]**
-   - **Goal**:
-   - **Measure**:
-   - **Target**:
-   - **Timeline**:
-   - **Why it matters**:
-
-### Secondary Objectives
-
-<!-- Nice-to-have objectives or future phase goals -->
-<!-- These add value but aren't required for initial launch success -->
-
-1. [Future phase objective with brief rationale]
-2. [Stretch goal that exceeds primary objectives]
-
-## Success Criteria
-
-<!-- This section defines concrete, testable criteria for success -->
-<!-- Distinguish between launch readiness and post-launch success -->
-
-### Launch Criteria (Must-Have)
-
-<!-- These must be met before we can launch to users -->
-<!-- Each criterion should be binary: pass/fail, yes/no -->
-<!-- Use checkboxes to track completion -->
-
-**Functional Completeness**
-- [ ] [All MVP features implemented and tested]
-  - Example: "User can create account, add payment method, and complete checkout"
-- [ ] [Core user workflows tested end-to-end]
-  - Example: "100% of critical user paths tested with >95% success rate"
-
-**Quality Standards**
-- [ ] [Performance benchmarks met]
-  - Example: "Page load time <2 seconds at p95"
-- [ ] [Security requirements satisfied]
-  - Example: "Security audit completed with no critical vulnerabilities"
-- [ ] [Accessibility compliance achieved]
-  - Example: "WCAG 2.1 AA compliance verified"
-
-**Operational Readiness**
-- [ ] [Monitoring and alerting configured]
-- [ ] [Documentation complete]
-  - Example: "User guide, API docs, and runbooks published"
-- [ ] [Support team trained]
-
-### Success Metrics (Post-Launch)
-
-<!-- These metrics indicate the product is achieving its objectives -->
-<!-- Track these for 30-90 days post-launch -->
-<!-- Each metric should have: baseline, target, measurement method, and timeframe -->
-
-**Adoption Metrics**
-- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
-  - How measured: [Measurement method]
-  - Example: "Active users: 0 → 5,000 within 60 days"
-  - How measured: "Daily active users in analytics platform"
-
-**Engagement Metrics**
-- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
-  - How measured:
-  - Example: "Session duration: 3 min → 8 min within 30 days"
-
-**Business Metrics**
-- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
-  - How measured:
-  - Example: "Conversion rate: 12% → 18% within 90 days"
-
-**Quality Metrics**
-- [ ] **[Metric name]**: [Baseline] → [Target] within [timeframe]
-  - How measured:
-  - Example: "Error rate: <1% sustained over 30 days"
-
-### Stretch Goals
-
-<!-- Ambitious goals that exceed primary objectives -->
-<!-- Nice to achieve but not required for success -->
-
-- [ ] [Ambitious goal with clear measurement]
-  - Example: "Achieve 10,000 users within 90 days (2x primary target)"
-
-## Functional Requirements
-
-<!-- This section specifies WHAT the system must do -->
-<!-- Each requirement should be: Specific, Testable, Unambiguous, and Complete -->
-<!-- Number requirements for easy reference (FR1, FR2, etc.) -->
-<!-- Group related requirements into logical sections if needed -->
-
-### FR1: [Requirement Name]
-
-**Description**
-<!-- What does this requirement enable? What user need does it address? -->
-<!-- Be specific about behavior, not implementation -->
-<!-- Example: "System shall allow users to save multiple payment methods for future use" -->
-
-**User Story** (Optional but helpful)
-<!-- As a [user type], I want [capability], so that [benefit] -->
-<!-- Example: "As a returning customer, I want to save my payment method, so that I can check out faster on future purchases" -->
-
-**Inputs**
-<!-- What data or actions trigger this functionality? -->
-<!-- Example: "User clicks 'Save payment method' checkbox during checkout" -->
-<!-- Example: "Payment details: card number, expiration date, CVV, billing address" -->
-
-**Outputs**
-<!-- What results or changes occur? -->
-<!-- Example: "Payment method stored securely with last 4 digits shown" -->
-<!-- Example: "Confirmation message displayed to user" -->
-
-**Business Rules**
-<!-- Any constraints or special conditions? -->
-<!-- Example: "Maximum 5 payment methods per user" -->
-<!-- Example: "Credit card validation must occur before saving" -->
-
-**Acceptance Criteria**
-<!-- Specific, testable conditions that must be met -->
-<!-- Use Given/When/Then format or checklist format -->
-
-- [ ] Given [precondition], when [action], then [expected result]
-  - Example: "Given user has <5 saved methods, when they save a new payment method, then it appears in their payment methods list"
-- [ ] Given [precondition], when [action], then [expected result]
-  - Example: "Given user enters invalid card number, when they attempt to save, then error message displays and payment method is not saved"
-- [ ] [Testable criterion]
-  - Example: "Saved payment method can be selected during future checkout"
-
-**Priority**: [Must Have / Should Have / Could Have / Won't Have]
-
-**Dependencies**: [Other requirements or external systems this depends on]
-<!-- Example: "Depends on FR3 (User Authentication) and integration with Stripe API" -->
-
----
-
-### FR2: [Requirement Name]
-
-**Description**
-
-**User Story**
-
-**Inputs**
-
-**Outputs**
-
-**Business Rules**
-
-**Acceptance Criteria**
-- [ ]
-- [ ]
-- [ ]
-
-**Priority**:
-
-**Dependencies**:
-
----
-
-### FR3: [Requirement Name]
-
-<!-- Repeat structure above -->
-<!-- Add as many functional requirements as needed -->
-<!-- Typical PRD has 10-30 functional requirements -->
-
----
-
-## Non-Functional Requirements
-
-<!-- This section specifies HOW WELL the system must perform -->
-<!-- NFRs define quality attributes: performance, security, usability, etc. -->
-<!-- Each NFR should be measurable and testable -->
-
-### NFR1: Performance
-
-<!-- How fast and responsive must the system be? -->
-
-**Response Time**
-- [Operation]: [Target response time]
-  - Example: "Page load: <2 seconds at p95 under normal load"
-- [Operation]: [Target response time]
-  - Example: "API calls: <200ms at p95"
-- [Operation]: [Target response time]
-  - Example: "Search results: <1 second for 95% of queries"
-
-**Throughput**
-- [Metric]: [Target capacity]
-  - Example: "Handle 1,000 transactions per minute sustained"
-- [Metric]: [Target capacity]
-  - Example: "Support 10,000 concurrent users"
-
-**Resource Utilization**
-- [Resource]: [Constraint or target]
-  - Example: "Database queries: <100ms average execution time"
-- [Resource]: [Constraint or target]
-  - Example: "Memory footprint: <512MB per service instance"
-
-**Testing Requirements**
-- Performance tests must simulate [load conditions]
-- Example: "Load test with 10,000 concurrent users for 1 hour"
-
----
-
-### NFR2: Security
-
-<!-- How must the system protect data and prevent unauthorized access? -->
-
-**Authentication**
-- [Requirement]
-  - Example: "Support multi-factor authentication (MFA) for all users"
-- [Requirement]
-  - Example: "Session timeout after 30 minutes of inactivity"
-
-**Authorization**
-- [Requirement]
-  - Example: "Role-based access control (RBAC) with minimum of 3 roles: Admin, User, Guest"
-- [Requirement]
-  - Example: "Users can only access their own data"
-
-**Data Protection**
-- [Requirement]
-  - Example: "All sensitive data encrypted at rest using AES-256"
-- [Requirement]
-  - Example: "All data in transit encrypted using TLS 1.3"
-- [Requirement]
-  - Example: "PII must be masked in logs and error messages"
-
-**Compliance**
-- [Standard/Regulation]: [Specific requirements]
-  - Example: "GDPR: Support right to data deletion within 30 days"
-- [Standard/Regulation]: [Specific requirements]
-  - Example: "PCI-DSS: Never store full card numbers or CVV"
-
-**Security Testing**
-- [Requirement]
-  - Example: "Pass OWASP Top 10 security audit"
-- [Requirement]
-  - Example: "Penetration testing completed before launch"
-
----
-
-### NFR3: Reliability
-
-<!-- How dependable and fault-tolerant must the system be? -->
-
-**Availability**
-- [Target uptime]
-  - Example: "99.9% uptime (SLA), measured monthly"
-  - Example: "Maximum planned downtime: 4 hours per month during maintenance windows"
-
-**Error Handling**
-- [Requirement]
-  - Example: "All API errors return appropriate HTTP status codes and user-friendly messages"
-- [Requirement]
-  - Example: "System gracefully degrades when third-party services unavailable"
-
-**Data Integrity**
-- [Requirement]
-  - Example: "Zero data loss for committed transactions"
-- [Requirement]
-  - Example: "Daily automated backups with 30-day retention"
-- [Requirement]
-  - Example: "Point-in-time recovery capability within 15 minutes"
-
-**Fault Tolerance**
-- [Requirement]
-  - Example: "System continues operating if single service instance fails"
-- [Requirement]
-  - Example: "Automatic retry with exponential backoff for transient failures"
-
-**Monitoring & Alerting**
-- [Requirement]
-  - Example: "Alert on error rate exceeding 1% within 5-minute window"
-- [Requirement]
-  - Example: "Monitor and log all critical user actions"
-
----
-
-### NFR4: Usability
-
-<!-- How easy and pleasant must the system be to use? -->
-
-**User Experience**
-- [Requirement]
-  - Example: "New users can complete primary task within 5 minutes without training"
-- [Requirement]
-  - Example: "Maximum 3 clicks to reach any major feature"
-
-**Accessibility**
-- [Standard]: [Requirements]
-  - Example: "WCAG 2.1 Level AA compliance"
-- [Requirement]
-  - Example: "Support keyboard navigation for all functionality"
-- [Requirement]
-  - Example: "Screen reader compatible"
-- [Requirement]
-  - Example: "Color contrast ratio minimum 4.5:1"
-
-**Internationalization**
-- [Requirement]
-  - Example: "Support English, Spanish, and French languages"
-- [Requirement]
-  - Example: "Display dates and currency in user's locale format"
-
-**Responsive Design**
-- [Requirement]
-  - Example: "Full functionality on mobile, tablet, and desktop"
-- [Requirement]
-  - Example: "Support minimum resolution: 320px width (mobile)"
-
-**Documentation**
-- [Requirement]
-  - Example: "In-app help tooltips for all major features"
-- [Requirement]
-  - Example: "Comprehensive user guide and FAQ"
-
----
-
-### NFR5: Scalability
-
-<!-- How must the system handle growth? -->
-
-**Growth Targets**
-- [Metric]: [Current] → [Target] over [timeframe]
-  - Example: "Users: 1,000 → 100,000 over 12 months"
-- [Metric]: [Current] → [Target] over [timeframe]
-  - Example: "Data volume: 10GB → 1TB over 12 months"
-
-**Scaling Approach**
-- [Strategy]
-  - Example: "Horizontal scaling: Add service instances to handle increased load"
-- [Strategy]
-  - Example: "Database sharding: Partition data by user ID when >1M users"
-
-**Performance Under Load**
-- [Requirement]
-  - Example: "Response time degradation <20% at 2x expected peak load"
-- [Requirement]
-  - Example: "Successfully handle 3x expected peak load with additional resources"
-
----
-
-### NFR6: Maintainability
-
-<!-- How easy must the system be to maintain and modify? -->
-
-**Code Quality**
-- [Requirement]
-  - Example: "Minimum 80% unit test coverage"
-- [Requirement]
-  - Example: "All code passes linter with zero warnings"
-
-**Documentation**
-- [Requirement]
-  - Example: "All APIs documented with OpenAPI specification"
-- [Requirement]
-  - Example: "Architecture decision records (ADRs) for major design choices"
-- [Requirement]
-  - Example: "Runbooks for common operational tasks"
-
-**Modularity**
-- [Requirement]
-  - Example: "Services loosely coupled with well-defined interfaces"
-- [Requirement]
-  - Example: "Can deploy individual services independently"
-
----
-
-## Constraints
-
-<!-- This section documents limitations we must work within -->
-<!-- Constraints shape the solution but are typically non-negotiable -->
-
-### Technical Constraints
-
-- [Constraint]: [Description and implications]
-  - Example: "Must integrate with legacy CRM system using SOAP APIs (limits performance)"
-- [Constraint]: [Description and implications]
-  - Example: "Existing infrastructure runs on AWS only (limits multi-cloud options)"
-
-### Business Constraints
-
-- [Constraint]: [Description and implications]
-  - Example: "Launch must occur before Q4 holiday season (hard deadline: October 1)"
-- [Constraint]: [Description and implications]
-  - Example: "No budget for third-party services costing >$5K/month"
-
-### Regulatory Constraints
-
-- [Constraint]: [Description and implications]
-  - Example: "Must comply with GDPR and CCPA (requires specific data handling)"
-- [Constraint]: [Description and implications]
-  - Example: "Healthcare data requires HIPAA compliance (limits storage options)"
-
-### Resource Constraints
-
-- [Constraint]: [Description and implications]
-  - Example: "Development team of 3 engineers (limits scope and complexity)"
-- [Constraint]: [Description and implications]
-  - Example: "No iOS developer available (web-only initial release)"
-
-### Integration Constraints
-
-- [Constraint]: [Description and implications]
-  - Example: "Payment gateway limited to Stripe (already contracted)"
-- [Constraint]: [Description and implications]
-  - Example: "SSO must use company's existing Okta instance"
-
-## Assumptions
-
-<!-- This section documents assumptions that underpin the PRD -->
-<!-- Assumptions are things we believe to be true but haven't verified -->
-<!-- If assumptions prove false, requirements may need to change -->
-
-**User Assumptions**
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Users have reliable internet connections (mobile experience may degrade on 3G)"
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Users are comfortable with English language (no immediate localization needed)"
-
-**Technical Assumptions**
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Third-party APIs maintain 99.9% uptime (our reliability depends on this)"
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Cloud infrastructure can scale to meet demand (architecture relies on auto-scaling)"
-
-**Business Assumptions**
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Target market will pay premium pricing (revenue projections based on this)"
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Current customer demand remains stable (sizing infrastructure for current scale)"
-
-**Resource Assumptions**
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Key engineers remain available throughout project (timeline depends on specific expertise)"
-- [Assumption]: [What we're assuming and why it matters]
-  - Example: "Design resources available for 20 hours/week (UI work scheduled accordingly)"
-
-## Out of Scope
-
-<!-- This section explicitly states what we will NOT build -->
-<!-- Being clear about exclusions prevents scope creep and manages expectations -->
-<!-- For each excluded item, briefly explain why it's out of scope -->
-
-### Features Explicitly Excluded
-
-- **[Feature/Capability]**: [Why it's excluded]
-  - Example: "Social media integration: Not requested by users in research, defer to Phase 2"
-- **[Feature/Capability]**: [Why it's excluded]
-  - Example: "Bulk import tool: Only 5% of users need this, not worth complexity for MVP"
-- **[Feature/Capability]**: [Why it's excluded]
-  - Example: "Mobile native apps: Web-first strategy, revisit if user demand emerges"
-
-### Deferred to Future Phases
-
-- **[Feature/Capability]**: [Why it's deferred and when it might be reconsidered]
-  - Example: "Advanced analytics dashboard: Phase 2 feature after we validate core workflow"
-- **[Feature/Capability]**: [Why it's deferred and when it might be reconsidered]
-  - Example: "Multi-tenant support: Add in 6 months once single-tenant proven"
-
-### Use Cases Not Supported
-
-- **[Use Case]**: [Why it's not supported]
-  - Example: "Enterprise customers with >10,000 users: Architecture doesn't scale to this level yet"
-- **[Use Case]**: [Why it's not supported]
-  - Example: "Offline mode: Requires significant complexity, not essential for MVP"
-
-### Platforms Not Supported
-
-- [Platform]: [Why not supported]
-  - Example: "Internet Explorer 11: <2% of user base, not worth compatibility effort"
-- [Platform]: [Why not supported]
-  - Example: "Legacy Android versions (pre-10): Security and maintenance burden"
-
-EOF
 
     echo "Successfully created PRD at $prd_file"
     echo ""
@@ -905,6 +395,7 @@ EOF
 # --- VALIDATE-PRD COMMAND ---
 
 function validate-prd() {
+    set +e  # Temporarily disable exit on error for this function
     local project_name=$1
     local mode=${2:-strict}
 
@@ -1014,8 +505,10 @@ function validate-prd() {
 
     # Check for acceptance criteria in requirements
     if grep -q "## Functional Requirements" "$prd_file"; then
-        local fr_count=$(grep -c "^### FR[0-9]" "$prd_file" || echo "0")
-        local ac_count=$(sed -n '/## Functional Requirements/,/^## /p' "$prd_file" | grep -c "Acceptance Criteria:" || echo "0")
+        local fr_count=$(grep -c "^### FR[0-9]" "$prd_file" || true)
+        fr_count=${fr_count:-0}
+        local ac_count=$(sed -n '/## Functional Requirements/,/^## /p' "$prd_file" | grep -c "Acceptance Criteria:" || true)
+        ac_count=${ac_count:-0}
 
         if [ "$fr_count" -gt 0 ] && [ "$ac_count" -ge "$fr_count" ]; then
             echo "  ✓ Functional requirements include acceptance criteria"
@@ -1030,6 +523,37 @@ function validate-prd() {
         echo "  ✓ Out of scope section defines boundaries"
     else
         echo "  ⚠ Out of scope section missing (recommended)"
+        ((warnings++))
+    fi
+
+    # LLM-based quality analysis
+    echo ""
+    echo "Advanced Quality Analysis (LLM):"
+
+    LLM_VALIDATOR="$(dirname "${BASH_SOURCE[0]}")/validate_prd_llm.py"
+
+    if [ -f "$LLM_VALIDATOR" ]; then
+        LLM_ANALYSIS=$(python3 "$LLM_VALIDATOR" --prd-file "$prd_file" 2>&1)
+        LLM_EXIT_CODE=$?
+
+        if [ $LLM_EXIT_CODE -eq 0 ] && [ -n "$LLM_ANALYSIS" ]; then
+            # Check if LLM found no issues
+            if echo "$LLM_ANALYSIS" | grep -q "No quality issues found"; then
+                echo "  ✓ LLM quality check passed"
+                echo "  $LLM_ANALYSIS"
+            else
+                echo "  ⚠ LLM identified potential quality issues:"
+                echo ""
+                echo "$LLM_ANALYSIS" | sed 's/^/  /'
+                echo ""
+                ((warnings++))
+            fi
+        else
+            echo "  ⚠ LLM quality analysis failed or unavailable"
+            ((warnings++))
+        fi
+    else
+        echo "  ⚠ LLM validator script not found at $LLM_VALIDATOR"
         ((warnings++))
     fi
 
