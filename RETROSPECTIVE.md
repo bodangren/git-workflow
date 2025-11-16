@@ -95,3 +95,23 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully integrated doc-validator into change-integrator workflow with clear error handling and output logging. The implementation was straightforward and met all acceptance criteria on first try.
 - **Lesson:** When integrating validation scripts, leveraging existing 'set -e' behavior simplifies error handling - no need for explicit exit code checks when the script already halts on failures.
 
+
+### #150 - feat/134-use-llm-in-change-integrator-for-structured-retrospective-entries
+
+```markdown
+## Retrospective Summary: LLM Integration in Change-Integrator Workflow
+
+### What Went Well:
+The integration of LLM into the `change-integrator` workflow was successfully completed, adhering to established project patterns. All defined acceptance criteria were met, and the new functionality was thoroughly verified through testing.
+
+### Lessons Learned:
+Robust LLM integration relies heavily on utilizing `subprocess` with comprehensive error handling and fallback mechanisms. A key learning was the importance of following existing code patterns and accurately identifying the correct model name (`gemini-2.5-flash`), which proved crucial for successful implementation.
+```
+
+<details>
+<summary>Original inputs</summary>
+
+- **Went well:** Successfully integrated LLM into change-integrator workflow following existing project patterns. All acceptance criteria met and functionality verified through testing.
+- **Lesson:** Using subprocess with proper error handling and fallback mechanisms ensures robust LLM integration. Following existing code patterns and discovering the correct model name (gemini-2.5-flash) were key to successful implementation.
+</details>
+
