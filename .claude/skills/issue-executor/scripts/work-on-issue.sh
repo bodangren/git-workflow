@@ -24,7 +24,30 @@ fi
 
 echo "Starting work on Issue #$ISSUE_NUMBER..."
 
-# 1. Verify clean git state
+# 1. Run document validator
+echo "Running document validator..."
+DOC_VALIDATOR_SCRIPT="$(dirname "${BASH_SOURCE[0]}")/../../doc-validator/scripts/doc-validator.sh"
+
+# Check if doc-validator script exists (it might not in all environments)
+if [ -f "$DOC_VALIDATOR_SCRIPT" ]; then
+    # Run doc-validator and capture output
+    DOC_WARNINGS=$(bash "$DOC_VALIDATOR_SCRIPT" 2>&1 || true)
+
+    if [ -n "$DOC_WARNINGS" ]; then
+        echo "⚠️  Documentation validation warnings detected:"
+        echo "$DOC_WARNINGS"
+        echo ""
+        echo "Note: These are warnings about markdown files in non-standard locations."
+        echo "Consider moving them to docs/ or updating doc-validator patterns if appropriate."
+        echo ""
+    else
+        echo "✓ Document validation passed - no stray markdown files detected."
+    fi
+else
+    echo "ℹ️  doc-validator script not found, skipping document validation."
+fi
+
+# 2. Verify clean git state
 echo "Verifying git status..."
 if [ -n "$(git status --porcelain)" ]; then
     echo "Error: Working directory is not clean. Please commit or stash changes." >&2
@@ -32,26 +55,26 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 echo "Git status is clean."
 
-# 2. Synthesize Implementation Plan with Gemini
+# 3. Synthesize Implementation Plan with Gemini
 echo "Synthesizing implementation plan for Issue #$ISSUE_NUMBER with Gemini..."
 
-# 2a. Read issue details from GitHub
+# 3a. Read issue details from GitHub
 echo "Fetching issue details..."
 ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" --json title,body)
 ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
 ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
 
-# 2b. Find all associated spec files
+# 3b. Find all associated spec files
 echo "Finding associated spec files..."
 # This pattern finds all markdown files in docs/specs and docs/changes
 SPEC_FILES=$(echo "$ISSUE_BODY" | grep -o 'docs/\(specs\|changes\)/[^[:space:]`'"'"']*\.md' || true)
 
-# 2c. Fetch issue comments
+# 3c. Fetch issue comments
 echo "Fetching issue comments..."
 COMMENTS_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
 COMMENTS=$(echo "$COMMENTS_JSON" | jq -r '.comments[] | "### Comment from @\(.author.login)\n\n\(.body)\n"')
 
-# 2d. Construct the Gemini prompt
+# 3d. Construct the Gemini prompt
 GEMINI_PROMPT=""
 
 if [ -n "$PARENT_EPIC_CONTEXT" ]; then
@@ -90,13 +113,13 @@ fi
 # Add final instruction to prompt
 GEMINI_PROMPT+="\n\nBased on all this context, what are the key steps I should take to implement this feature correctly, keeping in mind past learnings and adhering to the specifications? Provide a clear, actionable plan."
 
-# 2d. Call Gemini
+# 3e. Call Gemini
 echo "------------------------- GEMINI IMPLEMENTATION PLAN -------------------------"
-gemini --model gemini-2.5-flash -p "$GEMINI_PROMPT"
+gemini -p "$GEMINI_PROMPT"
 echo "----------------------------------------------------------------------------"
 echo "Context loaded and implementation plan generated."
 
-# 3. Create a feature branch
+# 4. Create a feature branch
 echo "Generating branch name..."
 # Sanitize title to create a branch name
 BRANCH_NAME=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed -e 's/task: //g' -e 's/[^a-z0-9]/-/g' -e 's/--/-/g' -e 's/^-//' -e 's/-$//')
