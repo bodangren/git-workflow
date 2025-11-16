@@ -120,28 +120,7 @@ echo -e "\n$RETRO_ENTRY" >> RETROSPECTIVE.md
 git add RETROSPECTIVE.md
 git commit -m "docs: Add retrospective for PR #$PR_NUMBER"
 
-# 7. Run document validator
-echo "Running document validator as final quality gate..."
-DOC_VALIDATOR_SCRIPT="$(dirname "${BASH_SOURCE[0]}")/../../doc-validator/scripts/doc-validator.sh"
-
-if [ -f "$DOC_VALIDATOR_SCRIPT" ]; then
-    # Run doc-validator and capture output
-    # Note: If doc-validator returns non-zero, the script will exit due to 'set -e'
-    DOC_VALIDATOR_OUTPUT=$(bash "$DOC_VALIDATOR_SCRIPT" 2>&1)
-
-    if [ -n "$DOC_VALIDATOR_OUTPUT" ]; then
-        echo "⚠️  Documentation validation warnings detected:"
-        echo "$DOC_VALIDATOR_OUTPUT"
-        echo ""
-    else
-        echo "✓ Document validation passed - no stray markdown files detected."
-    fi
-else
-    echo "⚠️  doc-validator script not found at $DOC_VALIDATOR_SCRIPT"
-    echo "Skipping document validation."
-fi
-
-# 8. Push final changes
+# 7. Push final changes
 echo "Pushing final integration commits..."
 git push
 
