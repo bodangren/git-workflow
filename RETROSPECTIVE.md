@@ -65,3 +65,9 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully replaced brittle shell-based link correction with robust LLM approach. The new Python script is cleaner, more maintainable, and provides better error handling with graceful fallbacks.
 - **Lesson:** LLM-based approaches can dramatically simplify complex string manipulation tasks. Using Gemini Flash 2.5 model provides good balance of cost and capability. Proper fallback handling is essential when depending on external APIs.
 
+
+### #145 - feat/129-create-skill-lister-skill
+
+- **Went well:** Successfully implemented skill-lister skill with comprehensive documentation, dual output modes (human-readable and JSON), and automated skill discovery. The implementation followed established patterns from scan-docs.sh, ensuring consistency with existing SynthesisFlow skills.
+- **Lesson:** Following established patterns from existing skills (using scan-docs.sh as a model) significantly accelerates development and ensures consistency. Clear acceptance criteria in issues make validation straightforward. The skill-lister itself demonstrates the value of discoverable, self-documenting systems.
+
