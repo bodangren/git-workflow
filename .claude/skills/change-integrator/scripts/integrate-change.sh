@@ -115,7 +115,30 @@ if [ -f "RETROSPECTIVE.md" ]; then
     fi
 fi
 
-RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n"
+# Generate retrospective entry using LLM
+echo "Generating retrospective entry with LLM..."
+LLM_SCRIPT="$(dirname "${BASH_SOURCE[0]}")/summarize_retrospective_llm.py"
+
+# Try to generate summary with LLM
+if [ -f "$LLM_SCRIPT" ]; then
+    LLM_SUMMARY=$(python3 "$LLM_SCRIPT" --went-well "$WENT_WELL" --lesson-learned "$LESSON" 2>&1)
+    LLM_EXIT_CODE=$?
+
+    if [ $LLM_EXIT_CODE -eq 0 ] && [ -n "$LLM_SUMMARY" ]; then
+        # LLM call succeeded - use structured format with details tag
+        echo "✓ LLM summary generated successfully."
+        RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n$LLM_SUMMARY\n\n<details>\n<summary>Original inputs</summary>\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n</details>\n"
+    else
+        # LLM call failed - fall back to original format
+        echo "⚠️  LLM summary generation failed, using original format."
+        RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n"
+    fi
+else
+    # Script not found - fall back to original format
+    echo "⚠️  LLM script not found at $LLM_SCRIPT, using original format."
+    RETRO_ENTRY="### #$PR_NUMBER - $BRANCH_NAME\n\n- **Went well:** $WENT_WELL\n- **Lesson:** $LESSON\n"
+fi
+
 echo -e "\n$RETRO_ENTRY" >> RETROSPECTIVE.md
 git add RETROSPECTIVE.md
 git commit -m "docs: Add retrospective for PR #$PR_NUMBER"

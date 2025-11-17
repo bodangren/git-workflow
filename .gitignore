@@ -47,3 +47,4 @@ dist/
 # Local development
 .env
 .env.local
+.claude
