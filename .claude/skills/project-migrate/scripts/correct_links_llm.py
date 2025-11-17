@@ -145,7 +145,8 @@ Content to analyze:
         # Call Gemini CLI if available, otherwise fallback to a simple pass-through
         try:
             result = subprocess.run(
-                ['gemini', '--model', 'gemini-flash-2.5', '-p', prompt],
+                ['gemini', '--model', 'gemini-2.5-flash'],
+                input=prompt,
                 capture_output=True,
                 text=True,
                 timeout=30
