@@ -1,11 +1,11 @@
 #!/bin/bash
-# SynthesisFlow Migration Rollback Script
+# AgenticDev Migration Rollback Script
 # This script restores your project to its pre-migration state
 
 set -e
 
 echo "========================================"
-echo " SynthesisFlow Migration Rollback"
+echo " AgenticDev Migration Rollback"
 echo "========================================"
 echo ""
 echo "⚠️  WARNING: This will restore your project to its pre-migration state."
@@ -69,12 +69,12 @@ fi
 
 echo ""
 
-# Step 3: Remove SynthesisFlow additions (only if they're now empty or were created by migration)
-echo "Step 3: Cleaning up SynthesisFlow-specific directories..."
+# Step 3: Remove AgenticDev additions (only if they're now empty or were created by migration)
+echo "Step 3: Cleaning up AgenticDev-specific directories..."
 
 # Load the migration manifest to determine what was created
 if [ -f "$BACKUP_DIR/migration-manifest.json" ]; then
-  echo "  Using migration manifest to identify SynthesisFlow additions..."
+  echo "  Using migration manifest to identify AgenticDev additions..."
 fi
 
 # Check if docs/specs should be removed (empty or only contains migrated files)
@@ -117,7 +117,7 @@ if [ -d "docs" ] && [ -z "$(ls -A docs 2>/dev/null)" ]; then
   rmdir docs
 fi
 
-echo "✓ SynthesisFlow directory cleanup complete"
+echo "✓ AgenticDev directory cleanup complete"
 echo ""
 
 # Step 4: Clean up empty parent directories (but preserve structure)

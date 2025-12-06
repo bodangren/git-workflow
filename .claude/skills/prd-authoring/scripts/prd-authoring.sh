@@ -1065,7 +1065,7 @@ Epic 5: [Name] (Independent - can be done in parallel)
    - Validate effort estimates with engineering team
 
 3. **Begin Spec Authoring**
-   - Use SynthesisFlow spec-authoring skill to create detailed specs
+   - Use AgenticDev spec-authoring skill to create detailed specs
    - Start with Epic 1 (foundational/highest priority)
    - Create one spec per epic or per major user story
 

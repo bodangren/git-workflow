@@ -64,4 +64,4 @@ while IFS= read -r -d '' md_file; do
     if ! is_file_allowed "$md_file"; then
         echo "WARNING: Markdown file in non-standard location: ${md_file}"
     fi
-done < <(find . -type f -name "*.md" -not -path "./.git/*" -not -path "./.synthesisflow-backup-*" -print0)
+done < <(find . -type f -name "*.md" -not -path "./.git/*" -not -path "./.agenticdev-backup-*" -print0)

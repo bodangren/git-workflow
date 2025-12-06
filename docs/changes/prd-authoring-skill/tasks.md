@@ -13,7 +13,7 @@ Create the skill directory and establish the file organization.
 **Acceptance Criteria**:
 - Directory structure matches existing skills (spec-authoring, sprint-planner)
 - YAML frontmatter includes name, description, triggers
-- Follows SynthesisFlow skill conventions
+- Follows AgenticDev skill conventions
 
 **Estimated Effort**: 15 minutes
 
@@ -61,7 +61,7 @@ Develop the bash script that implements skill commands.
 - All commands create proper directory structure
 - Templates include YAML frontmatter
 - Script validates inputs and provides helpful errors
-- Generated files follow SynthesisFlow conventions
+- Generated files follow AgenticDev conventions
 - Script follows bash best practices (set -e, proper quoting)
 
 **Estimated Effort**: 4-5 hours
@@ -84,7 +84,7 @@ Develop markdown templates for each document type.
 - Templates are comprehensive but not overwhelming
 - Each section has helpful prompts/questions
 - YAML frontmatter includes: title, type, status, created, updated
-- Templates demonstrate SynthesisFlow markdown conventions
+- Templates demonstrate AgenticDev markdown conventions
 - Guidance comments explain purpose of each section
 
 **Estimated Effort**: 2 hours

@@ -1,22 +1,22 @@
 ---
 name: skill-lister
-description: Use this skill to discover all available SynthesisFlow skills and their capabilities. Provides a bootstrap context for AI agents by listing all skills, their descriptions, and script paths from the .claude/skills/ directory.
+description: Use this skill to discover all available AgenticDev skills and their capabilities. Provides a bootstrap context for AI agents by listing all skills, their descriptions, and script paths from the .claude/skills/ directory.
 ---
 
 # Skill Lister
 
 ## Purpose
 
-Provide a comprehensive overview of all available SynthesisFlow skills in the project. The skill-lister scans the `.claude/skills/` directory, extracts skill metadata from SKILL.md files, and returns a formatted list of all discovered skills with their descriptions and script paths. This enables AI agents to quickly understand what capabilities are available without manually exploring the directory structure.
+Provide a comprehensive overview of all available AgenticDev skills in the project. The skill-lister scans the `.claude/skills/` directory, extracts skill metadata from SKILL.md files, and returns a formatted list of all discovered skills with their descriptions and script paths. This enables AI agents to quickly understand what capabilities are available without manually exploring the directory structure.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- At the beginning of any work session to understand available SynthesisFlow capabilities
-- When onboarding to a new project using SynthesisFlow
+- At the beginning of any work session to understand available AgenticDev capabilities
+- When onboarding to a new project using AgenticDev
 - Before deciding which skill to use for a particular task
-- When documenting or auditing the project's SynthesisFlow setup
+- When documenting or auditing the project's AgenticDev setup
 - To verify that all expected skills are installed and accessible
 
 ## Prerequisites
@@ -73,7 +73,7 @@ Based on the output, select the skill that best matches your current task:
 
 **Solution**:
 - Verify you're in the project root directory
-- Run `project-init` skill to set up SynthesisFlow
+- Run `project-init` skill to set up AgenticDev
 - Check if skills are installed in a different location
 
 ### Missing SKILL.md Files
@@ -109,6 +109,6 @@ Based on the output, select the skill that best matches your current task:
 - **Lightweight**: Minimal dependencies, works with standard bash tools
 - **Extensible**: Automatically discovers new skills as they're added
 - **JSON support**: Can output structured data for integration with other tools
-- **Convention-based**: Relies on standard SynthesisFlow skill structure (SKILL.md + scripts/)
+- **Convention-based**: Relies on standard AgenticDev skill structure (SKILL.md + scripts/)
 - **Safe to run**: Read-only operation with no side effects
 - **Discovery pattern**: Similar to doc-indexer but for skills instead of documentation

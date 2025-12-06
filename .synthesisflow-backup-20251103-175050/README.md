@@ -1,6 +1,6 @@
-# SynthesisFlow Migration Backup
+# AgenticDev Migration Backup
 
-This directory contains a backup of your project documentation before SynthesisFlow migration.
+This directory contains a backup of your project documentation before AgenticDev migration.
 
 ## Backup Contents
 
@@ -17,13 +17,13 @@ If you need to rollback the migration and restore your original documentation:
 Run the provided rollback script from your project root:
 
 ```bash
-bash .synthesisflow-backup-20251103-175050/rollback.sh
+bash .agenticdev-backup-20251103-175050/rollback.sh
 ```
 
 This will:
 1. Create a safety backup of the current state (before rollback)
 2. Restore the original docs/ directory from backup
-3. Remove SynthesisFlow additions (docs/specs/, docs/changes/) if they're empty
+3. Remove AgenticDev additions (docs/specs/, docs/changes/) if they're empty
 4. Preserve any non-empty directories to prevent data loss
 5. Clean up empty directories
 
@@ -38,7 +38,7 @@ If you prefer manual control:
 
 2. **Restore original docs/**:
    ```bash
-   cp -r .synthesisflow-backup-20251103-175050/docs .
+   cp -r .agenticdev-backup-20251103-175050/docs .
    ```
 
 3. **Clean up** (if desired):
@@ -61,4 +61,4 @@ If you prefer manual control:
 
 ## Questions?
 
-Refer to the SynthesisFlow documentation or the project-migrate skill documentation.
+Refer to the AgenticDev documentation or the project-migrate skill documentation.

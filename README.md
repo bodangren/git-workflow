@@ -1,133 +1,94 @@
-# SynthesisFlow - A Spec-Driven AI Development Methodology
+# AgenticDev
 
-This repository contains the tools and documentation for **SynthesisFlow**, a modular, end-to-end methodology for spec-driven software development using AI agents.
+**AgenticDev** is a modular, spec-driven development methodology designed to empower AI agents and developers to build software efficiently, safely, and autonomously. It provides a structured framework that bridges the gap between high-level ideas and production-ready code.
 
-## Overview
+## Core Philosophy
 
-SynthesisFlow has evolved from the original `git-workflow` skill into a more comprehensive and robust system. It synthesizes the best practices from several modern development methodologies:
+AgenticDev operates on a simple but rigorous principle: **Think before you code.**
 
-- **`spec-kit`**: For a rigorous, multi-stage process of defining a feature before implementation.
-- **`OpenSpec`**: For safely managing proposed changes in isolation from the source-of-truth specs.
-- **`BMAD`**: For a clean and simple Git branching and merging strategy.
-- **`git-workflow`**: For its powerful sprint planning and issue management capabilities.
+1.  **Spec-First**: Every feature starts with a written specification ("spec").
+2.  **Verification Loops**: Implementation is bound by TDD cycles—reproduction first, then fix.
+3.  **Atomic Execution**: Work is broken down into small, manageable units (Issues).
+4.  **Autonomous Integration**: Merging code triggers automated documentation updates and cleanup.
 
-The result is a highly-structured, portable, and AI-friendly workflow that ensures clarity, quality, and project velocity.
+## The Workflow
 
-## The SynthesisFlow Lifecycle
-
-Instead of a single, monolithic skill, SynthesisFlow is composed of a suite of modular skills that each handle a specific phase of the development lifecycle. The process is visualized below:
+The AgenticDev lifecycle moves a project from concept to completion through four distinct phases:
 
 ```mermaid
 graph TD
-    subgraph "Phase 1: Definition"
-        A[Start: New Feature Idea] --> B{propose-change}
-        B --> C[changes/my-feature/<br>spec-delta.md<br>plan.md<br>tasks.md]
-        C --> D[Open Spec PR for review]
-        D --> E{Team Review & Approval}
-        E -- Merge PR --> F[Spec is now Approved]
+    subgraph "Phase 1: Discovery & Planning"
+        A[Idea] --> B{prd-authoring}
+        B --> C[Product Brief / Research / PRD]
+        C --> D{spec-authoring}
+        D --> E[Draft Spec & Spec PR]
     end
 
-    subgraph "Phase 2: Sprint Planning"
-        F --> G{plan-sprint}
-        G --> H[Selects Approved specs for<br>current GitHub Milestone]
-        H --> I[Creates Epic Issue +<br>Atomic Task Issues in Milestone]
+    subgraph "Phase 2: Organization"
+        E -- Approved --> F{sprint-planner}
+        F --> G[Decompose into Atomic Issues]
+        G --> H[Create GitHub Milestone]
     end
 
-    subgraph "Phase 3: Implementation"
-        I --> J{work-on-issue}
-        J --> K[Reads Issue, Spec, Plan,<br>Retrospective, and Doc Index]
-        K --> L[Creates Git branch<br>eg feat/issue-123]
-        L --> M[Writes Code and Tests]
-        M --> N[Opens Code PR for review]
+    subgraph "Phase 3: Execution"
+        H --> I{issue-executor}
+        I --> J[Context Loading & TDD Plan]
+        J --> K[Feature Branch w/ Repro Script]
+        K --> L[Implementation & Verification]
+        L --> M[Code PR]
+        H --> N{sprint-manager}
+        N -- Co-ordinates --> I
     end
 
     subgraph "Phase 4: Integration"
-        N --> O{Code Review & Merge}
-        O -- Merge PR --> P{complete-change}
-        P --> Q[Merges spec-delta into<br>source-of-truth specs/ folder]
-        Q --> R[Updates RETROSPECTIVE.md]
-        R --> S[Archives feature branch<br>and closes Epic Issue]
-        S --> T[End: Feature Complete]
+        M -- Merged --> O{change-integrator}
+        O --> P[Promote Spec to Approved]
+        P --> Q[Update Retrospective]
+        Q --> R[Close Issues & Cleanup]
     end
-
-    style F fill:#d4edda,stroke:#c3e6cb
-    style I fill:#cfe2ff,stroke:#b8daff
-    style S fill:#d1ecf1,stroke:#bee5eb
 ```
 
-### Core Skillsets
+## Skills Catalog
 
-- **`project-init`**: Scaffolds new projects with SynthesisFlow directory structure.
-- **`project-migrate`**: Migrates existing brownfield projects with established documentation to SynthesisFlow structure.
-- **`prd-authoring`**: Guides early-stage project planning through Product Requirements Documents (PRDs), bridging the gap between project ideas and spec-driven development.
-- **`doc-indexer`**: Provides just-in-time context of all project documentation to the AI without loading full content.
-- **`spec-authoring`**: Manages the creation, refinement, and approval of feature specifications via "Spec PRs".
-- **`sprint-planner`**: Organizes approved specs into sprints, creating Epics and atomic Task Issues on a GitHub Project Board.
-- **`issue-executor`**: The core AI development loop for implementing a single, atomic issue with full context.
-- **`change-integrator`**: Merges completed work back into the source-of-truth and archives work branches post-merge.
-- **`agent-integrator`**: Registers the SynthesisFlow skills with any project's `AGENTS.md` file for agent discovery.
+All capabilities are implemented as modular "Skills" located in the `skills/` directory.
 
-## Skill Architecture
+### 1. Setup & Maintenance
+*   **`project-init`**: Scaffolds a new project with the required `docs/specs` and `docs/changes` structure.
+*   **`project-migrate`**: Intelligently migrates existing "brownfield" projects to the AgenticDev structure using AI analysis.
+*   **`agent-integrator`**: Updates the `AGENTS.md` file to register skills for agent discovery.
+*   **`skill-lister`**: Discovers and lists all available skills in the project.
+*   **`doc-validator`**: Enforces documentation standards and prevents "doc sprawl" by checking file locations.
 
-Each SynthesisFlow skill follows a consistent structure designed for Claude Code compliance:
+### 2. Planning & Discovery
+*   **`prd-authoring`**: Generates Product Briefs, Research Plans, and full PRDs from initial ideas using AI.
+*   **`spec-authoring`**: Manages the "Spec PR" workflow, drafting detailed technical specifications and analyzing PR feedback.
+*   **`doc-indexer`**: Scans project documentation to provide a just-in-time context map (frontmatter index) for the agent.
 
-### Directory Structure
+### 3. Sprint Management
+*   **`sprint-planner`**: Decomposes approved specs (Epics) into atomic GitHub Issues and organizes them into milestones.
+*   **`sprint-manager`**: Orchestrates the autonomous execution of an entire sprint by coordinating sub-agents to implement issues serially.
 
-```
-.claude/skills/skill-name/
-├── SKILL.md                 # Comprehensive documentation (50-262 lines)
-├── scripts/                 # Helper scripts directory
-│   └── helper-script.sh     # Automation for repetitive tasks
-└── references/              # Optional: Detailed workflow docs
-    └── workflow-details.md
-```
-
-### Hybrid Architecture Philosophy
-
-SynthesisFlow uses a **hybrid LLM-guided + helper-script architecture**:
-
-- **LLM Strategic Reasoning**: The AI agent reads `SKILL.md` and executes the workflow STEPS with full strategic understanding and decision-making
-- **Helper Scripts**: Automate repetitive or complex tasks (GitHub API calls, file parsing, project board updates) to reduce context usage
-- **Context Efficiency**: Scripts handle data retrieval and formatting; AI handles interpretation, planning, and strategic decisions
-
-This is NOT script automation vs AI instructions - it's AI-guided workflows WITH context-efficient helper scripts.
-
-### SKILL.md Structure
-
-Every skill's `SKILL.md` follows a comprehensive template:
-
-1. **Frontmatter**: YAML metadata with `name` and `description` fields for skill discovery
-2. **Purpose**: What the skill does and why it exists
-3. **When to Use**: Specific triggers and contexts where the LLM should invoke this skill
-4. **Prerequisites**: What must be true before starting this workflow
-5. **Workflow**: Step-by-step instructions mixing LLM strategic steps with helper script usage
-6. **Error Handling**: Common issues and solutions
-7. **Notes**: Important context, patterns, and gotchas
-
-### Example: issue-executor Workflow
-
-The `issue-executor` skill demonstrates this hybrid approach:
-
-1. **LLM identifies** which issue to work on (strategic decision)
-2. **Helper script** loads context: fetches issue details, reads specs, scans docs, creates branch (automation)
-3. **LLM reviews** loaded context and plans implementation (strategic reasoning)
-4. **LLM writes** code following acceptance criteria (core work)
-5. **LLM commits** and creates PR when ready (workflow completion)
-
-The script saves hundreds of tokens by automating repetitive context loading, while the LLM maintains full strategic control over the development process.
+### 4. Execution & Integration
+*   **`issue-executor`**: The core workhorse. Takes a single issue, generates a TDD plan (Repro → Fix → Verify), creates a branch, and manages the implementation loop.
+*   **`change-integrator`**: Post-merge cleanup tool. Promotes specs to "approved," updates the `RETROSPECTIVE.md` with learnings (auto-summarized), and closes related issues.
+*   **`frontend-design`**: A specialized agent for handling UI/UX tasks and frontend component design.
 
 ## Getting Started
 
-> **Note:** This repository is currently undergoing the transition to SynthesisFlow. The proposal to adopt this methodology is the first feature being built with the system itself.
+### For New Projects
+1.  Clone this repository or copy the `skills/` directory.
+2.  Run `bash skills/project-init/scripts/init-project.sh` to scaffold your docs.
+3.  Run `bash skills/agent-integrator/scripts/update-agents-file.sh` to create `AGENTS.md`.
+
+### For Existing Projects
+1.  Run `bash skills/project-migrate/scripts/project-migrate.sh` to analyze and migrate your docs.
 
 ## Contributing
 
-Contributions welcome! Please follow the SynthesisFlow process:
-
-1.  Fork the repository.
-2.  Use the `spec-authoring` skill to create a change proposal.
-3.  Submit a "Spec PR" for review.
-4.  Once approved, the feature can be planned into a sprint.
+We follow our own methodology:
+1.  Use `spec-authoring` to propose a change.
+2.  Submit a Spec PR.
+3.  Once approved, we'll plan it into the next sprint.
 
 ## License
 

@@ -28,7 +28,7 @@ This document breaks down the restructuring work into atomic, implementable task
 **Subtasks**:
 - [ ] Move `run.sh` ’ `scripts/init-project.sh`
 - [ ] Expand SKILL.md to 50-100 lines following template
-- [ ] Document when to initialize SynthesisFlow
+- [ ] Document when to initialize AgenticDev
 - [ ] Explain directory structure created
 - [ ] Add guidance on next steps after init
 
@@ -121,7 +121,7 @@ This document breaks down the restructuring work into atomic, implementable task
 **Subtasks**:
 - [ ] Move `run.sh` ’ `scripts/update-agents-file.sh`
 - [ ] Expand SKILL.md to 50-80 lines following template
-- [ ] Document when to register/update SynthesisFlow
+- [ ] Document when to register/update AgenticDev
 - [ ] Explain AGENTS.md purpose and structure
 - [ ] Document idempotent update strategy
 

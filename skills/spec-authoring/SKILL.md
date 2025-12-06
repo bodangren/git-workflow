@@ -23,7 +23,7 @@ Use this skill in the following situations:
 
 ## Prerequisites
 
-- Project initialized with SynthesisFlow structure (`docs/specs/` and `docs/changes/` directories exist).
+- Project initialized with AgenticDev structure (`docs/specs/` and `docs/changes/` directories exist).
 - GitHub repository set up.
 - `gh` CLI tool installed and authenticated.
 - `gemini` CLI tool installed and authenticated.

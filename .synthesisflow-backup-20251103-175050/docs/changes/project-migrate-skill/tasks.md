@@ -11,7 +11,7 @@ Create the basic directory structure and skeleton files for the project-migrate 
 - [ ] Create initial `scripts/project-migrate.sh` script
 
 **Acceptance Criteria**:
-- Directory structure matches SynthesisFlow conventions
+- Directory structure matches AgenticDev conventions
 - SKILL.md has proper frontmatter with name and description
 - Scripts directory exists and is executable
 - Skill is discoverable by Claude Code
@@ -91,7 +91,7 @@ Create safe backup mechanism before any modifications.
 Execute the actual file movements and transformations.
 
 **Subtasks**:
-- [ ] Create SynthesisFlow directory structure (docs/specs/, docs/changes/)
+- [ ] Create AgenticDev directory structure (docs/specs/, docs/changes/)
 - [ ] Move/copy files according to migration plan using `git mv` when possible
 - [ ] Handle conflicts (create subdirectories, ask for resolution)
 - [ ] Update relative links in markdown files
@@ -130,7 +130,7 @@ Verify migration completed successfully and report results.
 **Subtasks**:
 - [ ] Check all source files are in target locations
 - [ ] Validate link integrity (no broken links)
-- [ ] Confirm SynthesisFlow structure exists
+- [ ] Confirm AgenticDev structure exists
 - [ ] Compare file counts (discovered vs migrated)
 - [ ] Generate validation report
 
@@ -203,7 +203,7 @@ Create comprehensive workflow documentation for the skill.
 - Clear workflow instructions for LLM
 - Examples show common usage patterns
 - Error scenarios documented with solutions
-- Follows SynthesisFlow skill template
+- Follows AgenticDev skill template
 - Links to helper script appropriately
 
 ## Task 12: Create Rollback Mechanism
@@ -213,13 +213,13 @@ Implement safe rollback to pre-migration state.
 **Subtasks**:
 - [ ] Generate rollback.sh script in backup directory
 - [ ] Implement restoration logic (copy backup back)
-- [ ] Remove SynthesisFlow directories if empty after rollback
+- [ ] Remove AgenticDev directories if empty after rollback
 - [ ] Create rollback instructions in backup README
 - [ ] Test rollback on various scenarios
 
 **Acceptance Criteria**:
 - Rollback script successfully restores original state
-- SynthesisFlow additions removed appropriately
+- AgenticDev additions removed appropriately
 - Rollback instructions are clear
 - Works with partial migrations
 - Safe guards against data loss

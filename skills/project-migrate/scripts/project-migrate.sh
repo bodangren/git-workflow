@@ -1,6 +1,6 @@
 #!/bin/bash
 # Project Migrate Script
-# Migrates existing (brownfield) projects to SynthesisFlow structure
+# Migrates existing (brownfield) projects to AgenticDev structure
 
 set -e
 
@@ -223,7 +223,7 @@ get_categorization_rationale() {
   case "$category" in
     spec)
       if [ "$file_type" = "spec" ]; then
-        echo "Specification → docs/specs/ (SynthesisFlow source-of-truth)"
+        echo "Specification → docs/specs/ (AgenticDev source-of-truth)"
       elif [ "$file_type" = "adr" ]; then
         echo "ADR → docs/specs/ (architectural decisions are specs)"
       elif [ "$file_type" = "design" ]; then
@@ -241,7 +241,7 @@ get_categorization_rationale() {
       echo "General documentation → docs/"
       ;;
     root)
-      echo "Retrospective → root/RETROSPECTIVE.md (SynthesisFlow convention)"
+      echo "Retrospective → root/RETROSPECTIVE.md (AgenticDev convention)"
       ;;
     preserve)
       echo "README preserved in original location"
@@ -369,7 +369,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "========================================"
-echo " Project Migrate: Brownfield to SynthesisFlow"
+echo " Project Migrate: Brownfield to AgenticDev"
 echo "========================================"
 echo ""
 
@@ -819,7 +819,7 @@ prompt_phase_continue "Phase 4: Backup" \
 create_backup() {
   # Generate timestamped backup directory name
   local timestamp=$(date +%Y%m%d-%H%M%S)
-  BACKUP_DIR=".synthesisflow-backup-${timestamp}"
+  BACKUP_DIR=".agenticdev-backup-${timestamp}"
 
   echo "Creating backup directory: $BACKUP_DIR"
 
@@ -854,9 +854,9 @@ create_backup() {
   # Create backup README with restoration instructions
   echo "Creating backup README..."
   cat > "$BACKUP_DIR/README.md" <<'EOF'
-# SynthesisFlow Migration Backup
+# AgenticDev Migration Backup
 
-This directory contains a backup of your project documentation before SynthesisFlow migration.
+This directory contains a backup of your project documentation before AgenticDev migration.
 
 ## Backup Contents
 
@@ -879,7 +879,7 @@ bash BACKUP_DIR/rollback.sh
 This will:
 1. Create a safety backup of the current state (before rollback)
 2. Restore the original docs/ directory from backup
-3. Remove SynthesisFlow additions (docs/specs/, docs/changes/) if they're empty
+3. Remove AgenticDev additions (docs/specs/, docs/changes/) if they're empty
 4. Preserve any non-empty directories to prevent data loss
 5. Clean up empty directories
 
@@ -917,7 +917,7 @@ If you prefer manual control:
 
 ## Questions?
 
-Refer to the SynthesisFlow documentation or the project-migrate skill documentation.
+Refer to the AgenticDev documentation or the project-migrate skill documentation.
 EOF
 
   # Replace placeholders in README
@@ -931,13 +931,13 @@ EOF
   echo "Generating rollback script..."
   cat > "$BACKUP_DIR/rollback.sh" <<'ROLLBACK_SCRIPT'
 #!/bin/bash
-# SynthesisFlow Migration Rollback Script
+# AgenticDev Migration Rollback Script
 # This script restores your project to its pre-migration state
 
 set -e
 
 echo "========================================"
-echo " SynthesisFlow Migration Rollback"
+echo " AgenticDev Migration Rollback"
 echo "========================================"
 echo ""
 echo "⚠️  WARNING: This will restore your project to its pre-migration state."
@@ -1001,12 +1001,12 @@ fi
 
 echo ""
 
-# Step 3: Remove SynthesisFlow additions (only if they're now empty or were created by migration)
-echo "Step 3: Cleaning up SynthesisFlow-specific directories..."
+# Step 3: Remove AgenticDev additions (only if they're now empty or were created by migration)
+echo "Step 3: Cleaning up AgenticDev-specific directories..."
 
 # Load the migration manifest to determine what was created
 if [ -f "$BACKUP_DIR/migration-manifest.json" ]; then
-  echo "  Using migration manifest to identify SynthesisFlow additions..."
+  echo "  Using migration manifest to identify AgenticDev additions..."
 fi
 
 # Check if docs/specs should be removed (empty or only contains migrated files)
@@ -1049,7 +1049,7 @@ if [ -d "docs" ] && [ -z "$(ls -A docs 2>/dev/null)" ]; then
   rmdir docs
 fi
 
-echo "✓ SynthesisFlow directory cleanup complete"
+echo "✓ AgenticDev directory cleanup complete"
 echo ""
 
 # Step 4: Clean up empty parent directories (but preserve structure)
@@ -1108,7 +1108,7 @@ echo ""
 # Skip backup in dry-run mode
 if [ "$DRY_RUN" = true ]; then
   echo "DRY RUN: Backup would be created here"
-  echo "  Backup directory name would be: .synthesisflow-backup-$(date +%Y%m%d-%H%M%S)"
+  echo "  Backup directory name would be: .agenticdev-backup-$(date +%Y%m%d-%H%M%S)"
   echo "  Would backup: docs/ directory (if exists)"
   echo "  Would include: migration manifest, README, rollback script"
   echo ""
@@ -1128,9 +1128,9 @@ prompt_phase_continue "Phase 5: Migration" \
    Files will be moved to their target locations and links will be updated.
    You'll be prompted to resolve any conflicts that occur."
 
-# Function to create SynthesisFlow directory structure
+# Function to create AgenticDev directory structure
 create_directory_structure() {
-  echo "Creating SynthesisFlow directory structure..."
+  echo "Creating AgenticDev directory structure..."
 
   local dirs=("docs" "docs/specs" "docs/changes")
 
@@ -1361,7 +1361,7 @@ migrate_file() {
 
 # Function to execute migration
 execute_migration() {
-  echo "Creating SynthesisFlow directory structure..."
+  echo "Creating AgenticDev directory structure..."
   if ! create_directory_structure; then
     echo "⚠️  Error: Failed to create directory structure!"
     return 1
@@ -1815,8 +1815,8 @@ validate_migration() {
   local validation_errors=0
   local validation_warnings=0
 
-  # Validation 1: Check SynthesisFlow directory structure exists
-  echo "1. Checking SynthesisFlow directory structure..."
+  # Validation 1: Check AgenticDev directory structure exists
+  echo "1. Checking AgenticDev directory structure..."
   local required_dirs=("docs" "docs/specs" "docs/changes")
   local missing_dirs=0
 
@@ -2002,7 +2002,7 @@ Validation Report Summary
     echo "✅ VALIDATION PASSED"
     echo ""
     echo "All checks passed successfully!"
-    echo "  • SynthesisFlow directory structure exists"
+    echo "  • AgenticDev directory structure exists"
     echo "  • All discovered files accounted for ($discovered_count)"
     echo "  • File counts match expectations"
     echo "  • No broken links detected"
@@ -2050,7 +2050,7 @@ if [ "$DRY_RUN" = true ]; then
   echo "DRY RUN: Validation would execute here"
   echo ""
   echo "Would verify:"
-  echo "  1. SynthesisFlow directory structure exists (docs/, docs/specs/, docs/changes/)"
+  echo "  1. AgenticDev directory structure exists (docs/, docs/specs/, docs/changes/)"
   echo "  2. All source files are in target locations"
   echo "  3. File counts match (discovered: ${#DISCOVERED_FILES[@]}, to migrate: $((${#DISCOVERED_FILES[@]} - in_place_count)))"
   echo "  4. Link integrity (no broken links)"
@@ -2077,7 +2077,7 @@ echo ""
 echo "Next steps:"
 echo "  1. Review migrated files"
 echo "  2. Run doc-indexer to catalog documentation"
-echo "  3. Begin using SynthesisFlow workflow"
+echo "  3. Begin using AgenticDev workflow"
 echo ""
 
 # Display backup information if backup was created

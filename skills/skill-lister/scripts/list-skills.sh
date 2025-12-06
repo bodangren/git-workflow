@@ -102,7 +102,7 @@ if [ "$JSON_OUTPUT" = true ]; then
     rm "$json_objects_file"
 else
     # Human-readable output
-    echo "=== Available SynthesisFlow Skills ==="
+    echo "=== Available AgenticDev Skills ==="
     echo ""
 
     for skill_dir in "$SKILLS_DIR"/*/; do

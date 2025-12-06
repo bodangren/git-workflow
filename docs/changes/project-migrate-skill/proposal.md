@@ -3,14 +3,14 @@ title: Project Migrate Skill
 type: proposal
 status: approved
 created: 2024-03-01
-description: Intelligent migration tool for adding SynthesisFlow to existing projects with established documentation
+description: Intelligent migration tool for adding AgenticDev to existing projects with established documentation
 ---
 
 # Proposal: Project Migrate Skill
 
 ## Problem Statement
 
-The current `project-init` skill works well for greenfield projects but lacks the sophistication needed for brownfield/existing projects. When adding SynthesisFlow to an established codebase with existing documentation, teams face several challenges:
+The current `project-init` skill works well for greenfield projects but lacks the sophistication needed for brownfield/existing projects. When adding AgenticDev to an established codebase with existing documentation, teams face several challenges:
 
 1. **Content Loss Risk**: Simply creating new directories doesn't preserve existing documentation
 2. **No Discovery**: No automated way to find and catalog existing docs, specs, or design documents
@@ -28,7 +28,7 @@ Projects with established documentation need a migration path that:
 
 ## Proposed Solution
 
-Create a new `project-migrate` skill that intelligently migrates existing projects to the SynthesisFlow structure while preserving all existing documentation and providing guided migration.
+Create a new `project-migrate` skill that intelligently migrates existing projects to the AgenticDev structure while preserving all existing documentation and providing guided migration.
 
 ### Core Capabilities
 
@@ -42,7 +42,7 @@ Create a new `project-migrate` skill that intelligently migrates existing projec
    - Identify specs vs proposals
    - Find approved vs draft documentation
    - Detect architectural decision records
-   - Map existing structure to SynthesisFlow conventions
+   - Map existing structure to AgenticDev conventions
 
 3. **Planning Phase**: Generate migration plan
    - Suggest target locations for each file
@@ -56,7 +56,7 @@ Create a new `project-migrate` skill that intelligently migrates existing projec
    - Enable rollback capability
 
 5. **Migration Phase**: Execute the migration
-   - Create SynthesisFlow directory structure
+   - Create AgenticDev directory structure
    - Move/copy files to target locations
    - Update internal links and references
    - Preserve git history where possible
@@ -85,9 +85,9 @@ bash scripts/project-migrate.sh --dry-run
 1. **Safe Migration**: Automatic backups prevent content loss
 2. **Intelligent Categorization**: Automated analysis reduces manual decision-making
 3. **Preserves History**: Git-aware migration maintains file history
-4. **Clear Guidance**: Interactive prompts help users understand SynthesisFlow structure
+4. **Clear Guidance**: Interactive prompts help users understand AgenticDev structure
 5. **Rollback Support**: Easy restoration if migration needs adjustment
-6. **Adoption Enablement**: Lowers barrier to adopting SynthesisFlow methodology
+6. **Adoption Enablement**: Lowers barrier to adopting AgenticDev methodology
 
 ## Success Criteria
 

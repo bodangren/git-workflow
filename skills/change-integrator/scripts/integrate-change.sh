@@ -27,8 +27,21 @@ while getopts ":p:b:i:w:l:c:" opt; do
   esac
 done
 
-if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ] || [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
+if [ -z "$PR_NUMBER" ] || [ -z "$BRANCH_NAME" ]; then
+    echo "Error: PR Number (-p) and Branch Name (-b) are required."
     usage
+fi
+
+# Auto-generate learnings if missing
+if [ -z "$WENT_WELL" ] || [ -z "$LESSON" ]; then
+    echo "Learnings missing. Generating from PR context..."
+    PR_BODY=$(gh pr view "$PR_NUMBER" --json body,title -q '.title + "\n" + .body')
+    
+    # Simple one-shot generation
+    GENERATED_JSON=$(gemini -p "Analyze this PR description and extract: 1. One sentence on what went well. 2. One key lesson learned. Output JSON: {\"well\": \"...\", \"lesson\": \"...\"} \n\n $PR_BODY")
+    
+    WENT_WELL=$(echo "$GENERATED_JSON" | jq -r '.well')
+    LESSON=$(echo "$GENERATED_JSON" | jq -r '.lesson')
 fi
 
 # --- CONFIGURATION (should be detected dynamically in a future version) ---
@@ -77,19 +90,46 @@ else
     echo "No project board item ID provided, skipping project board update."
 fi
 
+# 5b. Close Linked Issue
+echo "Closing linked issue..."
+# Try to find the linked issue from the PR
+LINKED_ISSUE=$(gh pr view "$PR_NUMBER" --json closingIssuesReferences -q '.closingIssuesReferences[0].number')
+
+if [ -n "$LINKED_ISSUE" ] && [ "$LINKED_ISSUE" != "null" ]; then
+    echo "Closing linked issue #$LINKED_ISSUE..."
+    gh issue close "$LINKED_ISSUE" --comment "Issue closed via PR #$PR_NUMBER integration." || true
+else
+    echo "No linked issue found in PR metadata. Please verify issue #$PR_NUMBER status manually."
+fi
+
 # 6. Update Retrospective
 echo "Updating retrospective..."
 
 summarize_retrospective() {
     echo "RETROSPECTIVE.md has $(wc -l < RETROSPECTIVE.md) lines. Summarizing with Gemini..."
 
-    # Isolate content to summarize
-    local temp_summary_input="retro_to_summarize_$$.md" # Create in CWD
-    awk '/^## Sprint 4/{f=1}f' RETROSPECTIVE.md > "$temp_summary_input"
+    # Isolate content to summarize - Keep the header (first 10 lines approx) and the last 3 entries intact
+    # Everything in between gets summarized.
+    local temp_summary_input="retro_to_summarize_$$.md"
+    
+    # Find line number of the "Historical Learnings" header
+    local start_line=$(grep -n "## Historical Learnings" RETROSPECTIVE.md | cut -d: -f1)
+    if [ -z "$start_line" ]; then start_line=5; fi
+    
+    # Find line number of the 5th most recent entry (assuming ### format)
+    local end_line=$(grep -n "###" RETROSPECTIVE.md | tail -n 5 | head -n 1 | cut -d: -f1)
+    if [ -z "$end_line" ]; then end_line=$(wc -l < RETROSPECTIVE.md); fi
 
-    # Preserve the header and historical learnings
+    # Extract the middle chunk
+    sed -n "$((start_line + 1)),$((end_line - 1))p" RETROSPECTIVE.md > "$temp_summary_input"
+
+    # Preserve Header
     local header_content
-    header_content=$(awk '/^## Sprint 4/{exit}1' RETROSPECTIVE.md)
+    header_content=$(head -n "$start_line" RETROSPECTIVE.md)
+    
+    # Preserve Recent Entries
+    local recent_content
+    recent_content=$(tail -n "+$end_line" RETROSPECTIVE.md)
 
     # Call Gemini to summarize
     local summarized_sprints
@@ -100,8 +140,8 @@ summarize_retrospective() {
 
     # Reconstruct the file
     echo "$header_content" > RETROSPECTIVE.md
-    echo -e "\n## Summarized Sprints (via Gemini)\n" >> RETROSPECTIVE.md
-    echo "$summarized_sprints" >> RETROSPECTIVE.md
+    echo -e "\n$summarized_sprints\n" >> RETROSPECTIVE.md
+    echo "$recent_content" >> RETROSPECTIVE.md
 
     echo "Retrospective summarized and overwritten."
 }

@@ -1,14 +1,14 @@
 ---
-title: SynthesisFlow Methodology
+title: AgenticDev Methodology
 type: spec
 status: approved
 created: 2024-01-01
 description: Modular skill architecture for spec-driven development workflow
 ---
 
-# Spec Delta: SynthesisFlow Methodology
+# Spec Delta: AgenticDev Methodology
 
-This document describes the new skills that form the SynthesisFlow methodology.
+This document describes the new skills that form the AgenticDev methodology.
 
 ## New Skill Architecture
 
@@ -26,4 +26,4 @@ The existing `git-workflow` skill will be deprecated and replaced by the followi
 
 6.  **`change-integrator`**: Contains the `complete-change` skill. After a code PR is merged, this skill handles cleanup by merging the spec delta into the source-of-truth `specs/` directory, updating the retrospective, and archiving the feature branch.
 
-7.  **`agent-integrator`**: Contains the `register` skill. This idempotently creates or updates the root `AGENTS.md` file to ensure the SynthesisFlow skills are discoverable by any compatible AI agent.
+7.  **`agent-integrator`**: Contains the `register` skill. This idempotently creates or updates the root `AGENTS.md` file to ensure the AgenticDev skills are discoverable by any compatible AI agent.

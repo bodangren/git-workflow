@@ -31,7 +31,7 @@ Do NOT use this skill for:
 
 ## Prerequisites
 
-- Project initialized with SynthesisFlow structure (`docs/` directory exists).
+- Project initialized with AgenticDev structure (`docs/` directory exists).
 - `gemini` CLI tool installed and authenticated.
 
 ## PRD Philosophy

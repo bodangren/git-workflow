@@ -2,7 +2,7 @@
 
 +## Problem Statement
 +
-+The SynthesisFlow framework, while powerful, has several areas where the developer experience for the LLM agent can be improved. The current process relies heavily on the LLM's ability to parse prose, understand implicit conventions, and discover capabilities on its own. This leads to inefficiencies, potential for error, and a lack of portability to non-Claude agents.
++The AgenticDev framework, while powerful, has several areas where the developer experience for the LLM agent can be improved. The current process relies heavily on the LLM's ability to parse prose, understand implicit conventions, and discover capabilities on its own. This leads to inefficiencies, potential for error, and a lack of portability to non-Claude agents.
 +
 +## Proposed Solution
 +

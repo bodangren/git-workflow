@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add a new `project-migrate` skill to the SynthesisFlow suite that handles intelligent migration of existing projects to the SynthesisFlow directory structure. This skill complements `project-init` by addressing the specific needs of brownfield projects with established documentation.
+Add a new `project-migrate` skill to the AgenticDev suite that handles intelligent migration of existing projects to the AgenticDev directory structure. This skill complements `project-init` by addressing the specific needs of brownfield projects with established documentation.
 
 ## Skill Structure
 
@@ -33,7 +33,7 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 
 ### R2: Migration Planning
 
-**Requirement**: Generate a migration plan that maps existing content to SynthesisFlow structure.
+**Requirement**: Generate a migration plan that maps existing content to AgenticDev structure.
 
 **Implementation**:
 - Categorize each discovered file into target directory
@@ -53,7 +53,7 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 **Requirement**: Create complete backup before any migration operations.
 
 **Implementation**:
-- Create timestamped backup: `.synthesisflow-backup-YYYYMMDD-HHMMSS/`
+- Create timestamped backup: `.agenticdev-backup-YYYYMMDD-HHMMSS/`
 - Copy entire `docs/` directory if exists
 - Store migration manifest (JSON/YAML) documenting:
   - Timestamp
@@ -64,7 +64,7 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 
 **Backup Structure**:
 ```
-.synthesisflow-backup-20250102-143022/
+.agenticdev-backup-20250102-143022/
  docs/                    # Full copy of original docs/
  migration-manifest.json  # Migration plan and file mapping
  README.md               # Restoration instructions
@@ -75,7 +75,7 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 **Requirement**: Execute migration while preserving content and structure.
 
 **Implementation**:
-- Create SynthesisFlow directory structure (docs/specs, docs/changes)
+- Create AgenticDev directory structure (docs/specs, docs/changes)
 - Move/copy files according to migration plan
 - Preserve git history using `git mv` when appropriate
 - Update relative links in markdown files
@@ -112,15 +112,15 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 **Implementation**:
 - Provide rollback script in backup directory
 - Document rollback procedure in backup README
-- Rollback restores from backup and removes SynthesisFlow additions
+- Rollback restores from backup and removes AgenticDev additions
 - Warn about git history implications
 
 **Rollback Script**:
 ```bash
-# Generated in .synthesisflow-backup-*/rollback.sh
+# Generated in .agenticdev-backup-*/rollback.sh
 #!/bin/bash
 # Restore docs/ from backup
-# Remove SynthesisFlow directories if empty
+# Remove AgenticDev directories if empty
 # Show restoration summary
 ```
 
@@ -131,7 +131,7 @@ Add a new `project-migrate` skill to the SynthesisFlow suite that handles intell
 **Implementation**:
 - Check all source files are in target locations
 - Validate link integrity (no broken links)
-- Confirm SynthesisFlow structure exists
+- Confirm AgenticDev structure exists
 - Report any issues or warnings
 - Suggest next steps (e.g., run doc-indexer)
 
@@ -285,14 +285,14 @@ created: 2025-01-15
 
 ### For Existing Repositories
 
-Projects already using ad-hoc documentation can adopt SynthesisFlow by:
+Projects already using ad-hoc documentation can adopt AgenticDev by:
 
 1. Run `project-migrate` skill
 2. Review generated migration plan
 3. Approve migration or request adjustments
 4. Validate migrated structure
 5. Run `doc-indexer` to catalog new structure
-6. Begin using SynthesisFlow workflow
+6. Begin using AgenticDev workflow
 
 ### Integration with Existing Skills
 

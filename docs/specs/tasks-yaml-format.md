@@ -3,14 +3,14 @@ title: Tasks YAML Format Specification
 type: spec
 status: approved
 created: 2024-03-01
-description: Machine-readable format for sprint task definitions in SynthesisFlow
+description: Machine-readable format for sprint task definitions in AgenticDev
 ---
 
 # Spec: Tasks YAML Format Specification
 
 ## Overview
 
-This specification defines the `tasks.yml` format, a machine-readable replacement for the prose-based `tasks.md` files used in the SynthesisFlow framework. The YAML format enables direct automation, reduces parsing errors, and provides a structured approach to defining sprint tasks.
+This specification defines the `tasks.yml` format, a machine-readable replacement for the prose-based `tasks.md` files used in the AgenticDev framework. The YAML format enables direct automation, reduces parsing errors, and provides a structured approach to defining sprint tasks.
 
 ## Purpose
 
@@ -85,7 +85,7 @@ Must be one of the following values:
 
 Should identify the system component being worked on. Common values include:
 
-**For SynthesisFlow Framework:**
+**For AgenticDev Framework:**
 - Specific skill names (e.g., `issue-executor`, `sprint-planner`, `spec-authoring`)
 - `framework`: Core framework changes affecting multiple skills
 - `ci-cd`: Continuous integration or deployment changes

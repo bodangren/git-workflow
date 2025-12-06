@@ -1,20 +1,20 @@
 ---
 name: project-migrate
-description: Use this skill to migrate existing projects to the SynthesisFlow structure. It uses an AI-powered analysis to intelligently discover, categorize, and migrate documentation, generate rich frontmatter, and preserve git history.
+description: Use this skill to migrate existing projects to the AgenticDev structure. It uses an AI-powered analysis to intelligently discover, categorize, and migrate documentation, generate rich frontmatter, and preserve git history.
 ---
 
 # Project Migrate Skill
 
 ## Purpose
 
-To intelligently migrate existing projects (brownfield) to the SynthesisFlow directory structure using a powerful, AI-assisted workflow. This skill goes beyond simple file moving by leveraging the **Gemini CLI** to analyze document content, ensuring accurate categorization and the generation of rich, meaningful metadata. It provides a safe, guided migration with discovery, analysis, backup, and validation phases to ensure zero data loss and high-quality results.
+To intelligently migrate existing projects (brownfield) to the AgenticDev directory structure using a powerful, AI-assisted workflow. This skill goes beyond simple file moving by leveraging the **Gemini CLI** to analyze document content, ensuring accurate categorization and the generation of rich, meaningful metadata. It provides a safe, guided migration with discovery, analysis, backup, and validation phases to ensure zero data loss and high-quality results.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Adding SynthesisFlow to an existing project with established documentation.
-- Migrating docs from an ad-hoc structure to SynthesisFlow conventions.
+- Adding AgenticDev to an existing project with established documentation.
+- Migrating docs from an ad-hoc structure to AgenticDev conventions.
 - When you want to automatically and intelligently categorize and add metadata to existing documents.
 - To ensure a safe migration with backups and rollback capabilities.
 
@@ -52,7 +52,7 @@ bash scripts/project-migrate.sh --auto-approve
 ### Step 2: Review Each Phase
 
 **Phase 1 & 2 - AI-Powered Discovery and Analysis**:
-The script scans for all markdown files. For each file, it calls the **Gemini CLI** to analyze the document's *content*, not just its filename. This results in a much more accurate categorization of files into types like `spec`, `proposal`, `adr`, etc. The output is a detailed plan mapping each file to its new, correct location in the SynthesisFlow structure.
+The script scans for all markdown files. For each file, it calls the **Gemini CLI** to analyze the document's *content*, not just its filename. This results in a much more accurate categorization of files into types like `spec`, `proposal`, `adr`, etc. The output is a detailed plan mapping each file to its new, correct location in the AgenticDev structure.
 
 **Phase 3 - Planning**:
 Shows you the complete, AI-driven migration plan for your approval. You can review source and target mappings before any files are moved.

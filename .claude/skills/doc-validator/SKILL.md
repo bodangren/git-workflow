@@ -23,7 +23,7 @@ Use this skill in the following situations:
 ## Prerequisites
 
 - Standard bash utilities (`find`, `bash`)
-- Project follows SynthesisFlow directory conventions
+- Project follows AgenticDev directory conventions
 
 ## Workflow
 
@@ -98,7 +98,7 @@ The validator considers these locations as standard and will not warn about them
 ## Notes
 
 - **Non-destructive**: The script only reports issues, it does not move or delete files
-- **Excludes**: Automatically skips `.git/` and `.synthesisflow-backup-*` directories
+- **Excludes**: Automatically skips `.git/` and `.agenticdev-backup-*` directories
 - **Integration**: Designed to be called by other skills as part of quality checks
 - **Extensible**: Easy to add new allowed patterns by updating the script
 - **CI-friendly**: Returns parsable output suitable for automated checks

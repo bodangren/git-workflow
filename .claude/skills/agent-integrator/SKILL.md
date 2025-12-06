@@ -1,27 +1,27 @@
 ---
 name: agent-integrator
-description: Use this skill to create or update the root AGENTS.md file to register SynthesisFlow skills for AI agent discovery. Triggers include "register SynthesisFlow", "update AGENTS.md", "setup agent guide", or initializing a new project.
+description: Use this skill to create or update the root AGENTS.md file to register AgenticDev skills for AI agent discovery. Triggers include "register AgenticDev", "update AGENTS.md", "setup agent guide", or initializing a new project.
 ---
 
 # Agent Integrator Skill
 
 ## Purpose
 
-Idempotently create or update the AGENTS.md file in a project to register SynthesisFlow skills for discovery by AI agents. This skill ensures that any compatible AI agent working in the repository can discover and use the SynthesisFlow methodology and available skills.
+Idempotently create or update the AGENTS.md file in a project to register AgenticDev skills for discovery by AI agents. This skill ensures that any compatible AI agent working in the repository can discover and use the AgenticDev methodology and available skills.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- After running project-init to initialize SynthesisFlow in a new project
-- When installing SynthesisFlow skills in an existing project
+- After running project-init to initialize AgenticDev in a new project
+- When installing AgenticDev skills in an existing project
 - After adding new skills to the `.claude/skills/` directory
 - Updating the agent guide with new workflow information
-- Ensuring AI agents can discover available SynthesisFlow capabilities
+- Ensuring AI agents can discover available AgenticDev capabilities
 
 ## Prerequisites
 
-- Project has `.claude/skills/` directory with SynthesisFlow skills installed
+- Project has `.claude/skills/` directory with AgenticDev skills installed
 - Write permissions to project root directory
 - Optional: Existing AGENTS.md file (script creates if missing)
 
@@ -30,7 +30,7 @@ Use this skill in the following situations:
 The AGENTS.md file serves as a discovery mechanism for AI agents:
 
 - **Agent Discovery**: AI agents read this file to learn about available workflows
-- **Methodology Documentation**: Explains SynthesisFlow philosophy and core principles
+- **Methodology Documentation**: Explains AgenticDev philosophy and core principles
 - **Skill Catalog**: Lists all available skills and their purposes
 - **Getting Started**: Provides entry point for new agents working in the project
 
@@ -44,7 +44,7 @@ Check if AGENTS.md needs to be created or updated:
 # Check if file exists
 ls -la AGENTS.md
 
-# Check if SynthesisFlow section exists
+# Check if AgenticDev section exists
 grep "SYNTHESIS_FLOW" AGENTS.md
 ```
 
@@ -78,7 +78,7 @@ The helper script uses an idempotent update strategy:
    - Uses awk to safely replace marked section
 
 4. **Adds new content**:
-   - If markers not found, appends SynthesisFlow guide to end of file
+   - If markers not found, appends AgenticDev guide to end of file
    - Adds both start and end markers for future updates
 
 5. **Preserves other content**:
@@ -104,7 +104,7 @@ If the update looks correct, commit to the repository:
 
 ```bash
 git add AGENTS.md
-git commit -m "docs: Update AGENTS.md with SynthesisFlow guide"
+git commit -m "docs: Update AGENTS.md with AgenticDev guide"
 git push
 ```
 
@@ -146,5 +146,5 @@ git push
 - **Custom locations**: Use `-f` flag for alternative file paths
 - **Run after setup**: Typically run once after project-init, then rarely
 - **Update when skills change**: Re-run if new skills are added or removed
-- **AI agent discovery**: Helps agents understand available SynthesisFlow capabilities
+- **AI agent discovery**: Helps agents understand available AgenticDev capabilities
 - **Version control**: Commit AGENTS.md so all contributors see the guide

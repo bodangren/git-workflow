@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script scaffolds the basic directory structure for a SynthesisFlow project.
+# This script scaffolds the basic directory structure for a AgenticDev project.
 
 set -e
 
@@ -64,7 +64,7 @@ if [ -d "$PROJECT_DIR/docs" ]; then
     fi
 fi
 
-echo "Initializing SynthesisFlow structure in $PROJECT_DIR..."
+echo "Initializing AgenticDev structure in $PROJECT_DIR..."
 mkdir -p "$PROJECT_DIR/docs/specs"
 mkdir -p "$PROJECT_DIR/docs/changes"
 echo "✓ Done."

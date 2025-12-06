@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-SynthesisFlow currently has strong support for mid-stage development workflows (spec-authoring, sprint-planner, issue-executor), but lacks guidance for **early-stage project inception activities**. Teams need support for:
+AgenticDev currently has strong support for mid-stage development workflows (spec-authoring, sprint-planner, issue-executor), but lacks guidance for **early-stage project inception activities**. Teams need support for:
 
 - Creating Product Requirements Documents (PRDs) from initial ideas
 - Conducting market research and competitive analysis
@@ -34,7 +34,7 @@ Create a **prd-authoring** skill that incorporates workflows from BMAD's Product
 
 3. **Transition to Development**:
    - Bridge to existing spec-authoring workflow
-   - Ensure PRD aligns with SynthesisFlow's spec structure
+   - Ensure PRD aligns with AgenticDev's spec structure
    - Generate initial change proposals from approved PRDs
 
 ## Benefits

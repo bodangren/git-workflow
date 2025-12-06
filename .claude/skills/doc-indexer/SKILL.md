@@ -55,7 +55,7 @@ The scanner returns information about all markdown files found in `docs/`, inclu
 ```
 ---
 file: docs/specs/001-synthesis-flow.md
-title: SynthesisFlow Methodology
+title: AgenticDev Methodology
 status: approved
 type: spec
 ---
@@ -73,7 +73,7 @@ type: proposal
     "file": "docs/specs/001-synthesis-flow.md",
     "compliant": true,
     "frontmatter": {
-      "title": "SynthesisFlow Methodology",
+      "title": "AgenticDev Methodology",
       "status": "approved",
       "type": "spec"
     }

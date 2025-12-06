@@ -1,5 +1,5 @@
 #!/bin/bash
-# Validate SynthesisFlow skills for Claude Code compliance
+# Validate AgenticDev skills for Claude Code compliance
 # This script checks all skills in the skills/ directory for proper structure
 
 set -e
@@ -35,7 +35,7 @@ while getopts ":v" opt; do
 done
 
 echo "================================"
-echo "SynthesisFlow Skill Validation"
+echo "AgenticDev Skill Validation"
 echo "================================"
 echo ""
 

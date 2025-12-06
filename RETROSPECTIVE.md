@@ -14,7 +14,7 @@ This file captures learnings from completed tasks to inform and improve future d
 ---
 
 ### #45 - TASK: Restructure doc-indexer skill
-- **Lesson:** The SynthesisFlow philosophy is not about replacing scripts with AI, but about AI executing workflow steps with strategic reasoning, using scripts as context-efficient helpers for complex automation. Dogfooding the workflow on itself was critical for uncovering this misunderstanding and other bugs. A key process gap was forgetting to update `RETROSPECTIVE.md` after closing an issue, which is a required step.
+- **Lesson:** The AgenticDev philosophy is not about replacing scripts with AI, but about AI executing workflow steps with strategic reasoning, using scripts as context-efficient helpers for complex automation. Dogfooding the workflow on itself was critical for uncovering this misunderstanding and other bugs. A key process gap was forgetting to update `RETROSPECTIVE.md` after closing an issue, which is a required step.
 
 ### #45-51 - Core Skills Restructuring Sprint
 - **Lesson:** Established restructuring pattern: move script, expand SKILL.md, test, follow PR workflow. Documentation depth should match skill complexity. Combined SKILL.md + reference docs pattern works for complex workflows.
@@ -31,9 +31,9 @@ This file captures learnings from completed tasks to inform and improve future d
 ### #99-108: `prd-authoring` Skill Sprint
 - **Lesson:** PRDs define "What/Why" before specs define "How" - critical separation. Automated validation prevents downstream problems. Status command is key entry point for complex workflows. Templates with guidance improve UX. Traceability chain: PRD → Epic → Spec → Issues → Code.
 
-### #117 - feat/116-integrate-gemini-cli-for-large-context-analysis-in-synthesisflow-skills
+### #117 - feat/116-integrate-gemini-cli-for-large-context-analysis-in-agenticdev-skills
 
-- **Went well:** Successfully integrated Gemini CLI into six core SynthesisFlow skills, replacing brittle parsing/templating with AI-powered content generation and analysis. Enhanced RETROSPECTIVE.md summarization, issue-executor planning, prd-authoring drafting, project-migrate categorization/frontmatter, sprint-planner task decomposition, and spec-authoring drafting/feedback analysis. Followed SynthesisFlow methodology for implementation, testing, and documentation updates for each skill.
+- **Went well:** Successfully integrated Gemini CLI into six core AgenticDev skills, replacing brittle parsing/templating with AI-powered content generation and analysis. Enhanced RETROSPECTIVE.md summarization, issue-executor planning, prd-authoring drafting, project-migrate categorization/frontmatter, sprint-planner task decomposition, and spec-authoring drafting/feedback analysis. Followed AgenticDev methodology for implementation, testing, and documentation updates for each skill.
 - **Lesson:** The gh CLI commands for project items can be tricky to navigate, requiring careful use of project list and item-list with jq to extract the correct IDs. Integrating AI into existing shell scripts requires careful prompt engineering and robust parsing of AI output. Parallel execution of AI calls (& and wait) can significantly speed up content generation. Updating SKILL.md documentation is crucial to reflect new AI capabilities and prerequisites.
 
 
@@ -47,7 +47,7 @@ This file captures learnings from completed tasks to inform and improve future d
 - **Went well:** Successfully added RETROSPECTIVE.md context loading to sprint-planner while maintaining YAML parsing compliance and improving script flexibility with parameterizable input.
 - **Key challenges:** Resolved conflict between original request (add RETROSPECTIVE.md for LLM context) and specification (remove LLM calls) by implementing human-readable context loading instead.
 - **Important learnings:** Make scripts parameterizable from the start rather than hardcoding file paths. Design for flexibility and reusability even when requirements seem simple.
-- **Complete workflow execution:** Full SynthesisFlow workflow completed successfully from issue-executor through PR creation to change integration.
+- **Complete workflow execution:** Full AgenticDev workflow completed successfully from issue-executor through PR creation to change integration.
 
 ### #125 - feat: Add comprehensive tasks.yml format specification
 
@@ -68,7 +68,7 @@ This file captures learnings from completed tasks to inform and improve future d
 
 ### #145 - feat/129-create-skill-lister-skill
 
-- **Went well:** Successfully implemented skill-lister skill with comprehensive documentation, dual output modes (human-readable and JSON), and automated skill discovery. The implementation followed established patterns from scan-docs.sh, ensuring consistency with existing SynthesisFlow skills.
+- **Went well:** Successfully implemented skill-lister skill with comprehensive documentation, dual output modes (human-readable and JSON), and automated skill discovery. The implementation followed established patterns from scan-docs.sh, ensuring consistency with existing AgenticDev skills.
 - **Lesson:** Following established patterns from existing skills (using scan-docs.sh as a model) significantly accelerates development and ensures consistency. Clear acceptance criteria in issues make validation straightforward. The skill-lister itself demonstrates the value of discoverable, self-documenting systems.
 
 

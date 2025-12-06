@@ -90,6 +90,16 @@ fi
 # Add final instruction to prompt
 GEMINI_PROMPT+="\n\nBased on all this context, what are the key steps I should take to implement this feature correctly, keeping in mind past learnings and adhering to the specifications? Provide a clear, actionable plan."
 
+GEMINI_PROMPT+="\n\nCRITICAL INSTRUCTION: You must plan for a Test-Driven Development (TDD) workflow.
+Your plan MUST include these specific steps:
+1. **Reproduction**: Create a standalone reproduction script (e.g., 'repro_issue.sh') or a new test case that FAILS before any code is changed.
+2. **Verification (Fail)**: explicit step to run the repro script and confirm failure.
+3. **Implementation**: The actual code changes.
+4. **Verification (Pass)**: explicit step to run the repro script again to confirm success.
+5. **Cleanup**: Remove the temporary repro script or merge the new test case.
+
+Based on all this context, what are the key steps..."
+
 # 2d. Call Gemini
 echo "------------------------- GEMINI IMPLEMENTATION PLAN -------------------------"
 gemini -p "$GEMINI_PROMPT"

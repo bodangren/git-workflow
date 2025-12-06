@@ -1,24 +1,24 @@
 ---
 name: project-init
-description: Use this skill when starting a new project or adding SynthesisFlow to an existing project. Scaffolds the directory structure (docs/specs, docs/changes) and configuration files needed for the spec-driven development workflow.
+description: Use this skill when starting a new project or adding AgenticDev to an existing project. Scaffolds the directory structure (docs/specs, docs/changes) and configuration files needed for the spec-driven development workflow.
 ---
 
 # Project Init Skill
 
 ## Purpose
 
-Initialize a new project with the SynthesisFlow directory structure and configuration files. This skill sets up the foundational folders needed for the spec-driven development workflow, creating a standard structure for specifications, change proposals, and documentation.
+Initialize a new project with the AgenticDev directory structure and configuration files. This skill sets up the foundational folders needed for the spec-driven development workflow, creating a standard structure for specifications, change proposals, and documentation.
 
 ## When to Use
 
 Use this skill in the following situations:
 
-- Starting a completely new project that will use SynthesisFlow
-- Adding SynthesisFlow methodology to an existing project **with no existing documentation**
+- Starting a completely new project that will use AgenticDev
+- Adding AgenticDev methodology to an existing project **with no existing documentation**
 - Setting up a consistent structure for spec-driven development
-- Ensuring project follows SynthesisFlow conventions from the beginning
+- Ensuring project follows AgenticDev conventions from the beginning
 
-**Important**: If the project already has documentation in a `docs/` directory, use the **project-migrate** skill instead. It will properly catalog, categorize, and migrate existing documentation into the SynthesisFlow structure while preserving git history and updating links.
+**Important**: If the project already has documentation in a `docs/` directory, use the **project-migrate** skill instead. It will properly catalog, categorize, and migrate existing documentation into the AgenticDev structure while preserving git history and updating links.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ Before initializing, determine:
 - Is this a brand new project or an existing codebase?
 - Does a `docs/` directory already exist?
 - If `docs/` exists, does it contain markdown files?
-- Where should the SynthesisFlow structure be created?
+- Where should the AgenticDev structure be created?
 
 **Decision Tree**:
 - **No docs/ directory**: Proceed with project-init (this skill)
@@ -186,11 +186,11 @@ Understanding when to use each skill:
 - Starting a **brand new project** from scratch
 - Project has **no existing documentation**
 - docs/ directory is **empty** or doesn't exist
-- You just need the basic SynthesisFlow directory structure
+- You just need the basic AgenticDev directory structure
 
 ### Use project-migrate when:
 - Project has **existing documentation** in docs/ or other locations
-- You want to **migrate legacy docs** into SynthesisFlow structure
+- You want to **migrate legacy docs** into AgenticDev structure
 - You need to **preserve git history** during migration
 - Documentation has **relative links** that need updating
 - You want **doc-indexer compliant frontmatter** added automatically
